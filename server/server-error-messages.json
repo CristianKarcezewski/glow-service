@@ -1,0 +1,6 @@
+{
+    "header": {
+        "platformNotFound": "Request parameter 'platform' not found.",
+        "authorizationNotFound": "Request parameter 'platform' not found."
+    }
+}
