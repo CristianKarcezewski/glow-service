@@ -5,6 +5,7 @@ import "github.com/labstack/echo"
 const (
 	loginPath        = "/login"
 	refreshTokenPath = "/refresh"
+	registerPath     = "/regiter"
 )
 
 type (
@@ -12,6 +13,7 @@ type (
 		Echo         *echo.Echo
 		Login        echo.HandlerFunc
 		RefreshToken echo.HandlerFunc
+		Register     echo.HandlerFunc
 	}
 )
 
@@ -19,4 +21,5 @@ type (
 func (ar *AuthRouter) Wire() {
 	ar.Echo.POST(loginPath, ar.Login)
 	ar.Echo.GET(refreshTokenPath, ar.RefreshToken)
+	ar.Echo.POST(registerPath, ar.Register)
 }

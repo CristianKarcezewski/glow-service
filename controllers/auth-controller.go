@@ -16,7 +16,8 @@ type (
 	IAuthController interface {
 		Login() echo.HandlerFunc
 		RefreshToken() echo.HandlerFunc
-		Router(echo *echo.Echo, login echo.HandlerFunc, refreshToken echo.HandlerFunc) *routers.AuthRouter
+		Register() echo.HandlerFunc
+		Router(echo *echo.Echo, login echo.HandlerFunc, refreshToken echo.HandlerFunc, register echo.HandlerFunc) *routers.AuthRouter
 	}
 
 	authController struct {
@@ -40,6 +41,7 @@ func (ac *authController) Login() echo.HandlerFunc {
 		json.NewDecoder(context.Request().Body).Decode(&authData)
 		context.Request().Body.Close()
 
+		header.AddInfo("Validating headers")
 		if header.Platform == "" {
 			errorResponse := header.AddError(ac.errorMessageData.Header.PlatformNotFound)
 			go header.PrintStackOnConsole()
@@ -47,6 +49,7 @@ func (ac *authController) Login() echo.HandlerFunc {
 		}
 
 		// Validate payload info
+		header.AddInfo("Validating paylod data")
 		validationError := functions.ValidateStruct(authData)
 		if validationError != nil {
 			errorResponse := header.AddError(*validationError)
@@ -64,15 +67,48 @@ func (ac *authController) RefreshToken() echo.HandlerFunc {
 	}
 }
 
+func (ac *authController) Register() echo.HandlerFunc {
+	return func(context echo.Context) error {
+
+		var user dto.UserDto
+		header := functions.ValidateHeader(&context.Request().Header)
+		header.AddStep("AuthController-Login")
+
+		// Decode request body payload data
+		json.NewDecoder(context.Request().Body).Decode(&user)
+		context.Request().Body.Close()
+
+		header.AddInfo("Validating headers")
+		if header.Platform == "" {
+			errorResponse := header.AddError(ac.errorMessageData.Header.PlatformNotFound)
+			go header.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		// Validate payload info
+		header.AddInfo("Validating payload data")
+		validationError := functions.ValidateStruct(user)
+		if validationError != nil {
+			errorResponse := header.AddError(*validationError)
+			go header.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		return context.JSON(http.StatusOK, "Response OK")
+	}
+}
+
 // Router is a function that returns a router of authController
 func (ac *authController) Router(
 	echo *echo.Echo,
 	login echo.HandlerFunc,
 	refreshToken echo.HandlerFunc,
+	register echo.HandlerFunc,
 ) *routers.AuthRouter {
 	return &routers.AuthRouter{
 		Echo:         echo,
 		Login:        login,
 		RefreshToken: refreshToken,
+		Register:     register,
 	}
 }

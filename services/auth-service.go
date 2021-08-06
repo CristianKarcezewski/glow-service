@@ -1,6 +1,9 @@
 package services
 
 import (
+	"glow-service/common/functions"
+	"glow-service/models"
+	"glow-service/repository"
 	"net/http"
 	"time"
 
@@ -10,16 +13,19 @@ import (
 
 type (
 	IAuthService interface {
-		Login(email, password string) (string, error)
+		Login(email, password *string) (string, error)
+		Register(user *models.User) (string, error)
 	}
-	authService struct{}
+	authService struct {
+		userRepository repository.IUserRepository
+	}
 )
 
-func NewAuthService() IAuthService {
-	return &authService{}
+func NewAuthService(userRepository repository.IUserRepository) IAuthService {
+	return &authService{userRepository}
 }
 
-func (auth *authService) Login(email, password string) (string, error) {
+func (auth *authService) Login(email, password *string) (string, error) {
 
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -34,8 +40,11 @@ func (auth *authService) Login(email, password string) (string, error) {
 	return token.SignedString([]byte("secret"))
 }
 
-func accessible(c echo.Context) error {
-	return c.String(http.StatusOK, "Accessible")
+func (auth *authService) Register(user *models.User) (string, error) {
+	user.CreatedAt = functions.DateToString()
+	user.Active = true
+	auth.userRepository.Insert(user.AdaptToDAO())
+	return "", nil
 }
 
 func restricted(c echo.Context) error {

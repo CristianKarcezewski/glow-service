@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"glow-service/common/functions"
 	"glow-service/controllers"
-	"glow-service/models"
+	"glow-service/repository"
 	"glow-service/server"
 	"glow-service/services"
 	"strings"
@@ -18,20 +18,23 @@ func main() {
 		fmt.Println(serverConfigError.Error())
 	} else {
 		echo := echo.New()
-		initApplication(&serverConfig.ServerErrorMessages, echo)
+		initApplication(serverConfig, echo)
 		initEcho(echo, serverConfig.Environment, int64(serverConfig.Port))
 	}
 }
 
-func initApplication(errorMessages *models.ServerErrorMessages, echo *echo.Echo) {
+func initApplication(config *server.Configuration, echo *echo.Echo) {
+	// Start repositories
+	userRepository := repository.NewUserRepository(config.DatabaseHandler)
+
 	// Start services
-	authService := services.NewAuthService()
+	authService := services.NewAuthService(userRepository)
 
 	// Start controllers
-	authController := controllers.NewAuthController(errorMessages, authService)
+	authController := controllers.NewAuthController(&config.ServerErrorMessages, authService)
 
 	// Start Routers
-	authController.Router(echo, authController.Login(), authController.RefreshToken()).Wire()
+	authController.Router(echo, authController.Login(), authController.RefreshToken(), authController.Register()).Wire()
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {
