@@ -3,6 +3,7 @@ module glow-service
 go 1.16
 
 require (
+	github.com/go-pg/pg/v10 v10.10.3
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.7.0

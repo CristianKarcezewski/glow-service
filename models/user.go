@@ -17,8 +17,8 @@ type (
 	}
 )
 
-func (u *User) AdaptToDAO() *dao.UserDao {
-	return &dao.UserDao{
+func (u *User) AdaptToDAO() *dao.User {
+	return &dao.User{
 		UserId:      u.UserId,
 		UserGroupId: u.UserGroupId,
 		UserName:    u.UserName,

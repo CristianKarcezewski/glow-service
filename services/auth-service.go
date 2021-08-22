@@ -1,9 +1,7 @@
 package services
 
 import (
-	"glow-service/common/functions"
 	"glow-service/models"
-	"glow-service/repository"
 	"net/http"
 	"time"
 
@@ -13,19 +11,19 @@ import (
 
 type (
 	IAuthService interface {
-		Login(email, password *string) (string, error)
-		Register(user *models.User) (string, error)
+		Login(log *models.StackLog, email, password *string) (string, error)
+		Register(log *models.StackLog, user *models.User) (*string, error)
 	}
 	authService struct {
-		userRepository repository.IUserRepository
+		userService IUserService
 	}
 )
 
-func NewAuthService(userRepository repository.IUserRepository) IAuthService {
-	return &authService{userRepository}
+func NewAuthService(userService IUserService) IAuthService {
+	return &authService{userService}
 }
 
-func (auth *authService) Login(email, password *string) (string, error) {
+func (auth *authService) Login(log *models.StackLog, email, password *string) (string, error) {
 
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -40,11 +38,12 @@ func (auth *authService) Login(email, password *string) (string, error) {
 	return token.SignedString([]byte("secret"))
 }
 
-func (auth *authService) Register(user *models.User) (string, error) {
-	user.CreatedAt = functions.DateToString()
-	user.Active = true
-	auth.userRepository.Insert(user.AdaptToDAO())
-	return "", nil
+func (auth *authService) Register(log *models.StackLog, user *models.User) (*string, error) {
+	_, userErr := auth.userService.Register(log, user)
+	if userErr != nil {
+		return nil, userErr
+	}
+	return nil, nil
 }
 
 func restricted(c echo.Context) error {

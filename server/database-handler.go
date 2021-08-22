@@ -9,10 +9,11 @@ const (
 type (
 	IDatabaseHandler interface {
 		Select(tableName string, dao interface{}) error
+		FindById(tableName string, id *int64, dao interface{}) (interface{}, error)
 		Insert(tableName string, dao interface{}) error
 		Update(tableName string, dao interface{}) error
 		Remove(tableName string, dao interface{}) error
-		CustomQuery(string) error
+		CustomQuery(tableName string, query *string) error
 	}
 )
 

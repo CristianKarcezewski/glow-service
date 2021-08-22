@@ -7,6 +7,7 @@ import (
 	"glow-service/repository"
 	"glow-service/server"
 	"glow-service/services"
+	"net/http"
 	"strings"
 
 	"github.com/labstack/echo"
@@ -17,9 +18,12 @@ func main() {
 	if serverConfigError != nil {
 		fmt.Println(serverConfigError.Error())
 	} else {
-		echo := echo.New()
-		initApplication(serverConfig, echo)
-		initEcho(echo, serverConfig.Environment, int64(serverConfig.Port))
+		e := echo.New()
+		initApplication(serverConfig, e)
+		e.GET("/", func(c echo.Context) error {
+			return c.String(http.StatusOK, "You found me!")
+		})
+		initEcho(e, serverConfig.Environment, int64(serverConfig.Port))
 	}
 }
 
@@ -28,7 +32,8 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	userRepository := repository.NewUserRepository(config.DatabaseHandler)
 
 	// Start services
-	authService := services.NewAuthService(userRepository)
+	userService := services.NewUserService(userRepository)
+	authService := services.NewAuthService(userService)
 
 	// Start controllers
 	authController := controllers.NewAuthController(&config.ServerErrorMessages, authService)

@@ -94,6 +94,8 @@ func (ac *authController) Register() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
+		ac.authService.Register(header, user.ToModel())
+
 		return context.JSON(http.StatusOK, "Response OK")
 	}
 }
