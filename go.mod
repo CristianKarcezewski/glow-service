@@ -13,5 +13,6 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.3.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/tools v0.1.5
 )

@@ -9,10 +9,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	tokenSecret = "paniquito"
+)
+
 type (
 	IAuthService interface {
 		Login(log *models.StackLog, email, password *string) (string, error)
-		Register(log *models.StackLog, user *models.User) (*string, error)
+		Register(log *models.StackLog, user *models.User) (string, error)
 	}
 	authService struct {
 		userService IUserService
@@ -25,25 +29,21 @@ func NewAuthService(userService IUserService) IAuthService {
 
 func (auth *authService) Login(log *models.StackLog, email, password *string) (string, error) {
 
-	// Create token
-	token := jwt.New(jwt.SigningMethodHS256)
+	user, userErr := auth.userService.VerifyUser(log, email, password)
+	if userErr != nil {
+		return "", userErr
+	}
 
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = "Jon Snow"
-	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
-
-	// Generate encoded token and send it as response.
-	return token.SignedString([]byte("secret"))
+	return auth.generateToken(user)
 }
 
-func (auth *authService) Register(log *models.StackLog, user *models.User) (*string, error) {
-	_, userErr := auth.userService.Register(log, user)
+func (auth *authService) Register(log *models.StackLog, user *models.User) (string, error) {
+	user, userErr := auth.userService.Register(log, user)
 	if userErr != nil {
-		return nil, userErr
+		return "", userErr
 	}
-	return nil, nil
+
+	return auth.generateToken(user)
 }
 
 func restricted(c echo.Context) error {
@@ -51,4 +51,21 @@ func restricted(c echo.Context) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	return c.String(http.StatusOK, "Welcome "+name+"!")
+}
+
+func (auth *authService) generateToken(user *models.User) (string, error) {
+
+	// Create token
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	// Set claims
+	claims := token.Claims.(jwt.MapClaims)
+	claims["userId"] = user.UserId
+	claims["userGroupId"] = user.UserGroupId
+	claims["name"] = user.UserName
+	claims["email"] = user.Email
+	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
+
+	// Generate encoded token and send it as response.
+	return token.SignedString([]byte(tokenSecret))
 }

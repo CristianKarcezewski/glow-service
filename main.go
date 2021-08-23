@@ -30,9 +30,10 @@ func main() {
 func initApplication(config *server.Configuration, echo *echo.Echo) {
 	// Start repositories
 	userRepository := repository.NewUserRepository(config.DatabaseHandler)
+	hashRepository := repository.NewHashRepository(config.DatabaseHandler)
 
 	// Start services
-	userService := services.NewUserService(userRepository)
+	userService := services.NewUserService(userRepository, hashRepository)
 	authService := services.NewAuthService(userService)
 
 	// Start controllers

@@ -1,7 +1,5 @@
 package models
 
-import "glow-service/models/dao"
-
 type (
 	User struct {
 		UserId      int64
@@ -16,17 +14,3 @@ type (
 		Active      bool
 	}
 )
-
-func (u *User) AdaptToDAO() *dao.User {
-	return &dao.User{
-		UserId:      u.UserId,
-		UserGroupId: u.UserGroupId,
-		UserName:    u.UserName,
-		LastLogin:   u.LastLogin,
-		Email:       u.Email,
-		Phone:       u.Phone,
-		ImageUrl:    u.ImageUrl,
-		CreatedAt:   u.CreatedAt,
-		Active:      u.Active,
-	}
-}

@@ -4,5 +4,5 @@
     "databasePassword": "@Gl0w",
     "databaseAddress": "localhost",
     "databasePort": "5432",
-    "database": "glow-prod"
+    "database": "glow_dev"
 }

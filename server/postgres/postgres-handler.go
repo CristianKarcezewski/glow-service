@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
 )
 
 type (
@@ -19,8 +20,7 @@ func NewPostgresHandler(databaseProvider, user, password, address, port, databas
 		User:     *user,
 		Password: *password,
 		Addr:     addr,
-		Database: *databaseProvider,
-		PoolSize: 50,
+		Database: *database,
 	}
 
 	con := pg.Connect(options)
@@ -30,18 +30,19 @@ func NewPostgresHandler(databaseProvider, user, password, address, port, databas
 
 	pingErr := con.Ping(context.Background())
 	if pingErr != nil {
+		fmt.Print(pingErr)
 		panic("database connection test error")
 	}
 	return &postgresHandler{con}
 }
 
 func (p *postgresHandler) Insert(tableName string, dao interface{}) error {
-	obj, err := p.con.Model(dao).Returning("*").Insert()
+	// p.createTable(dao)
+	_, err := p.con.Model(dao).Returning("*").Insert(dao)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-	fmt.Println(obj)
-	return err
+	return nil
 }
 
 func (p *postgresHandler) FindById(tableName string, userId *int64, dao interface{}) (interface{}, error) {
@@ -63,4 +64,15 @@ func (p *postgresHandler) Remove(tableName string, dao interface{}) error {
 
 func (p *postgresHandler) CustomQuery(tableName string, query *string) error {
 	return nil
+}
+
+func (p *postgresHandler) createTable(dao interface{}) {
+	opts := &orm.CreateTableOptions{
+		IfNotExists: true,
+	}
+
+	createErr := p.con.Model(dao).CreateTable(opts)
+	if createErr != nil {
+		panic(createErr)
+	}
 }

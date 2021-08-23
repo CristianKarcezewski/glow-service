@@ -13,7 +13,7 @@ const (
 
 type (
 	IUserRepository interface {
-		Insert(user *dao.User) error
+		Insert(user *dao.User) (*dao.User, error)
 		FindById(userId *int64) (*dao.User, error)
 	}
 	userRepository struct {
@@ -25,8 +25,12 @@ func NewUserRepository(database server.IDatabaseHandler) IUserRepository {
 	return &userRepository{database}
 }
 
-func (ur *userRepository) Insert(user *dao.User) error {
-	return ur.database.Insert(repositoryUserTable, user)
+func (ur *userRepository) Insert(user *dao.User) (*dao.User, error) {
+	err := ur.database.Insert(repositoryUserTable, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (ur *userRepository) FindById(userId *int64) (*dao.User, error) {
