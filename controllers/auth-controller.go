@@ -64,6 +64,7 @@ func (ac *authController) Login() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
+		go header.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, token)
 	}
 }
@@ -79,7 +80,7 @@ func (ac *authController) Register() echo.HandlerFunc {
 
 		var user dto.UserDto
 		header := functions.ValidateHeader(&context.Request().Header)
-		header.AddStep("AuthController-Login")
+		header.AddStep("AuthController-Register")
 
 		// Decode request body payload data
 		json.NewDecoder(context.Request().Body).Decode(&user)
@@ -103,9 +104,12 @@ func (ac *authController) Register() echo.HandlerFunc {
 
 		token, err := ac.authService.Register(header, user.ToModel())
 		if err != nil {
-			return context.JSON(http.StatusTeapot, err)
+			errorResponse := header.AddError(err.Error())
+			go header.PrintStackOnConsole()
+			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
+		go header.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, token)
 	}
 }

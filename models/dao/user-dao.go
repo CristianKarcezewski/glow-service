@@ -1,24 +1,21 @@
 package dao
 
 import (
-	"errors"
 	"glow-service/models"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type (
 	User struct {
-		tableName   struct{} `pg:"users"`
-		UserId      int64    `pg:"id,pk"`
-		UserGroupId int64    `pg:"user_group_id"`
-		UserName    string   `pg:"user_name"`
-		LastLogin   string   `pg:"last_login"`
-		Email       string   `pg:"unique:email"`
-		Phone       string   `pg:"phone"`
-		ImageUrl    string   `pg:"image_url"`
-		CreatedAt   string   `pg:"created_at"`
-		Active      bool     `pg:"active"`
+		tableName   struct{} `json:"-" pg:"users"`
+		UserId      int64    `json:"userId,omitempty" pg:"id,pk"`
+		UserGroupId int64    `json:"userGroupId,omitempty" pg:"user_group_id"`
+		UserName    string   `json:"name,omitempty" pg:"user_name"`
+		LastLogin   string   `json:"-" pg:"last_login"`
+		Email       string   `json:"email,omitempty" pg:"unique:email"`
+		Phone       string   `json:"phone,omitempty" pg:"phone"`
+		ImageUrl    string   `json:"imageUrl,omitempty" pg:"image_url"`
+		CreatedAt   string   `json:"-" pg:"created_at"`
+		Active      bool     `json:"active,omitempty" pg:"active"`
 	}
 
 	Hash struct {
@@ -29,7 +26,7 @@ type (
 	}
 )
 
-func NewDAOUser(u *models.User) (*User, *Hash, error) {
+func NewDAOUser(u *models.User) *User {
 	newUser := User{
 		UserId:      u.UserId,
 		UserGroupId: u.UserGroupId,
@@ -42,16 +39,7 @@ func NewDAOUser(u *models.User) (*User, *Hash, error) {
 		Active:      u.Active,
 	}
 
-	bcrypt, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, nil, errors.New("Error encrypting hash")
-	}
-
-	hash := Hash{
-		Hash: string(bcrypt),
-	}
-
-	return &newUser, &hash, nil
+	return &newUser
 }
 
 func (u *User) ToModel() *models.User {

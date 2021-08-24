@@ -15,8 +15,8 @@ const (
 
 type (
 	IAuthService interface {
-		Login(log *models.StackLog, email, password *string) (string, error)
-		Register(log *models.StackLog, user *models.User) (string, error)
+		Login(log *models.StackLog, email, password *string) (*models.Auth, error)
+		Register(log *models.StackLog, user *models.User) (*models.Auth, error)
 	}
 	authService struct {
 		userService IUserService
@@ -27,23 +27,39 @@ func NewAuthService(userService IUserService) IAuthService {
 	return &authService{userService}
 }
 
-func (auth *authService) Login(log *models.StackLog, email, password *string) (string, error) {
+func (auth *authService) Login(log *models.StackLog, email, password *string) (*models.Auth, error) {
+	log.AddStep("AuthService-Login")
 
 	user, userErr := auth.userService.VerifyUser(log, email, password)
 	if userErr != nil {
-		return "", userErr
+		return nil, userErr
 	}
 
-	return auth.generateToken(user)
+	log.AddInfo("Generating token")
+	token, tokenErr := auth.generateToken(user)
+	if tokenErr != nil {
+		return nil, tokenErr
+	}
+
+	return &models.Auth{Authorization: token}, nil
 }
 
-func (auth *authService) Register(log *models.StackLog, user *models.User) (string, error) {
+func (auth *authService) Register(log *models.StackLog, user *models.User) (*models.Auth, error) {
+	log.AddStep("AuthService-Register")
+
 	user, userErr := auth.userService.Register(log, user)
 	if userErr != nil {
-		return "", userErr
+		return nil, userErr
 	}
 
-	return auth.generateToken(user)
+	log.AddInfo("Generating token")
+	token, tokenErr := auth.generateToken(user)
+	if tokenErr != nil {
+		return nil, tokenErr
+	}
+
+	return &models.Auth{Authorization: token}, nil
+
 }
 
 func restricted(c echo.Context) error {

@@ -38,7 +38,11 @@ func (log *StackLog) AddError(stackLog string) *ErrorResponse {
 
 // Print all stack trace into console.
 func (log *StackLog) PrintStackOnConsole() {
-	fmt.Printf("\n{%s: %s}\n", log.Platform, log.User.Email)
+	if log.User.Email != "" {
+		fmt.Printf("\n{%s: %s}\n", log.Platform, log.User.Email)
+	} else {
+		fmt.Printf("\n{%s: %s}\n", log.Platform, "Anonymous user")
+	}
 	for stepIndex := range log.StackTrace {
 		fmt.Printf("%s\n", log.StackTrace[stepIndex])
 	}

@@ -45,13 +45,22 @@ func (p *postgresHandler) Insert(tableName string, dao interface{}) error {
 	return nil
 }
 
-func (p *postgresHandler) FindById(tableName string, userId *int64, dao interface{}) (interface{}, error) {
-	err := p.con.Model(dao).Where(fmt.Sprintf("id = %d", *userId)).Select()
-	return dao, err
-}
+func (p *postgresHandler) Select(tableName string, result interface{}, key string, value interface{}) error {
+	// var key string
+	// var value interface{}
 
-func (p *postgresHandler) Select(tableName string, dao interface{}) error {
-	return nil
+	//dynamically extracts the filter value
+	// var mobj map[string]interface{}
+	// inrec, _ := json.Marshal(filter)
+	// json.Unmarshal(inrec, &mobj)
+	// for k, v := range mobj {
+	// 	key = k
+	// 	value = v
+	// 	break
+	// }
+
+	return p.con.Model(result).Where(fmt.Sprintf("%s = ?", key), value).Select()
+	// return p.con.Model(filter).Limit(1).Select(&mobj)
 }
 
 func (p *postgresHandler) Update(tableName string, dao interface{}) error {

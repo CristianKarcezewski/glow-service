@@ -5,7 +5,7 @@ import "github.com/labstack/echo"
 const (
 	loginPath        = "/login"
 	refreshTokenPath = "/refresh"
-	registerPath     = "/regiter"
+	registerPath     = "/user/regiter"
 )
 
 type (
