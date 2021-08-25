@@ -20,6 +20,10 @@ type (
 	}
 )
 
+func (log *StackLog) SetUser(email string) {
+	log.User.Email = email
+}
+
 // Add a stackTrace step log into object.
 func (log *StackLog) AddStep(stackLog string) {
 	log.StackTrace = append(log.StackTrace, fmt.Sprintf("(%s) STEP: %s", log.dateToString(), stackLog))

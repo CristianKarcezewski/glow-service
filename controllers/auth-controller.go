@@ -57,6 +57,8 @@ func (ac *authController) Login() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
+		header.SetUser(authData.Email)
+
 		token, tokenErr := ac.authService.Login(header, &authData.Email, &authData.Password)
 		if tokenErr != nil {
 			errorResponse := header.AddError(tokenErr.Error())
@@ -101,6 +103,8 @@ func (ac *authController) Register() echo.HandlerFunc {
 			go header.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
+
+		header.SetUser(user.Email)
 
 		token, err := ac.authService.Register(header, user.ToModel())
 		if err != nil {
