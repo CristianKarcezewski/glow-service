@@ -31,16 +31,24 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	// Start repositories
 	userRepository := repository.NewUserRepository(config.DatabaseHandler)
 	hashRepository := repository.NewHashRepository(config.DatabaseHandler)
+	statesRepository := repository.NewStateRepository(config.DatabaseHandler)
+	citiesRepository := repository.NewCitiesRepository(config.DatabaseHandler)
 
 	// Start services
 	userService := services.NewUserService(userRepository, hashRepository)
 	authService := services.NewAuthService(userService)
+	statesService := services.NewStateService(statesRepository)
+	citiesService := services.NewCitiesService(citiesRepository)
 
 	// Start controllers
 	authController := controllers.NewAuthController(&config.ServerErrorMessages, authService)
+	statesController := controllers.NewStatesController(&config.ServerErrorMessages, statesService)
+	citiesController := controllers.NewCitiesController(&config.ServerErrorMessages, citiesService)
 
 	// Start Routers
 	authController.Router(echo, authController.Login(), authController.RefreshToken(), authController.Register()).Wire()
+	statesController.Router(echo, statesController.GetAll()).Wire()
+	citiesController.Router(echo, citiesController.GetById(), citiesController.GetByState()).Wire()
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {

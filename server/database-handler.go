@@ -8,6 +8,7 @@ const (
 
 type (
 	IDatabaseHandler interface {
+		GetAll(tableName string, result interface{}) error
 		Select(tableName string, result interface{}, key string, value interface{}) error
 		Insert(tableName string, dao interface{}) error
 		Update(tableName string, dao interface{}) error

@@ -36,6 +36,10 @@ func NewPostgresHandler(databaseProvider, user, password, address, port, databas
 	return &postgresHandler{con}
 }
 
+func (p *postgresHandler) GetAll(tableName string, result interface{}) error {
+	return p.con.Model(result).Select()
+}
+
 func (p *postgresHandler) Insert(tableName string, dao interface{}) error {
 	// p.createTable(dao)
 	_, err := p.con.Model(dao).Returning("*").Insert(dao)
