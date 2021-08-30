@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/go-pg/pg/v10"
-	"github.com/go-pg/pg/v10/orm"
 )
 
 type (
@@ -71,21 +70,25 @@ func (p *postgresHandler) Update(tableName string, dao interface{}) error {
 	return nil
 }
 
-func (p *postgresHandler) Remove(tableName string, dao interface{}) error {
+func (p *postgresHandler) Remove(tableName string, dao interface{}, key string, value interface{}) error {
+	_, err := p.con.Model(dao).Where(fmt.Sprintf("%s = ?", key), value).Delete()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (p *postgresHandler) CustomQuery(tableName string, query *string) error {
-	return nil
+func (p *postgresHandler) CustomQuery() (*pg.DB, error) {
+	return p.con, nil
 }
 
-func (p *postgresHandler) createTable(dao interface{}) {
-	opts := &orm.CreateTableOptions{
-		IfNotExists: true,
-	}
+// func (p *postgresHandler) createTable(dao interface{}) {
+// 	opts := &orm.CreateTableOptions{
+// 		IfNotExists: true,
+// 	}
 
-	createErr := p.con.Model(dao).CreateTable(opts)
-	if createErr != nil {
-		panic(createErr)
-	}
-}
+// 	createErr := p.con.Model(dao).CreateTable(opts)
+// 	if createErr != nil {
+// 		panic(createErr)
+// 	}
+// }

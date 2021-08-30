@@ -7,8 +7,8 @@ import (
 
 type (
 	ICitiesService interface {
-		GetById(log *models.StackLog, cityId *string) (*models.City, error)
-		GetByState(log *models.StackLog, stateId *string) (*[]models.City, error)
+		GetById(log *models.StackLog, cityId int64) (*models.City, error)
+		GetByState(log *models.StackLog, stateId int64) (*[]models.City, error)
 	}
 	citiesService struct {
 		citiesRepository repository.ICitiesRepository
@@ -19,7 +19,7 @@ func NewCitiesService(citiesRepository repository.ICitiesRepository) ICitiesServ
 	return &citiesService{citiesRepository}
 }
 
-func (cs *citiesService) GetById(log *models.StackLog, cityId *string) (*models.City, error) {
+func (cs *citiesService) GetById(log *models.StackLog, cityId int64) (*models.City, error) {
 	log.AddStep("CitiesService-GetById")
 
 	city, cityErr := cs.citiesRepository.GetById(log, cityId)
@@ -29,7 +29,7 @@ func (cs *citiesService) GetById(log *models.StackLog, cityId *string) (*models.
 	return city.ToModel(), nil
 }
 
-func (cs *citiesService) GetByState(log *models.StackLog, stateId *string) (*[]models.City, error) {
+func (cs *citiesService) GetByState(log *models.StackLog, stateId int64) (*[]models.City, error) {
 	log.AddStep("CitiesService-GetByState")
 
 	var cities []models.City

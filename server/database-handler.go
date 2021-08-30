@@ -1,6 +1,10 @@
 package server
 
-import "glow-service/server/postgres"
+import (
+	"glow-service/server/postgres"
+
+	"github.com/go-pg/pg/v10"
+)
 
 const (
 	postgresDatabaseProvider = "postgres"
@@ -12,8 +16,8 @@ type (
 		Select(tableName string, result interface{}, key string, value interface{}) error
 		Insert(tableName string, dao interface{}) error
 		Update(tableName string, dao interface{}) error
-		Remove(tableName string, dao interface{}) error
-		CustomQuery(tableName string, query *string) error
+		Remove(tableName string, dao interface{}, key string, value interface{}) error
+		CustomQuery() (*pg.DB, error)
 	}
 )
 
