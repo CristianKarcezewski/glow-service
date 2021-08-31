@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	tokenSecret = "paniquito"
+	tokenSecret = "churiChurinFunFlais"
 )
 
 type (
@@ -63,25 +63,36 @@ func (auth *authService) Register(log *models.StackLog, user *models.User) (*mod
 
 }
 
-func (auth *authService) VerifyToken(log *models.StackLog, token string) (*models.User, error) {
+func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*models.User, error) {
 
 	log.AddStep("AuthService-ValidateToken")
 
 	var user models.User
-	tk := &jwt.Token{Raw: token}
-	claims := tk.Claims.(jwt.MapClaims)
+	hmacSecret := []byte(tokenSecret)
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		// check token signing method etc
+		return hmacSecret, nil
+	})
 
-	user.UserId = claims["userId"].(int64)
-	user.UserGroupId = claims["userGroupId"].(int64)
-	user.UserName = claims["name"].(string)
-	user.Email = claims["email"].(string)
-
-	exp := claims["exp"].(string)
-	dt, _ := functions.StringToDate(exp)
-	if !auth.compareTokenDate(dt) {
-		return nil, errors.New("invalid token")
+	if err != nil {
+		return nil, errors.New("Invalid token")
 	}
-	return &user, nil
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+
+		user.UserId = claims["userId"].(int64)
+		user.UserGroupId = claims["userGroupId"].(int64)
+		user.UserName = claims["name"].(string)
+		user.Email = claims["email"].(string)
+
+		exp := claims["exp"].(string)
+		dt, _ := functions.StringToDate(exp)
+		if auth.compareTokenDate(dt) {
+			return &user, nil
+		}
+
+	}
+	return nil, errors.New("Invalid token")
 }
 
 func (auth *authService) compareTokenDate(date time.Time) bool {
