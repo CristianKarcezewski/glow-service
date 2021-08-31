@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/routers"
 	"glow-service/services"
@@ -27,25 +26,27 @@ func NewStatesController(errorMessagesData *models.ServerErrorMessages, statesSe
 
 func (sc *statesController) GetAll() echo.HandlerFunc {
 	return func(context echo.Context) error {
-		header := functions.ValidateHeader(&context.Request().Header)
-		header.AddStep("StatesController-GetAll")
+
+		log := &models.StackLog{}
+		platform := context.Request().Header.Get("platform")
+		log.AddStep("StatesController-GetAll")
 		context.Request().Body.Close()
 
-		header.AddInfo("Validating headers")
-		if header.Platform == "" {
-			errorResponse := header.AddError(sc.errorMessagesData.Header.PlatformNotFound)
-			go header.PrintStackOnConsole()
+		log.AddInfo("Validating headers")
+		if platform == "" {
+			errorResponse := log.AddError(sc.errorMessagesData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		states, statesErr := sc.statesService.GetAll(header)
+		states, statesErr := sc.statesService.GetAll(log)
 		if statesErr != nil {
-			errorResponse := header.AddError(statesErr.Error())
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(statesErr.Error())
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go header.PrintStackOnConsole()
+		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, states)
 	}
 }

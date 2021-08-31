@@ -1,12 +1,12 @@
 package services
 
 import (
+	"errors"
+	"glow-service/common/functions"
 	"glow-service/models"
-	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/labstack/echo/v4"
 )
 
 const (
@@ -17,6 +17,7 @@ type (
 	IAuthService interface {
 		Login(log *models.StackLog, email, password *string) (*models.Auth, error)
 		Register(log *models.StackLog, user *models.User) (*models.Auth, error)
+		VerifyToken(log *models.StackLog, token string) (*models.User, error)
 	}
 	authService struct {
 		userService IUserService
@@ -62,11 +63,33 @@ func (auth *authService) Register(log *models.StackLog, user *models.User) (*mod
 
 }
 
-func restricted(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	name := claims["name"].(string)
-	return c.String(http.StatusOK, "Welcome "+name+"!")
+func (auth *authService) VerifyToken(log *models.StackLog, token string) (*models.User, error) {
+
+	log.AddStep("AuthService-ValidateToken")
+
+	var user models.User
+	tk := &jwt.Token{Raw: token}
+	claims := tk.Claims.(jwt.MapClaims)
+
+	user.UserId = claims["userId"].(int64)
+	user.UserGroupId = claims["userGroupId"].(int64)
+	user.UserName = claims["name"].(string)
+	user.Email = claims["email"].(string)
+
+	exp := claims["exp"].(string)
+	dt, _ := functions.StringToDate(exp)
+	if !auth.compareTokenDate(dt) {
+		return nil, errors.New("invalid token")
+	}
+	return &user, nil
+}
+
+func (auth *authService) compareTokenDate(date time.Time) bool {
+	currentTime := time.Now()
+	invalidTime := currentTime.Add(-time.Minute * 60)
+
+	diff := invalidTime.Before(date)
+	return diff
 }
 
 func (auth *authService) generateToken(user *models.User) (string, error) {
@@ -80,7 +103,7 @@ func (auth *authService) generateToken(user *models.User) (string, error) {
 	claims["userGroupId"] = user.UserGroupId
 	claims["name"] = user.UserName
 	claims["email"] = user.Email
-	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
+	claims["exp"] = functions.DateToString()
 
 	// Generate encoded token and send it as response.
 	return token.SignedString([]byte(tokenSecret))

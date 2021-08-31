@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/routers"
 	"glow-service/services"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -33,52 +33,68 @@ func NewCitiesController(errorMessagesData *models.ServerErrorMessages, citiesSe
 
 func (cc *citiesController) GetById() echo.HandlerFunc {
 	return func(context echo.Context) error {
-		header := functions.ValidateHeader(&context.Request().Header)
-		cityId := context.Param(pathParamCityId)
-		header.AddStep("CitiesController-GetAll")
+
+		log := &models.StackLog{}
+		platform := context.Request().Header.Get("platform")
+		pathCityId, pathCityErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
+		log.AddStep("CitiesController-GetAll")
 		context.Request().Body.Close()
 
-		header.AddInfo("Validating headers")
-		if header.Platform == "" {
-			errorResponse := header.AddError(cc.errorMessagesData.Header.PlatformNotFound)
-			go header.PrintStackOnConsole()
+		log.AddInfo("Validating headers")
+		if pathCityErr != nil {
+			errorResponse := log.AddError("Path param not found")
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		city, cityErr := cc.citiesService.GetById(header, &cityId)
+		if platform == "" {
+			errorResponse := log.AddError(cc.errorMessagesData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		city, cityErr := cc.citiesService.GetById(log, pathCityId)
 		if cityErr != nil {
-			errorResponse := header.AddError(cityErr.Error())
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(cityErr.Error())
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusNotFound, errorResponse)
 		}
 
-		go header.PrintStackOnConsole()
+		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, city)
 	}
 }
 
 func (cc *citiesController) GetByState() echo.HandlerFunc {
 	return func(context echo.Context) error {
-		header := functions.ValidateHeader(&context.Request().Header)
-		stateId := context.QueryParam(queryParamStateId)
-		header.AddStep("CitiesController-GetByState")
+
+		log := &models.StackLog{}
+		platform := context.Request().Header.Get("platform")
+		paramStateId, paramStateErr := strconv.ParseInt(context.QueryParam(queryParamStateId), 10, 64)
+		log.AddStep("CitiesController-GetByState")
 		context.Request().Body.Close()
 
-		header.AddInfo("Validating headers")
-		if header.Platform == "" {
-			errorResponse := header.AddError(cc.errorMessagesData.Header.PlatformNotFound)
-			go header.PrintStackOnConsole()
+		log.AddInfo("Validating headers")
+		if paramStateErr != nil {
+			errorResponse := log.AddError("Param stateId not found")
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		cities, citiesErr := cc.citiesService.GetByState(header, &stateId)
+		if platform == "" {
+			errorResponse := log.AddError(cc.errorMessagesData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		cities, citiesErr := cc.citiesService.GetByState(log, paramStateId)
 		if citiesErr != nil {
-			errorResponse := header.AddError(citiesErr.Error())
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(citiesErr.Error())
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusNotFound, errorResponse)
 		}
 
-		go header.PrintStackOnConsole()
+		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, cities)
 	}
 }

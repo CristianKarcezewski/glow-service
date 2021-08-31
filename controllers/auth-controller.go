@@ -34,39 +34,40 @@ func (ac *authController) Login() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		var authData dto.AuthData
-		header := functions.ValidateHeader(&context.Request().Header)
-		header.AddStep("AuthController-Login")
+		log := &models.StackLog{}
+		platform := context.Request().Header.Get("platform")
+		log.AddStep("AuthController-Login")
 
 		// Decode request body payload data
-		json.NewDecoder(context.Request().Body).Decode(&authData)
+		_ = json.NewDecoder(context.Request().Body).Decode(&authData)
 		context.Request().Body.Close()
 
-		header.AddInfo("Validating headers")
-		if header.Platform == "" {
-			errorResponse := header.AddError(ac.errorMessageData.Header.PlatformNotFound)
-			go header.PrintStackOnConsole()
+		log.AddInfo("Validating headers")
+		if platform == "" {
+			errorResponse := log.AddError(ac.errorMessageData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		// Validate payload info
-		header.AddInfo("Validating paylod data")
+		log.AddInfo("Validating paylod data")
 		validationError := functions.ValidateStruct(authData)
 		if validationError != nil {
-			errorResponse := header.AddError(*validationError)
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(*validationError)
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		header.SetUser(authData.Email)
+		log.SetUser(authData.Email)
 
-		token, tokenErr := ac.authService.Login(header, &authData.Email, &authData.Password)
+		token, tokenErr := ac.authService.Login(log, &authData.Email, &authData.Password)
 		if tokenErr != nil {
-			errorResponse := header.AddError(tokenErr.Error())
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(tokenErr.Error())
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		go header.PrintStackOnConsole()
+		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, token)
 	}
 }
@@ -81,39 +82,40 @@ func (ac *authController) Register() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		var user dto.UserDto
-		header := functions.ValidateHeader(&context.Request().Header)
-		header.AddStep("AuthController-Register")
+		log := &models.StackLog{}
+		platform := context.Request().Header.Get("platform")
+		log.AddStep("AuthController-Register")
 
 		// Decode request body payload data
-		json.NewDecoder(context.Request().Body).Decode(&user)
+		_ = json.NewDecoder(context.Request().Body).Decode(&user)
 		context.Request().Body.Close()
 
-		header.AddInfo("Validating headers")
-		if header.Platform == "" {
-			errorResponse := header.AddError(ac.errorMessageData.Header.PlatformNotFound)
-			go header.PrintStackOnConsole()
+		log.AddInfo("Validating headers")
+		if platform == "" {
+			errorResponse := log.AddError(ac.errorMessageData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		// Validate payload info
-		header.AddInfo("Validating payload data")
+		log.AddInfo("Validating payload data")
 		validationError := functions.ValidateStruct(user)
 		if validationError != nil {
-			errorResponse := header.AddError(*validationError)
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(*validationError)
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		header.SetUser(user.Email)
+		log.SetUser(user.Email)
 
-		token, err := ac.authService.Register(header, user.ToModel())
+		token, err := ac.authService.Register(log, user.ToModel())
 		if err != nil {
-			errorResponse := header.AddError(err.Error())
-			go header.PrintStackOnConsole()
+			errorResponse := log.AddError(err.Error())
+			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go header.PrintStackOnConsole()
+		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, token)
 	}
 }

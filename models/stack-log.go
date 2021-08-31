@@ -13,8 +13,6 @@ type (
 	}
 
 	user struct {
-		Token    string `json:"-"`
-		UserId   int64  `json:"serId,omitempty" validate:"required"`
 		UserName string `json:"username,omitempty" validate:"required"`
 		Email    string `json:"email,omitempty" validate:"required"`
 	}
