@@ -1,4 +1,4 @@
-package controllers
+package presenters
 
 import (
 	"encoding/json"
@@ -13,30 +13,30 @@ import (
 )
 
 type (
-	IAuthController interface {
+	IAuthPresenter interface {
 		Login() echo.HandlerFunc
 		RefreshToken() echo.HandlerFunc
 		Register() echo.HandlerFunc
 		Router(echo *echo.Echo, login echo.HandlerFunc, refreshToken echo.HandlerFunc, register echo.HandlerFunc) *routers.AuthRouter
 	}
 
-	authController struct {
+	authPresenter struct {
 		errorMessageData *models.ServerErrorMessages
 		authService      services.IAuthService
 	}
 )
 
-func NewAuthController(errorMessageData *models.ServerErrorMessages, authService services.IAuthService) IAuthController {
-	return &authController{errorMessageData, authService}
+func NewAuthPresenter(errorMessageData *models.ServerErrorMessages, authService services.IAuthService) IAuthPresenter {
+	return &authPresenter{errorMessageData, authService}
 }
 
-func (ac *authController) Login() echo.HandlerFunc {
+func (ac *authPresenter) Login() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		var authData dto.AuthData
 		log := &models.StackLog{}
 		platform := context.Request().Header.Get("platform")
-		log.AddStep("AuthController-Login")
+		log.AddStep("AuthPresenter-Login")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&authData)
@@ -72,19 +72,19 @@ func (ac *authController) Login() echo.HandlerFunc {
 	}
 }
 
-func (ac *authController) RefreshToken() echo.HandlerFunc {
+func (ac *authPresenter) RefreshToken() echo.HandlerFunc {
 	return func(context echo.Context) error {
 		return context.JSON(http.StatusOK, "")
 	}
 }
 
-func (ac *authController) Register() echo.HandlerFunc {
+func (ac *authPresenter) Register() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		var user dto.UserDto
 		log := &models.StackLog{}
 		platform := context.Request().Header.Get("platform")
-		log.AddStep("AuthController-Register")
+		log.AddStep("AuthPresenter-Register")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&user)
@@ -120,8 +120,8 @@ func (ac *authController) Register() echo.HandlerFunc {
 	}
 }
 
-// Router is a function that returns a router of authController
-func (ac *authController) Router(
+// Router is a function that returns a router of authPresenter
+func (ac *authPresenter) Router(
 	echo *echo.Echo,
 	login echo.HandlerFunc,
 	refreshToken echo.HandlerFunc,

@@ -88,6 +88,7 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 		exp := claims["exp"].(string)
 		dt, _ := functions.StringToDate(exp)
 		if auth.compareTokenDate(dt) {
+			log.SetUser(user.Email)
 			return &user, nil
 		}
 

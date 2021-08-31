@@ -25,7 +25,7 @@ func SetubDatabase(databaseProvider, user, password, address, port, database *st
 	switch *databaseProvider {
 	case postgresDatabaseProvider:
 		return postgres.NewPostgresHandler(databaseProvider, user, password, address, port, database)
-		break
+		// break
 	}
 	return nil
 }

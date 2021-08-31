@@ -13,6 +13,8 @@ type (
 		GetById(log *models.StackLog, addressId int64) (*models.Address, error)
 		Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
 		FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error)
+		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
+		Remove(log *models.StackLog, addressId int64) error
 	}
 	addressService struct {
 		addressRepository       repository.IAddressesRepository
@@ -102,6 +104,22 @@ func (as *addressService) FindByUser(log *models.StackLog, userId int64) (*[]mod
 	}
 
 	return &addr, nil
+}
+
+func (as *addressService) Update(log *models.StackLog, address *models.Address) (*models.Address, error) {
+	log.AddStep("AddressService-Update")
+
+	updatedAddress, updateErr := as.addressRepository.Update(log, dao.NewDaoAddress(address))
+	if updateErr != nil {
+		return nil, updateErr
+	}
+	return updatedAddress.ToModel(), nil
+}
+
+func (as *addressService) Remove(log *models.StackLog, addressId int64) error {
+	log.AddStep("AddressService-Remove")
+
+	return as.addressRepository.Remove(log, addressId)
 }
 
 func (as *addressService) validateState(wg *sync.WaitGroup, log *models.StackLog, stateId int64, err *error) {

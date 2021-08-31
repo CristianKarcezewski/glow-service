@@ -67,6 +67,10 @@ func (p *postgresHandler) Select(tableName string, result interface{}, key strin
 }
 
 func (p *postgresHandler) Update(tableName string, dao interface{}) error {
+	_, err := p.con.Model(dao).WherePK().Returning("*").Update(dao)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

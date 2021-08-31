@@ -17,6 +17,8 @@ type (
 		Insert(log *models.StackLog, address *dao.Address) (*dao.Address, error)
 		FindById(log *models.StackLog, addressId int64) (*dao.Address, error)
 		FindAllAddressesIds(log *models.StackLog, addressesIds []int64) (*[]dao.Address, error)
+		Update(log *models.StackLog, address *dao.Address) (*dao.Address, error)
+		Remove(log *models.StackLog, addressId int64) error
 	}
 	addressesRepository struct {
 		database server.IDatabaseHandler
@@ -49,7 +51,7 @@ func (ar *addressesRepository) FindById(log *models.StackLog, addressId int64) (
 	return &address, nil
 }
 
-func (ar addressesRepository) FindAllAddressesIds(log *models.StackLog, addressesIds []int64) (*[]dao.Address, error) {
+func (ar *addressesRepository) FindAllAddressesIds(log *models.StackLog, addressesIds []int64) (*[]dao.Address, error) {
 	log.AddStep("AddressRepository-FindAllAddressesIds")
 
 	var daoAddress []dao.Address
@@ -60,4 +62,20 @@ func (ar addressesRepository) FindAllAddressesIds(log *models.StackLog, addresse
 	}
 
 	return &daoAddress, nil
+}
+
+func (ar *addressesRepository) Update(log *models.StackLog, address *dao.Address) (*dao.Address, error) {
+	log.AddStep("AddressRepository-Update")
+	err := ar.database.Update(repositoryAddressTable, address)
+	if err != nil {
+		return nil, err
+	}
+	return address, nil
+}
+
+func (ar *addressesRepository) Remove(log *models.StackLog, addressId int64) error {
+	log.AddStep("AddressRepository-Remove")
+
+	var address dao.Address
+	return ar.database.Remove(repositoryAddressTable, &address, "id", addressId)
 }

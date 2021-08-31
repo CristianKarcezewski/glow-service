@@ -1,4 +1,4 @@
-package controllers
+package presenters
 
 import (
 	"glow-service/models"
@@ -10,26 +10,26 @@ import (
 )
 
 type (
-	IStatesController interface {
+	IStatesPresenter interface {
 		GetAll() echo.HandlerFunc
 		Router(echo *echo.Echo, getAll echo.HandlerFunc) *routers.StatesRouter
 	}
-	statesController struct {
+	statesPresenter struct {
 		errorMessagesData *models.ServerErrorMessages
 		statesService     services.IStatesService
 	}
 )
 
-func NewStatesController(errorMessagesData *models.ServerErrorMessages, statesService services.IStatesService) IStatesController {
-	return &statesController{errorMessagesData, statesService}
+func NewStatesPresenter(errorMessagesData *models.ServerErrorMessages, statesService services.IStatesService) IStatesPresenter {
+	return &statesPresenter{errorMessagesData, statesService}
 }
 
-func (sc *statesController) GetAll() echo.HandlerFunc {
+func (sc *statesPresenter) GetAll() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
 		platform := context.Request().Header.Get("platform")
-		log.AddStep("StatesController-GetAll")
+		log.AddStep("StatesPresenter-GetAll")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
@@ -51,7 +51,7 @@ func (sc *statesController) GetAll() echo.HandlerFunc {
 	}
 }
 
-func (sc *statesController) Router(echo *echo.Echo, getAll echo.HandlerFunc) *routers.StatesRouter {
+func (sc *statesPresenter) Router(echo *echo.Echo, getAll echo.HandlerFunc) *routers.StatesRouter {
 	return &routers.StatesRouter{
 		Echo:   echo,
 		GetAll: getAll,

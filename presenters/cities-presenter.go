@@ -1,4 +1,4 @@
-package controllers
+package presenters
 
 import (
 	"glow-service/models"
@@ -16,28 +16,28 @@ const (
 )
 
 type (
-	ICitiesController interface {
+	ICitiesPresenter interface {
 		GetById() echo.HandlerFunc
 		GetByState() echo.HandlerFunc
 		Router(echo *echo.Echo, getById echo.HandlerFunc, getByState echo.HandlerFunc) *routers.CitiesRouter
 	}
-	citiesController struct {
+	citiesPresenter struct {
 		errorMessagesData *models.ServerErrorMessages
 		citiesService     services.ICitiesService
 	}
 )
 
-func NewCitiesController(errorMessagesData *models.ServerErrorMessages, citiesService services.ICitiesService) ICitiesController {
-	return &citiesController{errorMessagesData, citiesService}
+func NewCitiesPresenter(errorMessagesData *models.ServerErrorMessages, citiesService services.ICitiesService) ICitiesPresenter {
+	return &citiesPresenter{errorMessagesData, citiesService}
 }
 
-func (cc *citiesController) GetById() echo.HandlerFunc {
+func (cc *citiesPresenter) GetById() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
 		platform := context.Request().Header.Get("platform")
 		pathCityId, pathCityErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("CitiesPresenter-GetAll")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
@@ -65,13 +65,13 @@ func (cc *citiesController) GetById() echo.HandlerFunc {
 	}
 }
 
-func (cc *citiesController) GetByState() echo.HandlerFunc {
+func (cc *citiesPresenter) GetByState() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
 		platform := context.Request().Header.Get("platform")
 		paramStateId, paramStateErr := strconv.ParseInt(context.QueryParam(queryParamStateId), 10, 64)
-		log.AddStep("CitiesController-GetByState")
+		log.AddStep("CitiesPresenter-GetByState")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
@@ -99,7 +99,7 @@ func (cc *citiesController) GetByState() echo.HandlerFunc {
 	}
 }
 
-func (cc *citiesController) Router(echo *echo.Echo, getById echo.HandlerFunc, getByState echo.HandlerFunc) *routers.CitiesRouter {
+func (cc *citiesPresenter) Router(echo *echo.Echo, getById echo.HandlerFunc, getByState echo.HandlerFunc) *routers.CitiesRouter {
 	return &routers.CitiesRouter{
 		Echo:       echo,
 		GetById:    getById,
