@@ -35,7 +35,7 @@ func (cc *citiesPresenter) GetById() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		pathCityId, pathCityErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
 		log.AddStep("CitiesPresenter-GetAll")
 		context.Request().Body.Close()
@@ -47,7 +47,7 @@ func (cc *citiesPresenter) GetById() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(cc.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -69,7 +69,7 @@ func (cc *citiesPresenter) GetByState() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		paramStateId, paramStateErr := strconv.ParseInt(context.QueryParam(queryParamStateId), 10, 64)
 		log.AddStep("CitiesPresenter-GetByState")
 		context.Request().Body.Close()
@@ -81,7 +81,7 @@ func (cc *citiesPresenter) GetByState() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(cc.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)

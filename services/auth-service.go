@@ -80,20 +80,22 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 
-		user.UserId = claims["userId"].(int64)
-		user.UserGroupId = claims["userGroupId"].(int64)
+		// user.UserId = claims["userId"].(float64)
+		// user.UserGroupId = claims["userGroupId"].(float64)
+		user.UserId = int64(claims["userId"].(float64))
+		user.UserGroupId = int64(claims["userGroupId"].(float64))
 		user.UserName = claims["name"].(string)
 		user.Email = claims["email"].(string)
 
 		exp := claims["exp"].(string)
 		dt, _ := functions.StringToDate(exp)
-		if auth.compareTokenDate(dt) {
+		if !auth.compareTokenDate(dt) {
 			log.SetUser(user.Email)
 			return &user, nil
 		}
 
 	}
-	return nil, errors.New("Invalid token")
+	return nil, errors.New("invalid token")
 }
 
 func (auth *authService) compareTokenDate(date time.Time) bool {

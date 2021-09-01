@@ -39,7 +39,7 @@ func (ac *addressesPresenter) Register() echo.HandlerFunc {
 
 		var address dto.Address
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		log.AddStep("CitiesController-GetAll")
 
@@ -48,7 +48,7 @@ func (ac *addressesPresenter) Register() echo.HandlerFunc {
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -86,7 +86,7 @@ func (ac *addressesPresenter) GetById() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
 		log.AddStep("CitiesController-GetAll")
@@ -100,7 +100,7 @@ func (ac *addressesPresenter) GetById() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -130,14 +130,14 @@ func (ac *addressesPresenter) GetByUser() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		log.AddStep("CitiesController-GetAll")
 
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -168,7 +168,7 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 
 		var address dto.Address
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		log.AddStep("CitiesController-GetAll")
 
@@ -177,7 +177,7 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -220,7 +220,7 @@ func (ac *addressesPresenter) Remove() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
 		log.AddStep("CitiesController-GetAll")
@@ -234,7 +234,7 @@ func (ac *addressesPresenter) Remove() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)

@@ -35,7 +35,7 @@ func (ac *authPresenter) Login() echo.HandlerFunc {
 
 		var authData dto.AuthData
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		log.AddStep("AuthPresenter-Login")
 
 		// Decode request body payload data
@@ -43,7 +43,7 @@ func (ac *authPresenter) Login() echo.HandlerFunc {
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessageData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -83,7 +83,7 @@ func (ac *authPresenter) Register() echo.HandlerFunc {
 
 		var user dto.UserDto
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		log.AddStep("AuthPresenter-Register")
 
 		// Decode request body payload data
@@ -91,7 +91,7 @@ func (ac *authPresenter) Register() echo.HandlerFunc {
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(ac.errorMessageData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)

@@ -28,12 +28,12 @@ func (sc *statesPresenter) GetAll() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
-		platform := context.Request().Header.Get("platform")
+		log.Platform = context.Request().Header.Get("platform")
 		log.AddStep("StatesPresenter-GetAll")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if platform == "" {
+		if log.Platform == "" {
 			errorResponse := log.AddError(sc.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
