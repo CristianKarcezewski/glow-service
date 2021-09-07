@@ -11,23 +11,23 @@ import (
 )
 
 type (
-	IUserService interface {
+	IUsersService interface {
 		Register(log *models.StackLog, user *models.User) (*models.User, error)
 		FindById(log *models.StackLog, userId *int64) (*models.User, error)
 		VerifyUser(log *models.StackLog, email, password *string) (*models.User, error)
 	}
 
-	userService struct {
+	usersService struct {
 		userRepository repository.IUserRepository
 		hashRepository repository.IHashRepository
 	}
 )
 
-func NewUserService(userRepository repository.IUserRepository, hashRepository repository.IHashRepository) IUserService {
-	return &userService{userRepository, hashRepository}
+func NewUserService(userRepository repository.IUserRepository, hashRepository repository.IHashRepository) IUsersService {
+	return &usersService{userRepository, hashRepository}
 }
 
-func (us *userService) Register(log *models.StackLog, user *models.User) (*models.User, error) {
+func (us *usersService) Register(log *models.StackLog, user *models.User) (*models.User, error) {
 	log.AddStep("UserService-Register")
 
 	log.AddInfo("Generating default user data")
@@ -59,14 +59,14 @@ func (us *userService) Register(log *models.StackLog, user *models.User) (*model
 	return newUser.ToModel(), nil
 }
 
-func (us *userService) FindById(log *models.StackLog, userId *int64) (*models.User, error) {
+func (us *usersService) FindById(log *models.StackLog, userId *int64) (*models.User, error) {
 	log.AddStep("UserService-FindById")
 
 	us.userRepository.FindById(log, userId)
 	return nil, nil
 }
 
-func (us *userService) VerifyUser(log *models.StackLog, email, password *string) (*models.User, error) {
+func (us *usersService) VerifyUser(log *models.StackLog, email, password *string) (*models.User, error) {
 	log.AddStep("UserService-VerifyUser")
 
 	user, findErr := us.userRepository.Select(log, "email", email)
@@ -85,7 +85,7 @@ func (us *userService) VerifyUser(log *models.StackLog, email, password *string)
 	return user.ToModel(), nil
 }
 
-func (us *userService) hashPassword(password *string) (*dao.Hash, error) {
+func (us *usersService) hashPassword(password *string) (*dao.Hash, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(*password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (us *userService) hashPassword(password *string) (*dao.Hash, error) {
 	return &dao.Hash{Hash: string(bytes)}, nil
 }
 
-func (us *userService) checkPasswordHash(password *string, hash *string) bool {
+func (us *usersService) checkPasswordHash(password *string, hash *string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(*hash), []byte(*password))
 	return err == nil
 }

@@ -16,7 +16,7 @@ type (
 		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
 		Remove(log *models.StackLog, addressId int64) error
 	}
-	addressService struct {
+	addressesService struct {
 		addressRepository       repository.IAddressesRepository
 		userAddressesRepository repository.IUserAddressesRepository
 		statesService           IStatesService
@@ -30,10 +30,10 @@ func NewAddressService(
 	statesService IStatesService,
 	citiesService ICitiesService,
 ) IAddressesService {
-	return &addressService{addressRepository, userAddressesRepository, statesService, citiesService}
+	return &addressesService{addressRepository, userAddressesRepository, statesService, citiesService}
 }
 
-func (as *addressService) GetById(log *models.StackLog, addressId int64) (*models.Address, error) {
+func (as *addressesService) GetById(log *models.StackLog, addressId int64) (*models.Address, error) {
 	log.AddStep("AddressService-GetById")
 
 	result, resultErr := as.addressRepository.FindById(log, addressId)
@@ -44,7 +44,7 @@ func (as *addressService) GetById(log *models.StackLog, addressId int64) (*model
 	return result.ToModel(), nil
 }
 
-func (as *addressService) Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error) {
+func (as *addressesService) Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error) {
 	log.AddStep("AddressService-Register")
 
 	log.AddInfo("Validating default address data")
@@ -81,7 +81,7 @@ func (as *addressService) Register(log *models.StackLog, userId int64, address *
 	return addressResul.ToModel(), nil
 }
 
-func (as *addressService) FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error) {
+func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error) {
 	log.AddStep("AddressService-FindByUser")
 	userAddresses, userAddressesError := as.userAddressesRepository.GetByUserId(log, userId)
 	if userAddressesError != nil {
@@ -106,7 +106,7 @@ func (as *addressService) FindByUser(log *models.StackLog, userId int64) (*[]mod
 	return &addr, nil
 }
 
-func (as *addressService) Update(log *models.StackLog, address *models.Address) (*models.Address, error) {
+func (as *addressesService) Update(log *models.StackLog, address *models.Address) (*models.Address, error) {
 	log.AddStep("AddressService-Update")
 
 	updatedAddress, updateErr := as.addressRepository.Update(log, dao.NewDaoAddress(address))
@@ -116,17 +116,17 @@ func (as *addressService) Update(log *models.StackLog, address *models.Address) 
 	return updatedAddress.ToModel(), nil
 }
 
-func (as *addressService) Remove(log *models.StackLog, addressId int64) error {
+func (as *addressesService) Remove(log *models.StackLog, addressId int64) error {
 	log.AddStep("AddressService-Remove")
 
 	return as.addressRepository.Remove(log, addressId)
 }
 
-func (as *addressService) validateState(wg *sync.WaitGroup, log *models.StackLog, stateId int64, err *error) {
+func (as *addressesService) validateState(wg *sync.WaitGroup, log *models.StackLog, stateId int64, err *error) {
 	_, *err = as.statesService.GetById(log, stateId)
 	wg.Done()
 }
-func (as *addressService) validateCity(wg *sync.WaitGroup, log *models.StackLog, cityId int64, err *error) {
+func (as *addressesService) validateCity(wg *sync.WaitGroup, log *models.StackLog, cityId int64, err *error) {
 	_, *err = as.citiesService.GetById(log, cityId)
 	wg.Done()
 }

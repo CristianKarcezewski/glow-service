@@ -11,21 +11,21 @@ const (
 )
 
 type (
-	IStateRepository interface {
+	IStatesRepository interface {
 		GetAll(log *models.StackLog) (*[]dao.State, error)
 		GetById(log *models.StackLog, stateId int64) (*dao.State, error)
 	}
 
-	stateRepository struct {
+	statesRepository struct {
 		database server.IDatabaseHandler
 	}
 )
 
-func NewStateRepository(database server.IDatabaseHandler) IStateRepository {
-	return &stateRepository{database}
+func NewStateRepository(database server.IDatabaseHandler) IStatesRepository {
+	return &statesRepository{database}
 }
 
-func (sr *stateRepository) GetAll(log *models.StackLog) (*[]dao.State, error) {
+func (sr *statesRepository) GetAll(log *models.StackLog) (*[]dao.State, error) {
 	log.AddStep("StateRepository-GetAll")
 
 	var states []dao.State
@@ -36,7 +36,7 @@ func (sr *stateRepository) GetAll(log *models.StackLog) (*[]dao.State, error) {
 	return &states, nil
 }
 
-func (sr *stateRepository) GetById(log *models.StackLog, stateId int64) (*dao.State, error) {
+func (sr *statesRepository) GetById(log *models.StackLog, stateId int64) (*dao.State, error) {
 	log.AddStep("StateRepository-GetById")
 
 	var state dao.State

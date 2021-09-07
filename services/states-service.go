@@ -10,16 +10,16 @@ type (
 		GetAll(log *models.StackLog) (*[]models.State, error)
 		GetById(log *models.StackLog, stateId int64) (*models.State, error)
 	}
-	stateService struct {
-		stateRepository repository.IStateRepository
+	statesService struct {
+		stateRepository repository.IStatesRepository
 	}
 )
 
-func NewStateService(stateRepository repository.IStateRepository) IStatesService {
-	return &stateService{stateRepository}
+func NewStateService(stateRepository repository.IStatesRepository) IStatesService {
+	return &statesService{stateRepository}
 }
 
-func (ss *stateService) GetAll(log *models.StackLog) (*[]models.State, error) {
+func (ss *statesService) GetAll(log *models.StackLog) (*[]models.State, error) {
 	log.AddStep("StateService-GetAll")
 
 	var states []models.State
@@ -36,7 +36,7 @@ func (ss *stateService) GetAll(log *models.StackLog) (*[]models.State, error) {
 	return &states, nil
 }
 
-func (ss *stateService) GetById(log *models.StackLog, stateId int64) (*models.State, error) {
+func (ss *statesService) GetById(log *models.StackLog, stateId int64) (*models.State, error) {
 	log.AddStep("StateService-GetById")
 
 	result, resultErr := ss.stateRepository.GetById(log, stateId)
