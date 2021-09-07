@@ -38,6 +38,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	citiesRepository := repository.NewCitiesRepository(config.DatabaseHandler)
 	addressesRepository := repository.NewAddressesRepository(config.DatabaseHandler)
 	userAddressesRepository := repository.NewUserAddressesRepository(config.DatabaseHandler)
+	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
 
 	// Start services
 	userService := services.NewUserService(userRepository, hashRepository)
@@ -45,18 +46,21 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	statesService := services.NewStateService(statesRepository)
 	citiesService := services.NewCitiesService(citiesRepository)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, statesService, citiesService)
+	companiesService := services.NewCompanyService(companiesRepository)
 
-	// Start controllers
+	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
 	statesPresenter := presenters.NewStatesPresenter(&config.ServerErrorMessages, statesService)
 	citiesPresenter := presenters.NewCitiesPresenter(&config.ServerErrorMessages, citiesService)
 	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService)
+	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages,authService,companiesService)
 
 	// Start Routers
 	authPresenter.Router(echo, authPresenter.Login(), authPresenter.RefreshToken(), authPresenter.Register()).Wire()
 	statesPresenter.Router(echo, statesPresenter.GetAll()).Wire()
 	citiesPresenter.Router(echo, citiesPresenter.GetById(), citiesPresenter.GetByState()).Wire()
 	addressesPresenter.Router(echo, addressesPresenter.Register(), addressesPresenter.GetById(), addressesPresenter.GetByUser(), addressesPresenter.Update(), addressesPresenter.Remove()).Wire()
+	companiesPresenter.Router(echo, companiesPresenter.Register()).Wire()
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {
