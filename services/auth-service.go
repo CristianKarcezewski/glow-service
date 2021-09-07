@@ -20,18 +20,18 @@ type (
 		VerifyToken(log *models.StackLog, token string) (*models.User, error)
 	}
 	authService struct {
-		userService IUserService
+		usersService IUsersService
 	}
 )
 
-func NewAuthService(userService IUserService) IAuthService {
-	return &authService{userService}
+func NewAuthService(usersService IUsersService) IAuthService {
+	return &authService{usersService}
 }
 
 func (auth *authService) Login(log *models.StackLog, email, password *string) (*models.Auth, error) {
 	log.AddStep("AuthService-Login")
 
-	user, userErr := auth.userService.VerifyUser(log, email, password)
+	user, userErr := auth.usersService.VerifyUser(log, email, password)
 	if userErr != nil {
 		return nil, userErr
 	}
@@ -48,7 +48,7 @@ func (auth *authService) Login(log *models.StackLog, email, password *string) (*
 func (auth *authService) Register(log *models.StackLog, user *models.User) (*models.Auth, error) {
 	log.AddStep("AuthService-Register")
 
-	user, userErr := auth.userService.Register(log, user)
+	user, userErr := auth.usersService.Register(log, user)
 	if userErr != nil {
 		return nil, userErr
 	}
@@ -75,7 +75,7 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 	})
 
 	if err != nil {
-		return nil, errors.New("Invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
