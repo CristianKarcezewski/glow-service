@@ -12,8 +12,8 @@ const (
 
 type (
 	IUserAddressesRepository interface {
-		Register(log *models.StackLog, userAddress *dao.UserAdresses) (*dao.UserAdresses, error)
-		GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAdresses, error)
+		Register(log *models.StackLog, userAddress *dao.UserAddresses) (*dao.UserAddresses, error)
+		GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddresses, error)
 		Remove(log *models.StackLog, addressId int64) error
 	}
 	userAddressesRepository struct {
@@ -25,7 +25,7 @@ func NewUserAddressesRepository(database server.IDatabaseHandler) IUserAddresses
 	return &userAddressesRepository{database}
 }
 
-func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *dao.UserAdresses) (*dao.UserAdresses, error) {
+func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *dao.UserAddresses) (*dao.UserAddresses, error) {
 	log.AddStep("UserAddressRepository-Register")
 	err := uar.database.Insert(repositoryUserAddressesTable, userAddress)
 	if err != nil {
@@ -34,9 +34,9 @@ func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *
 	return userAddress, nil
 }
 
-func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAdresses, error) {
+func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddresses, error) {
 	log.AddStep("UserAddressesRepository-GetByUserId")
-	var userAddresses []dao.UserAdresses
+	var userAddresses []dao.UserAddresses
 	err := uar.database.Select(repositoryUserAddressesTable, &userAddresses, "user_id", userId)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int
 
 func (uar *userAddressesRepository) Remove(log *models.StackLog, addressId int64) error {
 	log.AddStep("UserAddressesRepository-Remove")
-	var daoUA dao.UserAdresses
+	var daoUA dao.UserAddresses
 	err := uar.database.Remove(repositoryUserAddressesTable, &daoUA, "address_id", addressId)
 	if err != nil {
 		return err

@@ -67,9 +67,9 @@ func (as *addressesService) Register(log *models.StackLog, userId int64, address
 		return nil, addressResultErr
 	}
 
-	userAddress := dao.UserAdresses{
+	userAddress := dao.UserAddresses{
 		UserId:    userId,
-		AddressId: address.AddressId,
+		AddressId: addressResul.AddressId,
 	}
 
 	_, userAddressErr := as.userAddressesRepository.Register(log, &userAddress)
@@ -83,9 +83,15 @@ func (as *addressesService) Register(log *models.StackLog, userId int64, address
 
 func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error) {
 	log.AddStep("AddressService-FindByUser")
+	var addr []models.Address
+
 	userAddresses, userAddressesError := as.userAddressesRepository.GetByUserId(log, userId)
 	if userAddressesError != nil {
 		return nil, userAddressesError
+	}
+
+	if len(*userAddresses) == 0 {
+		return &addr, nil
 	}
 
 	var addressesIds []int64
@@ -98,7 +104,6 @@ func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]m
 		return nil, resultErr
 	}
 
-	var addr []models.Address
 	for i := range *result {
 		addr = append(addr, *(*result)[i].ToModel())
 	}

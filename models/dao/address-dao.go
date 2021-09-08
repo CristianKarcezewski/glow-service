@@ -4,7 +4,7 @@ import "glow-service/models"
 
 type (
 	Address struct {
-		tableName      struct{} `json:"-" pg:"adresses"`
+		tableName      struct{} `json:"-" pg:"addresses"`
 		AddressId      int64    `json:"addressId:omitempty" pg:"id,pk"`
 		Name           string   `json:"name,omitempty" pg:"name"`
 		PostalCode     string   `json:"postalCode,omitempty" pg:"postal_code"`
@@ -20,9 +20,9 @@ type (
 		CreatedAt      string   `json:"createdAt,omitempty" pg:"created_at"`
 	}
 
-	UserAdresses struct {
+	UserAddresses struct {
 		tableName       struct{} `json:"-" pg:"user_addresses"`
-		UserAddressesId int64    `json:"userAddressesId,omitempty" pg:"id,pk"`
+		UserAddressesId int64    `json:"userAressesId,omitempty" pg:"id,pk"`
 		UserId          int64    `json:"userId,omitempty" pg:"user_id"`
 		AddressId       int64    `json:"addressId,omitempty" pg:"address_id"`
 	}

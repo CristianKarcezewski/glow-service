@@ -2,7 +2,7 @@ package models
 
 type (
 	Address struct {
-		AddressId      int64  `json:"addressId:omitempty"`
+		AddressId      int64  `json:"addressId,omitempty"`
 		Name           string `json:"name,omitempty"`
 		PostalCode     string `json:"postalCode,omitempty"`
 		StateId        int64  `json:"state,omitempty"`
@@ -14,6 +14,6 @@ type (
 		ReferencePoint string `json:"referencePoint,omitempty"`
 		Latitude       string `json:"latitude,omitempty"`
 		Longitude      string `json:"longitude,omitempty"`
-		CreatedAt      string `json:"_"`
+		CreatedAt      string `json:"-"`
 	}
 )

@@ -41,7 +41,7 @@ func (ac *addressesPresenter) Register() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("AddressesController-GetAll")
+		log.AddStep("AddressesPresenter-Register")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -89,7 +89,7 @@ func (ac *addressesPresenter) GetById() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("AddressesPresenter-GetById")
 
 		context.Request().Body.Close()
 
@@ -132,7 +132,7 @@ func (ac *addressesPresenter) GetByUser() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("AddressesPresenter-GetByUser")
 
 		context.Request().Body.Close()
 
@@ -170,7 +170,7 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("AddressesPresenter-Update")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -223,7 +223,7 @@ func (ac *addressesPresenter) Remove() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("AddressesPresenter-Remove")
 
 		context.Request().Body.Close()
 
