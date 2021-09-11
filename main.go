@@ -39,6 +39,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	addressesRepository := repository.NewAddressesRepository(config.DatabaseHandler)
 	userAddressesRepository := repository.NewUserAddressesRepository(config.DatabaseHandler)
 	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
+	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 
 	// Start services
 	userService := services.NewUserService(userRepository, hashRepository)
@@ -47,13 +48,15 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	citiesService := services.NewCitiesService(citiesRepository)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, statesService, citiesService)
 	companiesService := services.NewCompanyService(companiesRepository)
+	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
 	statesPresenter := presenters.NewStatesPresenter(&config.ServerErrorMessages, statesService)
 	citiesPresenter := presenters.NewCitiesPresenter(&config.ServerErrorMessages, citiesService)
 	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService)
-	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages,authService,companiesService)
+	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages, authService, companiesService)
+	providerTypesPresenter := presenters.NewProviderTypePresenter(&config.ServerErrorMessages, providerTypesService)
 
 	// Start Routers
 	authPresenter.Router(echo, authPresenter.Login(), authPresenter.RefreshToken(), authPresenter.Register()).Wire()
@@ -61,6 +64,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	citiesPresenter.Router(echo, citiesPresenter.GetById(), citiesPresenter.GetByState()).Wire()
 	addressesPresenter.Router(echo, addressesPresenter.Register(), addressesPresenter.GetById(), addressesPresenter.GetByUser(), addressesPresenter.Update(), addressesPresenter.Remove()).Wire()
 	companiesPresenter.Router(echo, companiesPresenter.Register()).Wire()
+	providerTypesPresenter.Router(echo, providerTypesPresenter.GetById(), providerTypesPresenter.GetAll()).Wire()
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {

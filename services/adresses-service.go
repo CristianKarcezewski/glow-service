@@ -22,6 +22,7 @@ type (
 		statesService           IStatesService
 		citiesService           ICitiesService
 	}
+	
 )
 
 func NewAddressService(

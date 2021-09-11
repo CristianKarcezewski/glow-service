@@ -117,7 +117,7 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		createdCompany, companyErr := cp.companiesService.GetById(log, pathCompanyId)
+		getCompany, companyErr := cp.companiesService.GetById(log, pathCompanyId)
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
 			go log.PrintStackOnConsole()
@@ -125,7 +125,7 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		}
 
 		go log.PrintStackOnConsole()
-		return context.JSON(http.StatusOK, createdCompany)
+		return context.JSON(http.StatusOK, getCompany)
 	}
 }
 
