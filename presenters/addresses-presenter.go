@@ -13,14 +13,19 @@ import (
 	"github.com/labstack/echo"
 )
 
+const (
+	CompanyId = "companyId"
+)
+
 type (
 	IAddressesPresenter interface {
 		Register() echo.HandlerFunc
 		GetById() echo.HandlerFunc
 		GetByUser() echo.HandlerFunc
+		GetByCompany() echo.HandlerFunc
 		Update() echo.HandlerFunc
 		Remove() echo.HandlerFunc
-		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
+		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc,getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
 	}
 
 	addressesPresenter struct {
@@ -126,7 +131,7 @@ func (ac *addressesPresenter) GetById() echo.HandlerFunc {
 	}
 }
 
-func (ac *addressesPresenter) GetByUser() echo.HandlerFunc {
+func (ap *addressesPresenter) GetByUser() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
@@ -138,20 +143,20 @@ func (ac *addressesPresenter) GetByUser() echo.HandlerFunc {
 
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		log.AddInfo("Validating authorization")
-		user, tokenErr := ac.authService.VerifyToken(log, token)
+		user, tokenErr := ap.authService.VerifyToken(log, token)
 		if tokenErr != nil {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		addresses, addressErr := ac.addressesService.FindByUser(log, user.UserId)
+		addresses, addressErr := ap.addressesService.FindByUser(log, user.UserId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 			go log.PrintStackOnConsole()
@@ -163,7 +168,46 @@ func (ac *addressesPresenter) GetByUser() echo.HandlerFunc {
 	}
 }
 
-func (ac *addressesPresenter) Update() echo.HandlerFunc {
+func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
+	return func(context echo.Context) error {
+
+		log := &models.StackLog{}
+		log.Platform = context.Request().Header.Get("platform")
+		token := context.Request().Header.Get("authorization")
+		CompanyId, CompanyErr := strconv.ParseInt(context.Param(CompanyId), 10, 64)
+		log.AddStep("AddressesPresenter-GetByCompany")
+
+		context.Request().Body.Close()
+
+		log.AddInfo("Validating headers")
+		if CompanyErr != nil {
+			errorResponse := log.AddError(ap.errorMessagesData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		log.AddInfo("Validating authorization")
+		_, tokenErr := ap.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		addresses, addressErr := ap.addressesService.FindByCompany(log, CompanyId)
+		if addressErr != nil {
+			errorResponse := log.AddError(addressErr.Error())
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		go log.PrintStackOnConsole()
+		return context.JSON(http.StatusOK, addresses)
+	}
+}
+
+
+func (ap *addressesPresenter) Update() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		var address dto.Address
@@ -178,7 +222,7 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
@@ -197,14 +241,14 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 		}
 
 		log.AddInfo("Validating authorization")
-		_, tokenErr := ac.authService.VerifyToken(log, token)
+		_, tokenErr := ap.authService.VerifyToken(log, token)
 		if tokenErr != nil {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		updatedAddress, addressErr := ac.addressesService.Update(log, address.ToModel())
+		updatedAddress, addressErr := ap.addressesService.Update(log, address.ToModel())
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 			go log.PrintStackOnConsole()
@@ -216,7 +260,7 @@ func (ac *addressesPresenter) Update() echo.HandlerFunc {
 	}
 }
 
-func (ac *addressesPresenter) Remove() echo.HandlerFunc {
+func (ap *addressesPresenter) Remove() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
 		log := &models.StackLog{}
@@ -235,20 +279,20 @@ func (ac *addressesPresenter) Remove() echo.HandlerFunc {
 		}
 
 		if log.Platform == "" {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.PlatformNotFound)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		log.AddInfo("Validating authorization")
-		_, tokenErr := ac.authService.VerifyToken(log, token)
+		_, tokenErr := ap.authService.VerifyToken(log, token)
 		if tokenErr != nil {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
+			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		addressErr := ac.addressesService.Remove(log, pathAddressId)
+		addressErr := ap.addressesService.Remove(log, pathAddressId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 			go log.PrintStackOnConsole()
@@ -260,12 +304,13 @@ func (ac *addressesPresenter) Remove() echo.HandlerFunc {
 	}
 }
 
-func (ac *addressesPresenter) Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter {
+func (ac *addressesPresenter) Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter {
 	return &routers.AddressesRouter{
 		Echo:      echo,
 		Register:  register,
 		GetById:   getById,
 		GetByUser: getByUser,
+		GetByCompany: getByCompany,
 		Update:    update,
 		Remove:    remove,
 	}

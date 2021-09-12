@@ -38,6 +38,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	citiesRepository := repository.NewCitiesRepository(config.DatabaseHandler)
 	addressesRepository := repository.NewAddressesRepository(config.DatabaseHandler)
 	userAddressesRepository := repository.NewUserAddressesRepository(config.DatabaseHandler)
+	companyAddressesRepository := repository.NewCompanyAddressesRepository(config.DatabaseHandler)
 	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 
@@ -46,7 +47,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	authService := services.NewAuthService(userService)
 	statesService := services.NewStateService(statesRepository)
 	citiesService := services.NewCitiesService(citiesRepository)
-	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, statesService, citiesService)
+	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, statesService, citiesService)
 	companiesService := services.NewCompanyService(companiesRepository)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 
@@ -62,7 +63,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	authPresenter.Router(echo, authPresenter.Login(), authPresenter.RefreshToken(), authPresenter.Register()).Wire()
 	statesPresenter.Router(echo, statesPresenter.GetAll()).Wire()
 	citiesPresenter.Router(echo, citiesPresenter.GetById(), citiesPresenter.GetByState()).Wire()
-	addressesPresenter.Router(echo, addressesPresenter.Register(), addressesPresenter.GetById(), addressesPresenter.GetByUser(), addressesPresenter.Update(), addressesPresenter.Remove()).Wire()
+	addressesPresenter.Router(echo, addressesPresenter.Register(), addressesPresenter.GetById(), addressesPresenter.GetByUser(),addressesPresenter.GetByCompany(), addressesPresenter.Update(), addressesPresenter.Remove()).Wire()
 	companiesPresenter.Router(echo, companiesPresenter.Register()).Wire()
 	providerTypesPresenter.Router(echo, providerTypesPresenter.GetById(), providerTypesPresenter.GetAll()).Wire()
 }

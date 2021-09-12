@@ -13,12 +13,14 @@ type (
 		GetById(log *models.StackLog, addressId int64) (*models.Address, error)
 		Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
 		FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error)
+		FindByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error)
 		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
 		Remove(log *models.StackLog, addressId int64) error
 	}
 	addressesService struct {
 		addressRepository       repository.IAddressesRepository
 		userAddressesRepository repository.IUserAddressesRepository
+		companyAddressesRepository repository.ICompanyAddressesRepository
 		statesService           IStatesService
 		citiesService           ICitiesService
 	}
@@ -28,10 +30,11 @@ type (
 func NewAddressService(
 	addressRepository repository.IAddressesRepository,
 	userAddressesRepository repository.IUserAddressesRepository,
+	companyAddressesRepository repository.ICompanyAddressesRepository,
 	statesService IStatesService,
 	citiesService ICitiesService,
 ) IAddressesService {
-	return &addressesService{addressRepository, userAddressesRepository, statesService, citiesService}
+	return &addressesService{addressRepository, userAddressesRepository,companyAddressesRepository, statesService, citiesService}
 }
 
 func (as *addressesService) GetById(log *models.StackLog, addressId int64) (*models.Address, error) {
@@ -111,6 +114,37 @@ func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]m
 
 	return &addr, nil
 }
+
+func (as *addressesService) FindByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error) {
+	log.AddStep("AddressService-FindByCompany")
+	var addr []models.Address
+
+	companyAddresses, companyAddressesError := as.companyAddressesRepository.GetByCompanyId(log, companyId)
+	if companyAddressesError != nil {
+		return nil, companyAddressesError
+	}
+
+	if len(*companyAddresses) == 0 {
+		return &addr, nil
+	}
+
+	var addressesIds []int64
+	for i := range *companyAddresses {
+		addressesIds = append(addressesIds, (*companyAddresses)[i].AddressId)
+	}
+
+	result, resultErr := as.addressRepository.FindAllAddressesIds(log, addressesIds)
+	if resultErr != nil {
+		return nil, resultErr
+	}
+
+	for i := range *result {
+		addr = append(addr, *(*result)[i].ToModel())
+	}
+
+	return &addr, nil
+}
+
 
 func (as *addressesService) Update(log *models.StackLog, address *models.Address) (*models.Address, error) {
 	log.AddStep("AddressService-Update")
