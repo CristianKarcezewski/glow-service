@@ -25,7 +25,7 @@ type (
 		GetByCompany() echo.HandlerFunc
 		Update() echo.HandlerFunc
 		Remove() echo.HandlerFunc
-		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc,getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
+		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
 	}
 
 	addressesPresenter struct {
@@ -206,7 +206,6 @@ func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
 	}
 }
 
-
 func (ap *addressesPresenter) Update() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
@@ -306,12 +305,12 @@ func (ap *addressesPresenter) Remove() echo.HandlerFunc {
 
 func (ac *addressesPresenter) Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter {
 	return &routers.AddressesRouter{
-		Echo:      echo,
-		Register:  register,
-		GetById:   getById,
-		GetByUser: getByUser,
+		Echo:         echo,
+		Register:     register,
+		GetById:      getById,
+		GetByUser:    getByUser,
 		GetByCompany: getByCompany,
-		Update:    update,
-		Remove:    remove,
+		Update:       update,
+		Remove:       remove,
 	}
 }
