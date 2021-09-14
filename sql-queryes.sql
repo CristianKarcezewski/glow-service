@@ -5764,3 +5764,31 @@ CREATE TABLE IF NOT EXISTS user_addresses(
 		FOREIGN KEY(address_id)
 			REFERENCES addresses(id)
 );
+
+CREATE TABLE IF NOT EXISTS provider_types(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(100)
+);
+
+INSERT INTO provider_types(name) VALUES('Diarista');
+INSERT INTO provider_types(name) VALUES('Pedreiro');
+INSERT INTO provider_types(name) VALUES('Funileiro');
+INSERT INTO provider_types(name) VALUES('Encanador');
+INSERT INTO provider_types(name) VALUES('Serralheiro');
+INSERT INTO provider_types(name) VALUES('Cuidador');
+
+CREATE TABLE IF NOT EXISTS company(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	user_id INT UNIQUE,
+	provider_type_id INT,
+	expiration_date VARCHAR(100),
+	description VARCHAR(1000),
+	active BOOLEAN,
+	PRIMARY KEY(id),
+	CONSTRAINT fk_users
+		FOREIGN KEY(user_id)
+			REFERENCES users(id),
+	CONSTRAINT fk_provider_types
+		FOREIGN KEY(provider_type_id)
+			REFERENCES provider_types(id)
+);
