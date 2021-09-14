@@ -13,8 +13,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-const (
-	CompanyId = "companyId"
+const (	
+	pathAddressId = "addressId"
 )
 
 type (
@@ -25,7 +25,7 @@ type (
 		GetByCompany() echo.HandlerFunc
 		Update() echo.HandlerFunc
 		Remove() echo.HandlerFunc
-		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc,getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
+		Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter
 	}
 
 	addressesPresenter struct {
@@ -174,7 +174,7 @@ func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		CompanyId, CompanyErr := strconv.ParseInt(context.Param(CompanyId), 10, 64)
+		companyId, CompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
 		log.AddStep("AddressesPresenter-GetByCompany")
 
 		context.Request().Body.Close()
@@ -194,7 +194,7 @@ func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		addresses, addressErr := ap.addressesService.FindByCompany(log, CompanyId)
+		addresses, addressErr := ap.addressesService.FindByCompany(log, companyId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 			go log.PrintStackOnConsole()
@@ -205,7 +205,6 @@ func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
 		return context.JSON(http.StatusOK, addresses)
 	}
 }
-
 
 func (ap *addressesPresenter) Update() echo.HandlerFunc {
 	return func(context echo.Context) error {
@@ -266,7 +265,7 @@ func (ap *addressesPresenter) Remove() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
+		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
 		log.AddStep("AddressesPresenter-Remove")
 
 		context.Request().Body.Close()
@@ -306,12 +305,12 @@ func (ap *addressesPresenter) Remove() echo.HandlerFunc {
 
 func (ac *addressesPresenter) Router(echo *echo.Echo, register echo.HandlerFunc, getById echo.HandlerFunc, getByUser echo.HandlerFunc, getByCompany echo.HandlerFunc, update echo.HandlerFunc, remove echo.HandlerFunc) *routers.AddressesRouter {
 	return &routers.AddressesRouter{
-		Echo:      echo,
-		Register:  register,
-		GetById:   getById,
-		GetByUser: getByUser,
+		Echo:         echo,
+		Register:     register,
+		GetById:      getById,
+		GetByUser:    getByUser,
 		GetByCompany: getByCompany,
-		Update:    update,
-		Remove:    remove,
+		Update:       update,
+		Remove:       remove,
 	}
 }
