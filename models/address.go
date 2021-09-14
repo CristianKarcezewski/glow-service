@@ -15,7 +15,7 @@ type (
 		Latitude       string `json:"latitude,omitempty"`
 		Longitude      string `json:"longitude,omitempty"`
 		CreatedAt      string `json:"-"`
-		State          *State `json:"state,omitempty"`
-		City           *City  `json:"city,omitempty"`
+		State          State  `json:"state,omitempty"`
+		City           City   `json:"city,omitempty"`
 	}
 )

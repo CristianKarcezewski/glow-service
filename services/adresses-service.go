@@ -54,8 +54,8 @@ func (as *addressesService) Register(log *models.StackLog, userId int64, address
 	var locationErr error
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	go as.findStateAsync(wg, log, address.StateId, address.State, &locationErr)
-	go as.findCityAsync(wg, log, address.CityId, address.City, &locationErr)
+	go as.findStateAsync(wg, log, address.StateId, &address.State, &locationErr)
+	go as.findCityAsync(wg, log, address.CityId, &address.City, &locationErr)
 	wg.Wait()
 
 	if locationErr != nil {
@@ -111,12 +111,12 @@ func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]m
 		addr = append(addr, *(*result)[i].ToModel())
 	}
 
+	var locationError error
 	wg := &sync.WaitGroup{}
-	var locationErr error
 	wg.Add(len(addr) * 2)
 	for i := range addr {
-		go as.findStateAsync(wg, log, addr[i].StateId, addr[i].State, &locationErr)
-		go as.findCityAsync(wg, log, addr[i].CityId, addr[i].City, &locationErr)
+		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
 	}
 	wg.Wait()
 
@@ -150,6 +150,15 @@ func (as *addressesService) FindByCompany(log *models.StackLog, companyId int64)
 		addr = append(addr, *(*result)[i].ToModel())
 	}
 
+	var locationError error
+	wg := &sync.WaitGroup{}
+	wg.Add(len(addr) * 2)
+	for i := range addr {
+		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
+	}
+	wg.Wait()
+
 	return &addr, nil
 }
 
@@ -170,10 +179,24 @@ func (as *addressesService) Remove(log *models.StackLog, addressId int64) error 
 }
 
 func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.StackLog, stateId int64, state *models.State, err *error) {
-	state, *err = as.statesService.GetById(log, stateId)
+	st, e := as.statesService.GetById(log, stateId)
+	if e != nil {
+		*err = e
+	} else {
+		state.StateId = st.StateId
+		state.Uf = st.Uf
+		state.Name = st.Name
+	}
 	wg.Done()
 }
 func (as *addressesService) findCityAsync(wg *sync.WaitGroup, log *models.StackLog, cityId int64, city *models.City, err *error) {
-	city, *err = as.citiesService.GetById(log, cityId)
+	ct, e := as.citiesService.GetById(log, cityId)
+	if e != nil {
+		*err = e
+	} else {
+		city.CityId = ct.CityId
+		city.StateId = ct.CityId
+		city.Name = ct.Name
+	}
 	wg.Done()
 }
