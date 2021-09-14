@@ -11,7 +11,7 @@ const (
 )
 
 type (
-	IProviderTypesRepository interface {					
+	IProviderTypesRepository interface {
 		GetById(log *models.StackLog, providerTypeId int64) (*dao.ProviderType, error)
 		GetAll(log *models.StackLog) (*[]dao.ProviderType, error)
 	}
@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func NewProviderTypeRepository(database server.IDatabaseHandler)IProviderTypesRepository{
+func NewProviderTypeRepository(database server.IDatabaseHandler) IProviderTypesRepository {
 	return &providerTypesRepository{database}
 }
 
@@ -43,5 +43,5 @@ func (pr *providerTypesRepository) GetAll(log *models.StackLog) (*[]dao.Provider
 	if getErr != nil {
 		return nil, getErr
 	}
-	return &providerTypes, nil	
+	return &providerTypes, nil
 }

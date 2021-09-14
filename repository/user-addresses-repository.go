@@ -46,8 +46,8 @@ func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int
 
 func (uar *userAddressesRepository) Remove(log *models.StackLog, addressId int64) error {
 	log.AddStep("UserAddressesRepository-Remove")
-	var daoUA dao.UserAddresses
-	err := uar.database.Remove(repositoryUserAddressesTable, &daoUA, "address_id", addressId)
+	var daoUa dao.UserAddresses
+	err := uar.database.Remove(repositoryUserAddressesTable, &daoUa, "address_id", addressId)
 	if err != nil {
 		return err
 	}

@@ -10,19 +10,19 @@ type (
 		GetById(log *models.StackLog, providerTypeId int64) (*models.ProviderType, error)
 		GetAll(log *models.StackLog) (*[]models.ProviderType, error)
 	}
-	providerTypeService struct {
-		providerTypeRepository repository.IProviderTypesRepository
+	providerTypesService struct {
+		providerTypesRepository repository.IProviderTypesRepository
 	}
 )
 
-func NewProviderTypeService(providerTypeRepository repository.IProviderTypesRepository) IProviderTypesService {
-	return &providerTypeService{providerTypeRepository}
+func NewProviderTypeService(providerTypesRepository repository.IProviderTypesRepository) IProviderTypesService {
+	return &providerTypesService{providerTypesRepository}
 }
 
-func (ps *providerTypeService) GetById(log *models.StackLog, providerTypeId int64) (*models.ProviderType, error) {
+func (ps *providerTypesService) GetById(log *models.StackLog, providerTypeId int64) (*models.ProviderType, error) {
 	log.AddStep("ProviderTypeService-GetById")
 
-	result, resultErr := ps.providerTypeRepository.GetById(log, providerTypeId)
+	result, resultErr := ps.providerTypesRepository.GetById(log, providerTypeId)
 	if resultErr != nil {
 		return nil, resultErr
 	}
@@ -30,19 +30,19 @@ func (ps *providerTypeService) GetById(log *models.StackLog, providerTypeId int6
 	return result.ToModel(), nil
 }
 
-func (ps *providerTypeService) GetAll(log *models.StackLog) (*[]models.ProviderType, error) {
+func (ps *providerTypesService) GetAll(log *models.StackLog) (*[]models.ProviderType, error) {
 	log.AddStep("providerTypes-Service-GetAll")
 
 	var providerTypes []models.ProviderType
 
-	repositoryProviderTypes, err := ps.providerTypeRepository.GetAll(log)
+	repositoryProviderTypes, err := ps.providerTypesRepository.GetAll(log)
 	if err != nil {
 		return nil, err
 	}
 
 	for i := range *repositoryProviderTypes {
 		providerTypes = append(providerTypes, *(*repositoryProviderTypes)[i].ToModel())
-	}	
+	}
 
 	return &providerTypes, nil
 }

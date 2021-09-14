@@ -11,11 +11,13 @@ import (
 type (
 	IAddressesService interface {
 		GetById(log *models.StackLog, addressId int64) (*models.Address, error)
-		Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
-		FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error)
-		FindByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error)
+		GetByUser(log *models.StackLog, userId int64) (*[]models.Address, error)
+		GetByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error)
+		RegisterByUser(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
+		RegisterByCompany(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
 		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
-		Remove(log *models.StackLog, addressId int64) error
+		RemoveUserAddress(log *models.StackLog, addressId int64) error
+		RemoveCompanyAddress(log *models.StackLog, addressId int64) error
 	}
 	addressesService struct {
 		addressRepository          repository.IAddressesRepository
@@ -47,7 +49,7 @@ func (as *addressesService) GetById(log *models.StackLog, addressId int64) (*mod
 	return result.ToModel(), nil
 }
 
-func (as *addressesService) Register(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error) {
+func (as *addressesService) RegisterByUser(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error) {
 	log.AddStep("AddressService-Register")
 
 	log.AddInfo("Validating default address data")
@@ -70,12 +72,49 @@ func (as *addressesService) Register(log *models.StackLog, userId int64, address
 		return nil, addressResultErr
 	}
 
-	userAddress := dao.UserAddresses{
+	userAddress := dao.UserAddress{
 		UserId:    userId,
 		AddressId: addressResul.AddressId,
 	}
 
 	_, userAddressErr := as.userAddressesRepository.Register(log, &userAddress)
+	if userAddressErr != nil {
+		//TODO: Remove previous registered address
+		return nil, userAddressErr
+	}
+
+	return addressResul.ToModel(), nil
+}
+
+func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId int64, address *models.Address) (*models.Address, error) {
+	log.AddStep("AddressService-Register")
+
+	log.AddInfo("Validating default address data")
+	var locationErr error
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+	go as.findStateAsync(wg, log, address.StateId, &address.State, &locationErr)
+	go as.findCityAsync(wg, log, address.CityId, &address.City, &locationErr)
+	wg.Wait()
+
+	if locationErr != nil {
+		return nil, locationErr
+	}
+
+	log.AddInfo("Saving address")
+	address.CreatedAt = functions.DateToString()
+	daoAddress := dao.NewDaoAddress(address)
+	addressResul, addressResultErr := as.addressRepository.Insert(log, daoAddress)
+	if addressResultErr != nil {
+		return nil, addressResultErr
+	}
+
+	companyAddress := dao.CompanyAddress{
+		CompanyId: companyId,
+		AddressId: addressResul.AddressId,
+	}
+
+	_, userAddressErr := as.companyAddressesRepository.Register(log, &companyAddress)
 	if userAddressErr != nil {
 		//TODO: Remove previous registered address
 		return nil, userAddressErr
@@ -172,7 +211,13 @@ func (as *addressesService) Update(log *models.StackLog, address *models.Address
 	return updatedAddress.ToModel(), nil
 }
 
-func (as *addressesService) Remove(log *models.StackLog, addressId int64) error {
+func (as *addressesService) RemoveUserAddress(log *models.StackLog, addressId int64) error {
+	log.AddStep("AddressService-Remove")
+
+	return as.addressRepository.Remove(log, addressId)
+}
+
+func (as *addressesService) RemoveCompanyAddress(log *models.StackLog, addressId int64) error {
 	log.AddStep("AddressService-Remove")
 
 	return as.addressRepository.Remove(log, addressId)
@@ -189,6 +234,7 @@ func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.Stack
 	}
 	wg.Done()
 }
+
 func (as *addressesService) findCityAsync(wg *sync.WaitGroup, log *models.StackLog, cityId int64, city *models.City, err *error) {
 	ct, e := as.citiesService.GetById(log, cityId)
 	if e != nil {

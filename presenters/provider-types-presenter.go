@@ -16,9 +16,9 @@ const (
 
 type (
 	IProviderTypesPresenter interface {
-		GetById() echo.HandlerFunc 
+		GetById() echo.HandlerFunc
 		GetAll() echo.HandlerFunc
-		Router(echo *echo.Echo,getById echo.HandlerFunc, getAll echo.HandlerFunc) *routers.ProviderTypesRouter
+		Router(echo *echo.Echo, getById echo.HandlerFunc, getAll echo.HandlerFunc) *routers.ProviderTypesRouter
 	}
 	providerTypesPresenter struct {
 		errorMessagesData    *models.ServerErrorMessages

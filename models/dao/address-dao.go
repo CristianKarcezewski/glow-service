@@ -20,18 +20,18 @@ type (
 		CreatedAt      string   `json:"createdAt,omitempty" pg:"created_at"`
 	}
 
-	UserAddresses struct {
-		tableName       struct{} `json:"-" pg:"user_addresses"`
-		UserAddressesId int64    `json:"userAddressesId,omitempty" pg:"id,pk"`
-		UserId          int64    `json:"userId,omitempty" pg:"user_id"`
-		AddressId       int64    `json:"addressId,omitempty" pg:"address_id"`
+	UserAddress struct {
+		tableName     struct{} `json:"-" pg:"user_addresses"`
+		UserAddressId int64    `json:"userAddressId,omitempty" pg:"id,pk"`
+		UserId        int64    `json:"userId,omitempty" pg:"user_id"`
+		AddressId     int64    `json:"addressId,omitempty" pg:"address_id"`
 	}
 
-	CompanyAddresses struct {
-		tableName          struct{} `json:"-" pg:"company_addresses"`
-		CompanyAddressesId int64    `json:"companyAddressesId,omitempty" pg:"id,pk"`
-		CompanyId          int64    `json:"providerId,omitempty" pg:"company_id"`
-		AddressId          int64    `json:"addressId,omitempty" pg:"address_id"`
+	CompanyAddress struct {
+		tableName        struct{} `json:"-" pg:"company_addresses"`
+		CompanyAddressId int64    `json:"companyAddressId,omitempty" pg:"id,pk"`
+		CompanyId        int64    `json:"providerId,omitempty" pg:"company_id"`
+		AddressId        int64    `json:"addressId,omitempty" pg:"address_id"`
 	}
 )
 

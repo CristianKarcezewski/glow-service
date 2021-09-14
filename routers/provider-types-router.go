@@ -3,8 +3,8 @@ package routers
 import "github.com/labstack/echo"
 
 const (
-	getProviderTypeByIdPath = "/providerType/:providerTypeId"
-	getProviderTypesAllPath = "/providerTypesType"
+	getProviderTypeByIdPath = "/provider-type/:providerTypeId"
+	getProviderTypesAllPath = "/provider-types"
 )
 
 type (
