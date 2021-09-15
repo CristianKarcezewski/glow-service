@@ -23,7 +23,7 @@ type (
 		// GetById() echo.HandlerFunc
 		// Update() echo.HandlerFunc
 		// Remove() echo.HandlerFunc
-		Router(echo *echo.Echo, register echo.HandlerFunc) *routers.CompaniesRouter
+		Router(echo *echo.Echo)
 	}
 
 	companiesPresenter struct {
@@ -226,12 +226,14 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 	}
 }
 
-func (cp *companiesPresenter) Router(echo *echo.Echo, register echo.HandlerFunc) *routers.CompaniesRouter {
-	return &routers.CompaniesRouter{
+func (cp *companiesPresenter) Router(echo *echo.Echo) {
+	router := routers.CompaniesRouter{
 		Echo:     echo,
-		Register: register,
+		Register: cp.Register(),
 		// GetById:  getById,
 		// Update:   update,
 		// Remove:   remove,
 	}
+
+	router.Wire()
 }

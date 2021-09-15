@@ -19,7 +19,7 @@ type (
 	ICitiesPresenter interface {
 		GetById() echo.HandlerFunc
 		GetByState() echo.HandlerFunc
-		Router(echo *echo.Echo, getById echo.HandlerFunc, getByState echo.HandlerFunc) *routers.CitiesRouter
+		Router(echo *echo.Echo)
 	}
 	citiesPresenter struct {
 		errorMessagesData *models.ServerErrorMessages
@@ -99,10 +99,12 @@ func (cc *citiesPresenter) GetByState() echo.HandlerFunc {
 	}
 }
 
-func (cc *citiesPresenter) Router(echo *echo.Echo, getById echo.HandlerFunc, getByState echo.HandlerFunc) *routers.CitiesRouter {
-	return &routers.CitiesRouter{
+func (cc *citiesPresenter) Router(echo *echo.Echo) {
+	router := routers.CitiesRouter{
 		Echo:       echo,
-		GetById:    getById,
-		GetByState: getByState,
+		GetById:    cc.GetById(),
+		GetByState: cc.GetByState(),
 	}
+
+	router.Wire()
 }

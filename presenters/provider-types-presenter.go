@@ -18,7 +18,7 @@ type (
 	IProviderTypesPresenter interface {
 		GetById() echo.HandlerFunc
 		GetAll() echo.HandlerFunc
-		Router(echo *echo.Echo, getById echo.HandlerFunc, getAll echo.HandlerFunc) *routers.ProviderTypesRouter
+		Router(echo *echo.Echo)
 	}
 	providerTypesPresenter struct {
 		errorMessagesData    *models.ServerErrorMessages
@@ -91,10 +91,12 @@ func (pp *providerTypesPresenter) GetAll() echo.HandlerFunc {
 	}
 }
 
-func (pp *providerTypesPresenter) Router(echo *echo.Echo, getById echo.HandlerFunc, getAll echo.HandlerFunc) *routers.ProviderTypesRouter {
-	return &routers.ProviderTypesRouter{
+func (pp *providerTypesPresenter) Router(echo *echo.Echo) {
+	router := routers.ProviderTypesRouter{
 		Echo:    echo,
-		GetById: getById,
-		GetAll:  getAll,
+		GetById: pp.GetById(),
+		GetAll:  pp.GetAll(),
 	}
+
+	router.Wire()
 }

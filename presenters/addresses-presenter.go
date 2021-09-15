@@ -27,17 +27,7 @@ type (
 		Update() echo.HandlerFunc
 		RemoveUserAddress() echo.HandlerFunc
 		RemoveCompanyAddress() echo.HandlerFunc
-		Router(
-			echo *echo.Echo,
-			getById echo.HandlerFunc,
-			getByUser echo.HandlerFunc,
-			getByCompany echo.HandlerFunc,
-			registerByUser echo.HandlerFunc,
-			registerByCompany echo.HandlerFunc,
-			update echo.HandlerFunc,
-			removeUserAddress echo.HandlerFunc,
-			removeCompanyAddress echo.HandlerFunc,
-		) *routers.AddressesRouter
+		Router(echo *echo.Echo)
 	}
 
 	addressesPresenter struct {
@@ -408,26 +398,18 @@ func (ap *addressesPresenter) RemoveCompanyAddress() echo.HandlerFunc {
 	}
 }
 
-func (ac *addressesPresenter) Router(
-	echo *echo.Echo,
-	getById echo.HandlerFunc,
-	getByUser echo.HandlerFunc,
-	getByCompany echo.HandlerFunc,
-	registerByUser echo.HandlerFunc,
-	registerByCompany echo.HandlerFunc,
-	update echo.HandlerFunc,
-	removeUserAddress echo.HandlerFunc,
-	removeCompanyAddress echo.HandlerFunc,
-) *routers.AddressesRouter {
-	return &routers.AddressesRouter{
+func (ac *addressesPresenter) Router(echo *echo.Echo) {
+	router := routers.AddressesRouter{
 		Echo:              echo,
-		GetById:           getById,
-		GetByUser:         getByUser,
-		GetByCompany:      getByCompany,
-		RegisterByUser:    registerByUser,
-		RegisterByCompany: registerByCompany,
-		Update:            update,
-		RemoveByUser:      removeUserAddress,
-		RemoveByCompany:   removeCompanyAddress,
+		GetById:           ac.GetById(),
+		GetByUser:         ac.GetByUser(),
+		GetByCompany:      ac.GetByCompany(),
+		RegisterByUser:    ac.RegisterByUser(),
+		RegisterByCompany: ac.RegisterByCompany(),
+		Update:            ac.Update(),
+		RemoveByUser:      ac.RemoveUserAddress(),
+		RemoveByCompany:   ac.RemoveCompanyAddress(),
 	}
+
+	router.Wire()
 }

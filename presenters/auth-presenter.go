@@ -17,7 +17,7 @@ type (
 		Login() echo.HandlerFunc
 		RefreshToken() echo.HandlerFunc
 		Register() echo.HandlerFunc
-		Router(echo *echo.Echo, login echo.HandlerFunc, refreshToken echo.HandlerFunc, register echo.HandlerFunc) *routers.AuthRouter
+		Router(echo *echo.Echo)
 	}
 
 	authPresenter struct {
@@ -121,16 +121,13 @@ func (ac *authPresenter) Register() echo.HandlerFunc {
 }
 
 // Router is a function that returns a router of authPresenter
-func (ac *authPresenter) Router(
-	echo *echo.Echo,
-	login echo.HandlerFunc,
-	refreshToken echo.HandlerFunc,
-	register echo.HandlerFunc,
-) *routers.AuthRouter {
-	return &routers.AuthRouter{
+func (ac *authPresenter) Router(echo *echo.Echo) {
+	router := routers.AuthRouter{
 		Echo:         echo,
-		Login:        login,
-		RefreshToken: refreshToken,
-		Register:     register,
+		Login:        ac.Login(),
+		RefreshToken: ac.RefreshToken(),
+		Register:     ac.Register(),
 	}
+
+	router.Wire()
 }

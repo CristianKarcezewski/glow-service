@@ -12,7 +12,7 @@ import (
 type (
 	IStatesPresenter interface {
 		GetAll() echo.HandlerFunc
-		Router(echo *echo.Echo, getAll echo.HandlerFunc) *routers.StatesRouter
+		Router(echo *echo.Echo)
 	}
 	statesPresenter struct {
 		errorMessagesData *models.ServerErrorMessages
@@ -51,9 +51,11 @@ func (sc *statesPresenter) GetAll() echo.HandlerFunc {
 	}
 }
 
-func (sc *statesPresenter) Router(echo *echo.Echo, getAll echo.HandlerFunc) *routers.StatesRouter {
-	return &routers.StatesRouter{
+func (sc *statesPresenter) Router(echo *echo.Echo) {
+	router := routers.StatesRouter{
 		Echo:   echo,
-		GetAll: getAll,
+		GetAll: sc.GetAll(),
 	}
+
+	router.Wire()
 }
