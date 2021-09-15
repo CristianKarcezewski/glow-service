@@ -12,8 +12,8 @@ const (
 
 type (
 	ICompanyAddressesRepository interface {
-		Register(log *models.StackLog, companyAddress *dao.CompanyAddresses) (*dao.CompanyAddresses, error)
-		GetByCompanyId(log *models.StackLog, companyId int64) (*[]dao.CompanyAddresses, error)
+		Register(log *models.StackLog, companyAddress *dao.CompanyAddress) (*dao.CompanyAddress, error)
+		GetByCompanyId(log *models.StackLog, companyId int64) (*[]dao.CompanyAddress, error)
 		Remove(log *models.StackLog, addressId int64) error
 	}
 	companyAddressesRepository struct {
@@ -25,7 +25,7 @@ func NewCompanyAddressesRepository(database server.IDatabaseHandler) ICompanyAdd
 	return &companyAddressesRepository{database}
 }
 
-func (uar *companyAddressesRepository) Register(log *models.StackLog, companyAddress *dao.CompanyAddresses) (*dao.CompanyAddresses, error) {
+func (uar *companyAddressesRepository) Register(log *models.StackLog, companyAddress *dao.CompanyAddress) (*dao.CompanyAddress, error) {
 	log.AddStep("CompanyAddressRepository-Register")
 	err := uar.database.Insert(repositoryCompanyAddressesTable, companyAddress)
 	if err != nil {
@@ -34,9 +34,9 @@ func (uar *companyAddressesRepository) Register(log *models.StackLog, companyAdd
 	return companyAddress, nil
 }
 
-func (uar *companyAddressesRepository) GetByCompanyId(log *models.StackLog, companyId int64) (*[]dao.CompanyAddresses, error) {
+func (uar *companyAddressesRepository) GetByCompanyId(log *models.StackLog, companyId int64) (*[]dao.CompanyAddress, error) {
 	log.AddStep("UserAddressesRepository-GetByUserId")
-	var companyAddresses []dao.CompanyAddresses
+	var companyAddresses []dao.CompanyAddress
 	err := uar.database.Select(repositoryUserAddressesTable, &companyAddresses, "company_id", companyId)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (uar *companyAddressesRepository) GetByCompanyId(log *models.StackLog, comp
 
 func (uar *companyAddressesRepository) Remove(log *models.StackLog, addressId int64) error {
 	log.AddStep("CompanyAddressesRepository-Remove")
-	var daoUA dao.CompanyAddresses
+	var daoUA dao.CompanyAddress
 	err := uar.database.Remove(repositoryUserAddressesTable, &daoUA, "address_id", addressId)
 	if err != nil {
 		return err

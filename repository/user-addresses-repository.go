@@ -12,8 +12,8 @@ const (
 
 type (
 	IUserAddressesRepository interface {
-		Register(log *models.StackLog, userAddress *dao.UserAddresses) (*dao.UserAddresses, error)
-		GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddresses, error)
+		Register(log *models.StackLog, userAddress *dao.UserAddress) (*dao.UserAddress, error)
+		GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddress, error)
 		Remove(log *models.StackLog, addressId int64) error
 	}
 	userAddressesRepository struct {
@@ -25,7 +25,7 @@ func NewUserAddressesRepository(database server.IDatabaseHandler) IUserAddresses
 	return &userAddressesRepository{database}
 }
 
-func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *dao.UserAddresses) (*dao.UserAddresses, error) {
+func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *dao.UserAddress) (*dao.UserAddress, error) {
 	log.AddStep("UserAddressRepository-Register")
 	err := uar.database.Insert(repositoryUserAddressesTable, userAddress)
 	if err != nil {
@@ -34,9 +34,9 @@ func (uar *userAddressesRepository) Register(log *models.StackLog, userAddress *
 	return userAddress, nil
 }
 
-func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddresses, error) {
+func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int64) (*[]dao.UserAddress, error) {
 	log.AddStep("UserAddressesRepository-GetByUserId")
-	var userAddresses []dao.UserAddresses
+	var userAddresses []dao.UserAddress
 	err := uar.database.Select(repositoryUserAddressesTable, &userAddresses, "user_id", userId)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (uar *userAddressesRepository) GetByUserId(log *models.StackLog, userId int
 
 func (uar *userAddressesRepository) Remove(log *models.StackLog, addressId int64) error {
 	log.AddStep("UserAddressesRepository-Remove")
-	var daoUa dao.UserAddresses
+	var daoUa dao.UserAddress
 	err := uar.database.Remove(repositoryUserAddressesTable, &daoUa, "address_id", addressId)
 	if err != nil {
 		return err

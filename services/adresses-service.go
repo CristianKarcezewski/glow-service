@@ -49,6 +49,84 @@ func (as *addressesService) GetById(log *models.StackLog, addressId int64) (*mod
 	return result.ToModel(), nil
 }
 
+func (as *addressesService) GetByUser(log *models.StackLog, userId int64) (*[]models.Address, error) {
+	log.AddStep("AddressService-FindByUser")
+	var addr []models.Address
+
+	userAddresses, userAddressesError := as.userAddressesRepository.GetByUserId(log, userId)
+	if userAddressesError != nil {
+		return nil, userAddressesError
+	}
+
+	if len(*userAddresses) == 0 {
+		return &addr, nil
+	}
+
+	var addressesIds []int64
+	for i := range *userAddresses {
+		addressesIds = append(addressesIds, (*userAddresses)[i].AddressId)
+	}
+
+	result, resultErr := as.addressRepository.FindAllAddressesIds(log, addressesIds)
+	if resultErr != nil {
+		return nil, resultErr
+	}
+
+	for i := range *result {
+		addr = append(addr, *(*result)[i].ToModel())
+	}
+
+	var locationError error
+	wg := &sync.WaitGroup{}
+	wg.Add(len(addr) * 2)
+	for i := range addr {
+		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
+	}
+	wg.Wait()
+
+	return &addr, nil
+}
+
+func (as *addressesService) GetByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error) {
+	log.AddStep("AddressService-FindByCompany")
+	var addr []models.Address
+
+	companyAddresses, companyAddressesError := as.companyAddressesRepository.GetByCompanyId(log, companyId)
+	if companyAddressesError != nil {
+		return nil, companyAddressesError
+	}
+
+	if len(*companyAddresses) == 0 {
+		return &addr, nil
+	}
+
+	var addressesIds []int64
+	for i := range *companyAddresses {
+		addressesIds = append(addressesIds, (*companyAddresses)[i].AddressId)
+	}
+
+	result, resultErr := as.addressRepository.FindAllAddressesIds(log, addressesIds)
+	if resultErr != nil {
+		return nil, resultErr
+	}
+
+	for i := range *result {
+		addr = append(addr, *(*result)[i].ToModel())
+	}
+
+	var locationError error
+	wg := &sync.WaitGroup{}
+	wg.Add(len(addr) * 2)
+	for i := range addr {
+		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
+	}
+	wg.Wait()
+
+	return &addr, nil
+}
+
 func (as *addressesService) RegisterByUser(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error) {
 	log.AddStep("AddressService-Register")
 
@@ -121,84 +199,6 @@ func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId in
 	}
 
 	return addressResul.ToModel(), nil
-}
-
-func (as *addressesService) FindByUser(log *models.StackLog, userId int64) (*[]models.Address, error) {
-	log.AddStep("AddressService-FindByUser")
-	var addr []models.Address
-
-	userAddresses, userAddressesError := as.userAddressesRepository.GetByUserId(log, userId)
-	if userAddressesError != nil {
-		return nil, userAddressesError
-	}
-
-	if len(*userAddresses) == 0 {
-		return &addr, nil
-	}
-
-	var addressesIds []int64
-	for i := range *userAddresses {
-		addressesIds = append(addressesIds, (*userAddresses)[i].AddressId)
-	}
-
-	result, resultErr := as.addressRepository.FindAllAddressesIds(log, addressesIds)
-	if resultErr != nil {
-		return nil, resultErr
-	}
-
-	for i := range *result {
-		addr = append(addr, *(*result)[i].ToModel())
-	}
-
-	var locationError error
-	wg := &sync.WaitGroup{}
-	wg.Add(len(addr) * 2)
-	for i := range addr {
-		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
-		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
-	}
-	wg.Wait()
-
-	return &addr, nil
-}
-
-func (as *addressesService) FindByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error) {
-	log.AddStep("AddressService-FindByCompany")
-	var addr []models.Address
-
-	companyAddresses, companyAddressesError := as.companyAddressesRepository.GetByCompanyId(log, companyId)
-	if companyAddressesError != nil {
-		return nil, companyAddressesError
-	}
-
-	if len(*companyAddresses) == 0 {
-		return &addr, nil
-	}
-
-	var addressesIds []int64
-	for i := range *companyAddresses {
-		addressesIds = append(addressesIds, (*companyAddresses)[i].AddressId)
-	}
-
-	result, resultErr := as.addressRepository.FindAllAddressesIds(log, addressesIds)
-	if resultErr != nil {
-		return nil, resultErr
-	}
-
-	for i := range *result {
-		addr = append(addr, *(*result)[i].ToModel())
-	}
-
-	var locationError error
-	wg := &sync.WaitGroup{}
-	wg.Add(len(addr) * 2)
-	for i := range addr {
-		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
-		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
-	}
-	wg.Wait()
-
-	return &addr, nil
 }
 
 func (as *addressesService) Update(log *models.StackLog, address *models.Address) (*models.Address, error) {

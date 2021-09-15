@@ -3,32 +3,37 @@ package routers
 import "github.com/labstack/echo"
 
 const (
-	registerAddressUserPath    = "/user/address/register"
-	registerAddressCompanyPath = "/company/address/register"
-	getAddressByIdPath         = "/address/:addressId"
-	getAddressesByUserPath     = "/user/addresses"
-	getAddressesByCompanyPath  = "/company/addresses"
-	updateAddressPath          = "/address"
-	removeAddressPath          = "/address/:addressId"
+	pathGetById           = "addresses/:addressId"
+	pathGetByUser         = "addresses/user"
+	pathGetByCompany      = "addresses/company"
+	pathRegisterByUser    = "addresses/user"
+	pathRegisterByCompany = "addresses/company"
+	pathUpdate            = "addresses"
+	pathRemoveByUser      = "addresses/user/:addressId"
+	pathRemoveByCompany   = "addresses/company/:addressId"
 )
 
 type (
 	AddressesRouter struct {
-		Echo         *echo.Echo
-		Register     echo.HandlerFunc
-		GetById      echo.HandlerFunc
-		GetByUser    echo.HandlerFunc
-		GetByCompany echo.HandlerFunc
-		Update       echo.HandlerFunc
-		Remove       echo.HandlerFunc
+		Echo              *echo.Echo
+		GetById           echo.HandlerFunc
+		GetByUser         echo.HandlerFunc
+		GetByCompany      echo.HandlerFunc
+		RegisterByUser    echo.HandlerFunc
+		RegisterByCompany echo.HandlerFunc
+		Update            echo.HandlerFunc
+		RemoveByUser      echo.HandlerFunc
+		RemoveByCompany   echo.HandlerFunc
 	}
 )
 
 func (ar *AddressesRouter) Wire() {
-	ar.Echo.POST(registerAddressUserPath, ar.Register)
-	ar.Echo.POST(registerAddressCompanyPath, ar.Register)
-	ar.Echo.GET(getAddressByIdPath, ar.GetById)
-	ar.Echo.GET(getAddressesByUserPath, ar.GetByUser)
-	ar.Echo.PUT(updateAddressPath, ar.Update)
-	ar.Echo.DELETE(removeAddressPath, ar.Remove)
+	ar.Echo.GET(pathGetById, ar.GetById)
+	ar.Echo.GET(pathGetByUser, ar.GetByUser)
+	ar.Echo.GET(pathGetByCompany, ar.GetByCompany)
+	ar.Echo.POST(pathRegisterByUser, ar.RegisterByUser)
+	ar.Echo.POST(pathRegisterByCompany, ar.RegisterByCompany)
+	ar.Echo.PUT(pathUpdate, ar.Update)
+	ar.Echo.DELETE(pathRemoveByUser, ar.RemoveByUser)
+	ar.Echo.DELETE(pathRemoveByCompany, ar.RegisterByCompany)
 }

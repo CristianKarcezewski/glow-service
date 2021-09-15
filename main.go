@@ -31,6 +31,7 @@ func main() {
 }
 
 func initApplication(config *server.Configuration, echo *echo.Echo) {
+
 	// Start repositories
 	userRepository := repository.NewUserRepository(config.DatabaseHandler)
 	hashRepository := repository.NewHashRepository(config.DatabaseHandler)
@@ -63,7 +64,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	authPresenter.Router(echo, authPresenter.Login(), authPresenter.RefreshToken(), authPresenter.Register()).Wire()
 	statesPresenter.Router(echo, statesPresenter.GetAll()).Wire()
 	citiesPresenter.Router(echo, citiesPresenter.GetById(), citiesPresenter.GetByState()).Wire()
-	addressesPresenter.Router(echo, addressesPresenter.Register(), addressesPresenter.GetById(), addressesPresenter.GetByUser(),addressesPresenter.GetByCompany(), addressesPresenter.Update(), addressesPresenter.Remove()).Wire()
+	addressesPresenter.Router(echo, addressesPresenter.GetById(), addressesPresenter.GetByUser(), addressesPresenter.GetByCompany(), addressesPresenter.RegisterByUser(), addressesPresenter.RegisterByCompany(), addressesPresenter.Update(), addressesPresenter.RemoveUserAddress(), addressesPresenter.RemoveCompanyAddress()).Wire()
 	companiesPresenter.Router(echo, companiesPresenter.Register()).Wire()
 	providerTypesPresenter.Router(echo, providerTypesPresenter.GetById(), providerTypesPresenter.GetAll()).Wire()
 }
