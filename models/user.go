@@ -15,6 +15,9 @@ type (
 	}
 
 	Auth struct {
+		UserId        int64  `json:"userId,omitempty"`
+		UserGroupId   int64  `json:"userGroupId,omitempty"`
+		Expirate      string `json:"expirate,omitempty"`
 		Authorization string `json:"authorization,omitempty"`
 	}
 )

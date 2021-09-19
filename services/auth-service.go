@@ -15,53 +15,54 @@ const (
 
 type (
 	IAuthService interface {
-		Login(log *models.StackLog, email, password *string) (*models.Auth, error)
-		Register(log *models.StackLog, user *models.User) (*models.Auth, error)
+		// Login(log *models.StackLog, email, password *string) (*models.Auth, error)
 		VerifyToken(log *models.StackLog, token string) (*models.User, error)
+		GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error)
 	}
-	authService struct {
-		usersService IUsersService
-	}
+	authService struct{}
 )
 
-func NewAuthService(usersService IUsersService) IAuthService {
-	return &authService{usersService}
+func NewAuthService() IAuthService {
+	return &authService{}
 }
 
-func (auth *authService) Login(log *models.StackLog, email, password *string) (*models.Auth, error) {
-	log.AddStep("AuthService-Login")
+// func (auth *authService) Login(log *models.StackLog, email, password *string) (*models.Auth, error) {
+// 	log.AddStep("AuthService-Login")
 
-	user, userErr := auth.usersService.VerifyUser(log, email, password)
-	if userErr != nil {
-		return nil, userErr
-	}
+// 	user, userErr := auth.usersService.VerifyUser(log, email, password)
+// 	if userErr != nil {
+// 		return nil, userErr
+// 	}
 
-	log.AddInfo("Generating token")
-	token, tokenErr := auth.generateToken(user)
-	if tokenErr != nil {
-		return nil, tokenErr
-	}
+// 	log.AddInfo("Generating token")
+// 	authModel, authErr := auth.GenerateToken(user)
+// 	if authErr != nil {
+// 		return nil, authErr
+// 	}
 
-	return &models.Auth{Authorization: token}, nil
-}
+// 	authModel.UserId = user.UserId
+// 	authModel.UserGroupId = user.UserGroupId
 
-func (auth *authService) Register(log *models.StackLog, user *models.User) (*models.Auth, error) {
-	log.AddStep("AuthService-Register")
+// 	return authModel, nil
+// }
 
-	user, userErr := auth.usersService.Register(log, user)
-	if userErr != nil {
-		return nil, userErr
-	}
+// func (auth *authService) Register(log *models.StackLog, user *models.User) (*models.Auth, error) {
+// 	log.AddStep("AuthService-Register")
 
-	log.AddInfo("Generating token")
-	token, tokenErr := auth.generateToken(user)
-	if tokenErr != nil {
-		return nil, tokenErr
-	}
+// 	user, userErr := auth.usersService.Register(log, user)
+// 	if userErr != nil {
+// 		return nil, userErr
+// 	}
 
-	return &models.Auth{Authorization: token}, nil
+// 	log.AddInfo("Generating token")
+// 	token, tokenErr := auth.generateToken(user)
+// 	if tokenErr != nil {
+// 		return nil, tokenErr
+// 	}
 
-}
+// 	return &models.Auth{Authorization: token}, nil
+
+// }
 
 func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*models.User, error) {
 
@@ -106,7 +107,10 @@ func (auth *authService) compareTokenDate(date time.Time) bool {
 	return diff
 }
 
-func (auth *authService) generateToken(user *models.User) (string, error) {
+func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error) {
+	log.AddStep("AuthService-GenerateToken")
+
+	dateTime := functions.DateToString()
 
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -117,8 +121,18 @@ func (auth *authService) generateToken(user *models.User) (string, error) {
 	claims["userGroupId"] = user.UserGroupId
 	claims["name"] = user.UserName
 	claims["email"] = user.Email
-	claims["exp"] = functions.DateToString()
+	claims["exp"] = dateTime
 
 	// Generate encoded token and send it as response.
-	return token.SignedString([]byte(tokenSecret))
+	tokenStr, err := token.SignedString([]byte(tokenSecret))
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.Auth{
+		UserId:        user.UserId,
+		UserGroupId:   user.UserGroupId,
+		Expirate:      dateTime,
+		Authorization: tokenStr,
+	}, nil
 }

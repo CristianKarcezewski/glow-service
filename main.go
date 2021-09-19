@@ -44,8 +44,8 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 
 	// Start services
-	userService := services.NewUserService(userRepository, hashRepository)
-	authService := services.NewAuthService(userService)
+	authService := services.NewAuthService()
+	userService := services.NewUserService(userRepository, hashRepository, authService)
 	statesService := services.NewStateService(statesRepository)
 	citiesService := services.NewCitiesService(citiesRepository)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, statesService, citiesService)
@@ -54,6 +54,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
+	userPresenter := presenters.NewUserPresenter(&config.ServerErrorMessages, userService)
 	statesPresenter := presenters.NewStatesPresenter(&config.ServerErrorMessages, statesService)
 	citiesPresenter := presenters.NewCitiesPresenter(&config.ServerErrorMessages, citiesService)
 	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService)
@@ -62,6 +63,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 
 	// Start Routers
 	authPresenter.Router(echo)
+	userPresenter.Router(echo)
 	statesPresenter.Router(echo)
 	citiesPresenter.Router(echo)
 	addressesPresenter.Router(echo)

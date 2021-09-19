@@ -5,6 +5,7 @@ import (
 	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/models/dao"
+	"glow-service/models/dto"
 	"glow-service/repository"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,22 +13,39 @@ import (
 
 type (
 	IUsersService interface {
-		Register(log *models.StackLog, user *models.User) (*models.User, error)
-		FindById(log *models.StackLog, userId *int64) (*models.User, error)
+		Login(log *models.StackLog, auth *dto.AuthData) (*models.Auth, error)
+		Register(log *models.StackLog, user *models.User) (*models.Auth, error)
+		Select(log *models.StackLog, userId *int64) (*models.User, error)
 		VerifyUser(log *models.StackLog, email, password *string) (*models.User, error)
+		Update(log *models.StackLog, user *models.User) (*models.User, error)
 	}
 
 	usersService struct {
 		userRepository repository.IUserRepository
 		hashRepository repository.IHashRepository
+		authService    IAuthService
 	}
 )
 
-func NewUserService(userRepository repository.IUserRepository, hashRepository repository.IHashRepository) IUsersService {
-	return &usersService{userRepository, hashRepository}
+func NewUserService(userRepository repository.IUserRepository, hashRepository repository.IHashRepository, authService IAuthService) IUsersService {
+	return &usersService{userRepository, hashRepository, authService}
 }
 
-func (us *usersService) Register(log *models.StackLog, user *models.User) (*models.User, error) {
+func (us *usersService) Login(log *models.StackLog, auth *dto.AuthData) (*models.Auth, error) {
+	log.AddStep("UserService-Login")
+	user, userErr := us.VerifyUser(log, &auth.Email, &auth.Password)
+	if userErr != nil {
+		return nil, userErr
+	}
+
+	authData, authErr := us.authService.GenerateToken(log, user)
+	if authErr != nil {
+		return nil, authErr
+	}
+	return authData, nil
+}
+
+func (us *usersService) Register(log *models.StackLog, user *models.User) (*models.Auth, error) {
 	log.AddStep("UserService-Register")
 
 	log.AddInfo("Generating default user data")
@@ -56,14 +74,22 @@ func (us *usersService) Register(log *models.StackLog, user *models.User) (*mode
 		return nil, saveHashErr
 	}
 
-	return newUser.ToModel(), nil
+	auth, authErr := us.authService.GenerateToken(log, newUser.ToModel())
+	if authErr != nil {
+		return nil, authErr
+	}
+
+	return auth, nil
 }
 
-func (us *usersService) FindById(log *models.StackLog, userId *int64) (*models.User, error) {
+func (us *usersService) Select(log *models.StackLog, userId *int64) (*models.User, error) {
 	log.AddStep("UserService-FindById")
 
-	us.userRepository.FindById(log, userId)
-	return nil, nil
+	user, err := us.userRepository.Select(log, "id", userId)
+	if err != nil {
+		return nil, err
+	}
+	return user.ToModel(), nil
 }
 
 func (us *usersService) VerifyUser(log *models.StackLog, email, password *string) (*models.User, error) {
@@ -83,6 +109,15 @@ func (us *usersService) VerifyUser(log *models.StackLog, email, password *string
 		return nil, errors.New("user not recgonized")
 	}
 	return user.ToModel(), nil
+}
+
+func (us *usersService) Update(log *models.StackLog, user *models.User) (*models.User, error) {
+	log.AddStep("UserService-Update")
+	daoUser, err := us.userRepository.Update(log, dao.NewDAOUser(user))
+	if err != nil {
+		return nil, err
+	}
+	return daoUser.ToModel(), nil
 }
 
 func (us *usersService) hashPassword(password *string) (*dao.Hash, error) {

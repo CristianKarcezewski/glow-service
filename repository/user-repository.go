@@ -14,8 +14,8 @@ const (
 type (
 	IUserRepository interface {
 		Insert(log *models.StackLog, user *dao.User) (*dao.User, error)
-		FindById(log *models.StackLog, userId *int64) (*dao.User, error)
 		Select(log *models.StackLog, key string, value interface{}) (*dao.User, error)
+		Update(log *models.StackLog, user *dao.User) (*dao.User, error)
 	}
 	userRepository struct {
 		database server.IDatabaseHandler
@@ -50,16 +50,12 @@ func (ur *userRepository) Select(log *models.StackLog, key string, value interfa
 	return &user, nil
 }
 
-func (ur *userRepository) FindById(log *models.StackLog, userId *int64) (*dao.User, error) {
-	log.AddStep("UserRepository-FindById")
+func (ur *userRepository) Update(log *models.StackLog, user *dao.User) (*dao.User, error) {
+	log.AddStep("UserRepository-Update")
 
-	// var user models.User
-	// us, err := ur.database.FindById(repositoryUserTable, userId, &user)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if us != nil {
-	// 	fmt.Println(us)
-	// }
-	return nil, nil
+	err := ur.database.Update(repositoryUserTable, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
