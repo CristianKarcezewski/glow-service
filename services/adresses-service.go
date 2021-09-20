@@ -23,8 +23,7 @@ type (
 		addressRepository          repository.IAddressesRepository
 		userAddressesRepository    repository.IUserAddressesRepository
 		companyAddressesRepository repository.ICompanyAddressesRepository
-		statesService              IStatesService
-		citiesService              ICitiesService
+		locationService            ILocationService
 	}
 )
 
@@ -32,10 +31,14 @@ func NewAddressService(
 	addressRepository repository.IAddressesRepository,
 	userAddressesRepository repository.IUserAddressesRepository,
 	companyAddressesRepository repository.ICompanyAddressesRepository,
-	statesService IStatesService,
-	citiesService ICitiesService,
+	locationService ILocationService,
 ) IAddressesService {
-	return &addressesService{addressRepository, userAddressesRepository, companyAddressesRepository, statesService, citiesService}
+	return &addressesService{
+		addressRepository,
+		userAddressesRepository,
+		companyAddressesRepository,
+		locationService,
+	}
 }
 
 func (as *addressesService) GetById(log *models.StackLog, addressId int64) (*models.Address, error) {
@@ -80,7 +83,7 @@ func (as *addressesService) GetByUser(log *models.StackLog, userId int64) (*[]mo
 	wg := &sync.WaitGroup{}
 	wg.Add(len(addr) * 2)
 	for i := range addr {
-		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findStateAsync(wg, log, addr[i].StateUF, &addr[i].State, &locationError)
 		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
 	}
 	wg.Wait()
@@ -119,7 +122,7 @@ func (as *addressesService) GetByCompany(log *models.StackLog, companyId int64) 
 	wg := &sync.WaitGroup{}
 	wg.Add(len(addr) * 2)
 	for i := range addr {
-		go as.findStateAsync(wg, log, addr[i].StateId, &addr[i].State, &locationError)
+		go as.findStateAsync(wg, log, addr[i].StateUF, &addr[i].State, &locationError)
 		go as.findCityAsync(wg, log, addr[i].CityId, &addr[i].City, &locationError)
 	}
 	wg.Wait()
@@ -134,7 +137,7 @@ func (as *addressesService) RegisterByUser(log *models.StackLog, userId int64, a
 	var locationErr error
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	go as.findStateAsync(wg, log, address.StateId, &address.State, &locationErr)
+	go as.findStateAsync(wg, log, address.StateUF, &address.State, &locationErr)
 	go as.findCityAsync(wg, log, address.CityId, &address.City, &locationErr)
 	wg.Wait()
 
@@ -157,11 +160,12 @@ func (as *addressesService) RegisterByUser(log *models.StackLog, userId int64, a
 
 	_, userAddressErr := as.userAddressesRepository.Register(log, &userAddress)
 	if userAddressErr != nil {
-		//TODO: Remove previous registered address
+		go as.addressRepository.Remove(log, addressResul.AddressId)
 		return nil, userAddressErr
 	}
 
-	return addressResul.ToModel(), nil
+	address.AddressId = daoAddress.AddressId
+	return address, nil
 }
 
 func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId int64, address *models.Address) (*models.Address, error) {
@@ -171,7 +175,7 @@ func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId in
 	var locationErr error
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	go as.findStateAsync(wg, log, address.StateId, &address.State, &locationErr)
+	go as.findStateAsync(wg, log, address.StateUF, &address.State, &locationErr)
 	go as.findCityAsync(wg, log, address.CityId, &address.City, &locationErr)
 	wg.Wait()
 
@@ -194,7 +198,7 @@ func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId in
 
 	_, userAddressErr := as.companyAddressesRepository.Register(log, &companyAddress)
 	if userAddressErr != nil {
-		//TODO: Remove previous registered address
+		go as.addressRepository.Remove(log, addressResul.AddressId)
 		return nil, userAddressErr
 	}
 
@@ -225,11 +229,16 @@ func (as *addressesService) RemoveUserAddress(log *models.StackLog, addressId in
 func (as *addressesService) RemoveCompanyAddress(log *models.StackLog, addressId int64) error {
 	log.AddStep("AddressService-Remove")
 
+	companyAddrErr := as.companyAddressesRepository.Remove(log, addressId)
+	if companyAddrErr != nil {
+		return companyAddrErr
+	}
+
 	return as.addressRepository.Remove(log, addressId)
 }
 
-func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.StackLog, stateId int64, state *models.State, err *error) {
-	st, e := as.statesService.GetById(log, stateId)
+func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.StackLog, stateUF string, state *models.State, err *error) {
+	st, e := as.locationService.FindStateByUf(log, stateUF)
 	if e != nil {
 		*err = e
 	} else {
@@ -241,12 +250,11 @@ func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.Stack
 }
 
 func (as *addressesService) findCityAsync(wg *sync.WaitGroup, log *models.StackLog, cityId int64, city *models.City, err *error) {
-	ct, e := as.citiesService.GetById(log, cityId)
+	ct, e := as.locationService.FindCityById(log, cityId)
 	if e != nil {
 		*err = e
 	} else {
 		city.CityId = ct.CityId
-		city.StateId = ct.CityId
 		city.Name = ct.Name
 	}
 	wg.Done()

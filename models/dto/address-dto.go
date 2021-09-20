@@ -7,9 +7,9 @@ type (
 		AddressId      int64  `json:"addressId"`
 		Name           string `json:"name" validate:"required"`
 		PostalCode     string `json:"postalCode,omitempty"`
-		StateId        int64  `json:"stateId" validate:"required"`
+		StateUF        string `json:"stateUf" validate:"required"`
 		CityId         int64  `json:"cityId" validate:"required"`
-		Neighborhood   string `json:"neighborhood" validate:"required"`
+		District       string `json:"district" validate:"required"`
 		Street         string `json:"street" validate:"required"`
 		Number         int64  `json:"number" validate:"required"`
 		Complement     string `json:"complement,omitempty"`
@@ -24,9 +24,9 @@ func (add *Address) ToModel() *models.Address {
 		AddressId:      add.AddressId,
 		Name:           add.Name,
 		PostalCode:     add.PostalCode,
-		StateId:        add.StateId,
+		StateUF:        add.StateUF,
 		CityId:         add.CityId,
-		Neighborhood:   add.Neighborhood,
+		District:       add.District,
 		Street:         add.Street,
 		Number:         add.Number,
 		Complement:     add.Complement,

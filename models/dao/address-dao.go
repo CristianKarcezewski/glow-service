@@ -8,9 +8,9 @@ type (
 		AddressId      int64    `json:"addressId:omitempty" pg:"id,pk"`
 		Name           string   `json:"name,omitempty" pg:"name"`
 		PostalCode     string   `json:"postalCode,omitempty" pg:"postal_code"`
-		StateId        int64    `json:"state,omitempty" pg:"state_id"`
+		StateUF        string   `json:"state,omitempty" pg:"state_uf"`
 		CityId         int64    `json:"city,omitempty" pg:"city_id"`
-		Neighborhood   string   `json:"neighborhood,omitempty" pg:"neighboorhood"`
+		District       string   `json:"district,omitempty" pg:"district"`
 		Street         string   `json:"street,omitempty" pg:"street"`
 		Number         int64    `json:"number,omitempty" pg:"number"`
 		Complement     string   `json:"complement,omitempty" pg:"complement"`
@@ -40,9 +40,9 @@ func NewDaoAddress(add *models.Address) *Address {
 		AddressId:      add.AddressId,
 		Name:           add.Name,
 		PostalCode:     add.PostalCode,
-		StateId:        add.StateId,
+		StateUF:        add.StateUF,
 		CityId:         add.CityId,
-		Neighborhood:   add.Neighborhood,
+		District:       add.District,
 		Street:         add.Street,
 		Number:         add.Number,
 		Complement:     add.Complement,
@@ -58,9 +58,9 @@ func (add *Address) ToModel() *models.Address {
 		AddressId:      add.AddressId,
 		Name:           add.Name,
 		PostalCode:     add.PostalCode,
-		StateId:        add.StateId,
+		StateUF:        add.StateUF,
 		CityId:         add.CityId,
-		Neighborhood:   add.Neighborhood,
+		District:       add.District,
 		Street:         add.Street,
 		Number:         add.Number,
 		Complement:     add.Complement,

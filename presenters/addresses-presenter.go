@@ -49,7 +49,7 @@ func (ac *addressesPresenter) GetById() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathParamCityId), 10, 64)
+		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
 		log.AddStep("AddressesPresenter-GetById")
 
 		context.Request().Body.Close()

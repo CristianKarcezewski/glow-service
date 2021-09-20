@@ -5,9 +5,9 @@ type (
 		AddressId      int64  `json:"addressId,omitempty"`
 		Name           string `json:"name,omitempty"`
 		PostalCode     string `json:"postalCode,omitempty"`
-		StateId        int64  `json:"stateId,omitempty"`
+		StateUF        string `json:"stateUf,omitempty"`
 		CityId         int64  `json:"cityId,omitempty"`
-		Neighborhood   string `json:"neighborhood,omitempty"`
+		District       string `json:"district,omitempty"`
 		Street         string `json:"street,omitempty"`
 		Number         int64  `json:"number,omitempty"`
 		Complement     string `json:"complement,omitempty"`

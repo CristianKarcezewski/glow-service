@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"glow-service/common/functions"
+	"glow-service/gateways"
 	"glow-service/presenters"
 	"glow-service/repository"
 	"glow-service/server"
@@ -35,28 +36,27 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	// Start repositories
 	userRepository := repository.NewUserRepository(config.DatabaseHandler)
 	hashRepository := repository.NewHashRepository(config.DatabaseHandler)
-	statesRepository := repository.NewStateRepository(config.DatabaseHandler)
-	citiesRepository := repository.NewCitiesRepository(config.DatabaseHandler)
 	addressesRepository := repository.NewAddressesRepository(config.DatabaseHandler)
 	userAddressesRepository := repository.NewUserAddressesRepository(config.DatabaseHandler)
 	companyAddressesRepository := repository.NewCompanyAddressesRepository(config.DatabaseHandler)
 	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 
+	// Start gateways
+	locationGateway := gateways.NewLocationsGateway()
+
 	// Start services
 	authService := services.NewAuthService()
 	userService := services.NewUserService(userRepository, hashRepository, authService)
-	statesService := services.NewStateService(statesRepository)
-	citiesService := services.NewCitiesService(citiesRepository)
-	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, statesService, citiesService)
+	locationService := services.NewLocationService(locationGateway)
+	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
 	companiesService := services.NewCompanyService(companiesRepository)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
 	userPresenter := presenters.NewUserPresenter(&config.ServerErrorMessages, userService)
-	statesPresenter := presenters.NewStatesPresenter(&config.ServerErrorMessages, statesService)
-	citiesPresenter := presenters.NewCitiesPresenter(&config.ServerErrorMessages, citiesService)
+	locationPresenter := presenters.NewLocationPresenter(&config.ServerErrorMessages, authService, locationService)
 	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService)
 	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages, authService, companiesService)
 	providerTypesPresenter := presenters.NewProviderTypePresenter(&config.ServerErrorMessages, providerTypesService)
@@ -64,8 +64,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	// Start Routers
 	authPresenter.Router(echo)
 	userPresenter.Router(echo)
-	statesPresenter.Router(echo)
-	citiesPresenter.Router(echo)
+	locationPresenter.Router(echo)
 	addressesPresenter.Router(echo)
 	companiesPresenter.Router(echo)
 	providerTypesPresenter.Router(echo)
