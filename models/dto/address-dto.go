@@ -4,7 +4,7 @@ import "glow-service/models"
 
 type (
 	Address struct {
-		AddressId      int64  `json:"addressId:omitempty"`
+		AddressId      int64  `json:"addressId"`
 		Name           string `json:"name" validate:"required"`
 		PostalCode     string `json:"postalCode,omitempty"`
 		StateId        int64  `json:"stateId" validate:"required"`

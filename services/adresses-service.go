@@ -214,6 +214,11 @@ func (as *addressesService) Update(log *models.StackLog, address *models.Address
 func (as *addressesService) RemoveUserAddress(log *models.StackLog, addressId int64) error {
 	log.AddStep("AddressService-Remove")
 
+	userAddrErr := as.userAddressesRepository.Remove(log, addressId)
+	if userAddrErr != nil {
+		return userAddrErr
+	}
+
 	return as.addressRepository.Remove(log, addressId)
 }
 

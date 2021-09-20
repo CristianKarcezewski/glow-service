@@ -3,13 +3,15 @@ package routers
 import "github.com/labstack/echo"
 
 const (
-	pathGetById           = "addresses/:addressId"
-	pathGetByUser         = "addresses/user"
+	pathGetById = "addresses/:addressId"
+	pathUpdate  = "addresses"
+
+	pathGetByUser      = "addresses/user"
+	pathRegisterByUser = "addresses/user"
+	pathRemoveByUser   = "addresses/user/:addressId"
+
 	pathGetByCompany      = "addresses/company"
-	pathRegisterByUser    = "addresses/user"
 	pathRegisterByCompany = "addresses/company"
-	pathUpdate            = "addresses"
-	pathRemoveByUser      = "addresses/user/:addressId"
 	pathRemoveByCompany   = "addresses/company/:addressId"
 )
 
