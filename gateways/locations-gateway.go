@@ -102,7 +102,7 @@ func (lg *locationsGateway) GetCityById(log *models.StackLog, cityId int64) (*re
 }
 
 func (lg *locationsGateway) GetCitiesByState(log *models.StackLog, stateUF string) (*[]response.City, error) {
-	log.AddStep("LocationsGateway-GetCityById")
+	log.AddStep("LocationsGateway-GetCitiesByState")
 
 	resp, respErr := http.Get(fmt.Sprintf("%s/%s/municipios", ibgeStates, stateUF))
 	if respErr != nil {

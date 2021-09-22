@@ -316,13 +316,13 @@ func (ap *addressesPresenter) RemoveUserAddress() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
+		AddressId, AddressIdErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
 		log.AddStep("AddressesPresenter-Remove")
 
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		if pathAddressErr != nil {
+		if AddressIdErr != nil {
 			errorResponse := log.AddError("Path param not found")
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
@@ -342,7 +342,7 @@ func (ap *addressesPresenter) RemoveUserAddress() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		addressErr := ap.addressesService.RemoveUserAddress(log, pathAddressId)
+		addressErr := ap.addressesService.RemoveUserAddress(log, AddressId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 			go log.PrintStackOnConsole()

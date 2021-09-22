@@ -8,26 +8,33 @@ import (
 	"glow-service/routers"
 	"glow-service/services"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
+)
+
+const (
+	pathUserId = "userId"
 )
 
 type (
 	IUsersPresenter interface {
 		Login() echo.HandlerFunc
+		GetById() echo.HandlerFunc
 		Register() echo.HandlerFunc
 		Update() echo.HandlerFunc
 		Router(echo *echo.Echo)
 	}
 
 	usersPresenter struct {
-		errorMessageData *models.ServerErrorMessages
-		usersService     services.IUsersService
+		errorMessagesData *models.ServerErrorMessages
+		authService       services.IAuthService
+		usersService      services.IUsersService
 	}
 )
 
-func NewUserPresenter(errorMessageData *models.ServerErrorMessages, userService services.IUsersService) IUsersPresenter {
-	return &usersPresenter{errorMessageData, userService}
+func NewUserPresenter(errorMessageData *models.ServerErrorMessages, authService services.IAuthService, userService services.IUsersService) IUsersPresenter {
+	return &usersPresenter{errorMessageData, authService, userService}
 }
 
 func (up *usersPresenter) Login() echo.HandlerFunc {
@@ -44,7 +51,7 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
-			errorResponse := log.AddError(up.errorMessageData.Header.PlatformNotFound)
+			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
@@ -72,6 +79,50 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 	}
 }
 
+func (up *usersPresenter) GetById() echo.HandlerFunc {
+	return func(context echo.Context) error {
+
+		log := &models.StackLog{}
+		log.Platform = context.Request().Header.Get("platform")
+		token := context.Request().Header.Get("authorization")
+		userId, userIdErr := strconv.ParseInt(context.Param(pathUserId), 10, 64)
+		context.Request().Body.Close()
+
+		log.AddStep("UserPresenter-GetById")
+
+		log.AddInfo("Validating headers")
+		if userIdErr != nil {
+			errorResponse := log.AddError("Path param not found")
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if log.Platform == "" {
+			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		log.AddInfo("Validating authorization")
+		_, tokenErr := up.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(up.errorMessagesData.Header.NotAuthorized)
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		user, userErr := up.usersService.GetById(log, userId)
+		if userErr != nil {
+			errorResponse := log.AddError(userErr.Error())
+			go log.PrintStackOnConsole()
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		go log.PrintStackOnConsole()
+		return context.JSON(http.StatusOK, user)
+	}
+}
+
 func (up *usersPresenter) Register() echo.HandlerFunc {
 	return func(context echo.Context) error {
 
@@ -86,7 +137,7 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
-			errorResponse := log.AddError(up.errorMessageData.Header.PlatformNotFound)
+			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
@@ -128,7 +179,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
-			errorResponse := log.AddError(up.errorMessageData.Header.PlatformNotFound)
+			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
 			go log.PrintStackOnConsole()
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
@@ -160,6 +211,7 @@ func (up *usersPresenter) Router(echo *echo.Echo) {
 	router := routers.UsersRouter{
 		Echo:     echo,
 		Login:    up.Login(),
+		GetById:  up.GetById(),
 		Register: up.Register(),
 		Update:   up.Update(),
 	}

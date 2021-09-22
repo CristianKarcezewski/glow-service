@@ -182,7 +182,7 @@ func (lp *locationPresenter) GetCitiesByState() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		stateUF := context.Param(pathStateUF)
-		log.AddStep("LocationPresenter-GetStateByUf")
+		log.AddStep("LocationPresenter-GetCitiesByState")
 
 		log.AddInfo("Validating headers")
 		if stateUF == "" {

@@ -15,7 +15,7 @@ type (
 	IUsersService interface {
 		Login(log *models.StackLog, auth *dto.AuthData) (*models.Auth, error)
 		Register(log *models.StackLog, user *models.User) (*models.Auth, error)
-		Select(log *models.StackLog, userId *int64) (*models.User, error)
+		GetById(log *models.StackLog, userId int64) (*models.User, error)
 		VerifyUser(log *models.StackLog, email, password *string) (*models.User, error)
 		Update(log *models.StackLog, user *models.User) (*models.User, error)
 	}
@@ -82,7 +82,7 @@ func (us *usersService) Register(log *models.StackLog, user *models.User) (*mode
 	return auth, nil
 }
 
-func (us *usersService) Select(log *models.StackLog, userId *int64) (*models.User, error) {
+func (us *usersService) GetById(log *models.StackLog, userId int64) (*models.User, error) {
 	log.AddStep("UserService-FindById")
 
 	user, err := us.userRepository.Select(log, "id", userId)

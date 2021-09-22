@@ -100,7 +100,7 @@ func (ls *locationService) FindCityById(log *models.StackLog, cityId int64) (*mo
 }
 
 func (ls *locationService) FindCitiesByStateUf(log *models.StackLog, stateUF string) (*[]models.City, error) {
-	log.AddStep("LocationService-FindCityById")
+	log.AddStep("LocationService-FindCitiesByStateUf")
 
 	citiesResponse, respErr := ls.locationGateway.GetCitiesByState(log, stateUF)
 	if respErr != nil {

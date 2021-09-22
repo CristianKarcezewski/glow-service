@@ -2,7 +2,7 @@ package models
 
 type (
 	ProviderType struct {
-		ProviderTypeId int64  `json:"ProviderTypeId,omitempty"`
+		ProviderTypeId int64  `json:"providerTypeId,omitempty"`
 		Name           string `json:"name,omitempty"`
 	}
 )
