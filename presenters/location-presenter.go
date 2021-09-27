@@ -57,12 +57,12 @@ func (lp *locationPresenter) ViacepAddress() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if postalCode == "" {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 		if log.Platform == "" {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -70,18 +70,17 @@ func (lp *locationPresenter) ViacepAddress() echo.HandlerFunc {
 		_, tokenErr := lp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		address, addressErr := lp.locationService.FindByPostalCode(log, postalCode)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, address)
 	}
 }
@@ -97,23 +96,22 @@ func (lp *locationPresenter) GetStateByUf() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if stateUF == "" {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 		if log.Platform == "" {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		state, stateErr := lp.locationService.FindStateByUf(log, stateUF)
 		if stateErr != nil {
 			errorResponse := log.AddError(stateErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, state)
 	}
 }
@@ -128,18 +126,17 @@ func (lp *locationPresenter) GetStates() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		states, statesErr := lp.locationService.FindStates(log)
 		if statesErr != nil {
 			errorResponse := log.AddError(statesErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, states)
 	}
 }
@@ -155,23 +152,22 @@ func (lp *locationPresenter) GetCityById() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if cityIdErr != nil {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 		if log.Platform == "" {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		city, cityErr := lp.locationService.FindCityById(log, cityId)
 		if cityErr != nil {
 			errorResponse := log.AddError(cityErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, city)
 	}
 }
@@ -187,23 +183,22 @@ func (lp *locationPresenter) GetCitiesByState() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if stateUF == "" {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 		if log.Platform == "" {
 			errorResponse := log.AddError(lp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		cities, citiesErr := lp.locationService.FindCitiesByStateUf(log, stateUF)
 		if citiesErr != nil {
 			errorResponse := log.AddError(citiesErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, cities)
 	}
 }

@@ -53,7 +53,7 @@ func (cp *companiesPresenter) Register() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -61,7 +61,7 @@ func (cp *companiesPresenter) Register() echo.HandlerFunc {
 		validationError := functions.ValidateStruct(&company)
 		if validationError != nil {
 			errorResponse := log.AddError(*validationError)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -69,18 +69,17 @@ func (cp *companiesPresenter) Register() echo.HandlerFunc {
 		user, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		createdCompany, companyErr := cp.companiesService.Register(log, user.UserId, company.ToModel())
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, createdCompany)
 	}
 }
@@ -99,13 +98,13 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if pathCompanyErr != nil {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if log.Platform == "" {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -113,18 +112,17 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		_, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		getCompany, companyErr := cp.companiesService.GetById(log, pathCompanyId)
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, getCompany)
 	}
 }
@@ -145,7 +143,7 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -153,12 +151,12 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		validationError := functions.ValidateStruct(&company)
 		if validationError != nil {
 			errorResponse := log.AddError(*validationError)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 		if company.CompanyId == 0 {
 			errorResponse := log.AddError("Company id not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -166,18 +164,17 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		_, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		updatedCompany, companyErr := cp.companiesService.Update(log, company.ToModel())
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, updatedCompany)
 	}
 }
@@ -196,13 +193,13 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if pathCompanyErr != nil {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if log.Platform == "" {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -210,18 +207,17 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 		_, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		addressErr := cp.companiesService.Remove(log, pathCompanyId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, "Address removed")
 	}
 }

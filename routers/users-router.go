@@ -4,7 +4,7 @@ import "github.com/labstack/echo"
 
 const (
 	userLoginPath    = "/users/login"
-	userGetPath      = "/users/:userId"
+	userGetPath      = "/users"
 	userRegisterPath = "/users"
 	userUpdatePath   = "/users"
 )

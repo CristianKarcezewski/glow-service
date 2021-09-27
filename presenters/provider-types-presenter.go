@@ -42,24 +42,23 @@ func (pp *providerTypesPresenter) GetById() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if pathProviderTypeErr != nil {
 			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		if log.Platform == "" {
 			errorResponse := log.AddError(pp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		providerType, providerTypeErr := pp.providerTypesService.GetById(log, pathProviderTypeId)
 		if providerTypeErr != nil {
 			errorResponse := log.AddError(providerTypeErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusNotFound, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, providerType)
 	}
 }
@@ -75,18 +74,17 @@ func (pp *providerTypesPresenter) GetAll() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(pp.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		providerType, providerTypeErr := pp.providerTypesService.GetAll(log)
 		if providerTypeErr != nil {
 			errorResponse := log.AddError(providerTypeErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, providerType)
 	}
 }

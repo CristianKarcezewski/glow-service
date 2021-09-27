@@ -8,7 +8,6 @@ import (
 	"glow-service/routers"
 	"glow-service/services"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo"
 )
@@ -52,7 +51,7 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -61,7 +60,7 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 		validationError := functions.ValidateStruct(authData)
 		if validationError != nil {
 			errorResponse := log.AddError(*validationError)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -70,11 +69,10 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 		auth, authErr := up.usersService.Login(log, &authData)
 		if authErr != nil {
 			errorResponse := log.AddError(authErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, auth)
 	}
 }
@@ -85,40 +83,33 @@ func (up *usersPresenter) GetById() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		userId, userIdErr := strconv.ParseInt(context.Param(pathUserId), 10, 64)
 		context.Request().Body.Close()
 
 		log.AddStep("UserPresenter-GetById")
 
 		log.AddInfo("Validating headers")
-		if userIdErr != nil {
-			errorResponse := log.AddError("Path param not found")
-			go log.PrintStackOnConsole()
-			return context.JSON(http.StatusBadRequest, errorResponse)
-		}
 
 		if log.Platform == "" {
 			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		log.AddInfo("Validating authorization")
-		_, tokenErr := up.authService.VerifyToken(log, token)
+		tokenUser, tokenErr := up.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(up.errorMessagesData.Header.NotAuthorized)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		user, userErr := up.usersService.GetById(log, userId)
+		user, userErr := up.usersService.GetById(log, tokenUser.UserId)
 		if userErr != nil {
 			errorResponse := log.AddError(userErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, user)
 	}
 }
@@ -138,7 +129,7 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -147,7 +138,7 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 		validationError := functions.ValidateStruct(user)
 		if validationError != nil {
 			errorResponse := log.AddError(*validationError)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -156,11 +147,10 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 		token, err := up.usersService.Register(log, user.ToModel())
 		if err != nil {
 			errorResponse := log.AddError(err.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, token)
 	}
 }
@@ -180,7 +170,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 		log.AddInfo("Validating headers")
 		if log.Platform == "" {
 			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -189,7 +179,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 		validationError := functions.ValidateStruct(user)
 		if validationError != nil {
 			errorResponse := log.AddError(*validationError)
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
@@ -198,11 +188,10 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 		updatedUser, updateErr := up.usersService.Update(log, user.ToModel())
 		if updateErr != nil {
 			errorResponse := log.AddError(updateErr.Error())
-			go log.PrintStackOnConsole()
+
 			return context.JSON(http.StatusTeapot, errorResponse)
 		}
 
-		go log.PrintStackOnConsole()
 		return context.JSON(http.StatusOK, updatedUser)
 	}
 }

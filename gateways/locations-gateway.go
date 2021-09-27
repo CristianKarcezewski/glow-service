@@ -32,7 +32,9 @@ func NewLocationsGateway() ILocationsGateway {
 func (lg *locationsGateway) GetViacep(log *models.StackLog, postalCode string) (*response.Viacep, error) {
 	log.AddStep("LocationsGateway-GetViacep")
 
-	resp, respErr := http.Get(fmt.Sprintf("%s/%s/json", viacep, postalCode))
+	uri := fmt.Sprintf("%s/%s/json", viacep, postalCode)
+	log.AddInfo(fmt.Sprintf("LocationsGateway - Requesting viacep info (%s)", postalCode))
+	resp, respErr := http.Get(uri)
 	if respErr != nil {
 		return nil, respErr
 	}
@@ -50,7 +52,9 @@ func (lg *locationsGateway) GetViacep(log *models.StackLog, postalCode string) (
 func (lg *locationsGateway) GetStateByUF(log *models.StackLog, stateUF string) (*response.State, error) {
 	log.AddStep("LocationsGateway-GetStateById")
 
-	resp, respErr := http.Get(fmt.Sprintf("%s/%s", ibgeStates, stateUF))
+	uri := fmt.Sprintf("%s/%s", ibgeStates, stateUF)
+	log.AddInfo(fmt.Sprintf("LocationsGateway - Requesting state from (%s)", uri))
+	resp, respErr := http.Get(uri)
 	if respErr != nil {
 		return nil, respErr
 	}
@@ -68,7 +72,9 @@ func (lg *locationsGateway) GetStateByUF(log *models.StackLog, stateUF string) (
 func (lg *locationsGateway) GetStates(log *models.StackLog) (*[]response.State, error) {
 	log.AddStep("LocationsGateway-GetStates")
 
-	resp, respErr := http.Get(ibgeStates)
+	uri := fmt.Sprintf("%s%s", ibgeStates, "?orderBy=nome")
+	log.AddInfo(fmt.Sprintf("LocationsGateway - Requesting states from (%s)", uri))
+	resp, respErr := http.Get(uri)
 	if respErr != nil {
 		return nil, respErr
 	}
@@ -86,7 +92,9 @@ func (lg *locationsGateway) GetStates(log *models.StackLog) (*[]response.State, 
 func (lg *locationsGateway) GetCityById(log *models.StackLog, cityId int64) (*response.City, error) {
 	log.AddStep("LocationsGateway-GetCityById")
 
-	resp, respErr := http.Get(fmt.Sprintf("%s/%d", ibgeCities, cityId))
+	uri := fmt.Sprintf("%s/%d", ibgeCities, cityId)
+	log.AddInfo(fmt.Sprintf("LocationsGateway - Requesting city from (%s)", uri))
+	resp, respErr := http.Get(uri)
 	if respErr != nil {
 		return nil, respErr
 	}
@@ -104,7 +112,9 @@ func (lg *locationsGateway) GetCityById(log *models.StackLog, cityId int64) (*re
 func (lg *locationsGateway) GetCitiesByState(log *models.StackLog, stateUF string) (*[]response.City, error) {
 	log.AddStep("LocationsGateway-GetCitiesByState")
 
-	resp, respErr := http.Get(fmt.Sprintf("%s/%s/municipios", ibgeStates, stateUF))
+	uri := fmt.Sprintf("%s/%s/municipios%s", ibgeStates, stateUF, "?orderBy=nome")
+	log.AddInfo(fmt.Sprintf("LocationsGateway - Requesting cities from (%s)", uri))
+	resp, respErr := http.Get(uri)
 	if respErr != nil {
 		return nil, respErr
 	}
