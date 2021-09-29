@@ -18,12 +18,13 @@ type (
 	}
 	companiesService struct {
 		companyRepository repository.ICompanyRepository
+		addressesService  IAddressesService
 	}
 )
 
 func NewCompanyService(
-	companyRepository repository.ICompanyRepository) ICompaniesService {
-	return &companiesService{companyRepository}
+	companyRepository repository.ICompanyRepository, addressesService IAddressesService) ICompaniesService {
+	return &companiesService{companyRepository, addressesService}
 }
 
 func (cs *companiesService) GetById(log *models.StackLog, companyId int64) (*models.Company, error) {
@@ -50,8 +51,18 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 
 	newCompany, companyErr := cs.companyRepository.Insert(log, dao.NewDAOCompany(company))
 	if companyErr != nil {
-		//TODO: Remove previous registered address
 		return nil, companyErr
+	}
+
+	address := models.Address{
+		StateUF: company.StateUF,
+		CityId:  company.CityId,
+	}
+
+	_, registedError := cs.addressesService.RegisterByCompany(log, newCompany.CompanyId, &address)
+	if registedError != nil {
+		go cs.Remove(log, newCompany.CompanyId)
+		return nil, registedError
 	}
 
 	return newCompany.ToModel(), nil
