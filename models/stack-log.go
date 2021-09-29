@@ -24,7 +24,15 @@ func (log *StackLog) SetUser(email string) {
 
 // Add a stackTrace step log into object.
 func (log *StackLog) AddStep(stackLog string) {
-	log.StackTrace = append(log.StackTrace, fmt.Sprintf("(%s) STEP: %s", log.dateToString(), stackLog))
+	if len(log.StackTrace) == 0 {
+		if len(log.User.Email) > 0 {
+			log.StackTrace = append(log.StackTrace, fmt.Sprintf("\n{%s: %s}\n(%s) STEP: %s", log.Platform, log.User.Email, log.dateToString(), stackLog))
+		} else {
+			log.StackTrace = append(log.StackTrace, fmt.Sprintf("\n{%s: %s}\n(%s) STEP: %s", log.Platform, "Anonymous User", log.dateToString(), stackLog))
+		}
+	} else {
+		log.StackTrace = append(log.StackTrace, fmt.Sprintf("(%s) STEP: %s", log.dateToString(), stackLog))
+	}
 	fmt.Println(log.StackTrace[(len(log.StackTrace) - 1)])
 }
 

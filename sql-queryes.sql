@@ -78,10 +78,12 @@ INSERT INTO provider_types(name) VALUES('Cuidador');
 
 CREATE TABLE IF NOT EXISTS companies(
 	id INT GENERATED ALWAYS AS IDENTITY,
-	user_id INT UNIQUE,
+	company_name VARCHAR(100),
+	user_id INT,
 	provider_type_id INT,
 	expiration_date VARCHAR(100),
 	description VARCHAR(1000),
+	created_at VARCHAR(100),
 	active BOOLEAN,
 	PRIMARY KEY(id),
 	CONSTRAINT fk_users

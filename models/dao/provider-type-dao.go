@@ -7,8 +7,8 @@ import (
 type (
 	ProviderType struct {
 		tableName      struct{} `json:"-" pg:"provider_types"`
-		ProviderTypeId int64    `json:"companyId,omitempty" pg:"id,pk"`
-		Name           string   `json:"name" pg:"name,omitempty"`
+		ProviderTypeId int64    `json:"companyI" pg:"id,pk"`
+		Name           string   `json:"name" pg:"name"`
 	}
 )
 

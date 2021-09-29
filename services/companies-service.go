@@ -19,12 +19,13 @@ type (
 	companiesService struct {
 		companyRepository repository.ICompanyRepository
 		addressesService  IAddressesService
+		usersService      IUsersService
 	}
 )
 
 func NewCompanyService(
-	companyRepository repository.ICompanyRepository, addressesService IAddressesService) ICompaniesService {
-	return &companiesService{companyRepository, addressesService}
+	companyRepository repository.ICompanyRepository, addressesService IAddressesService, userService IUsersService) ICompaniesService {
+	return &companiesService{companyRepository, addressesService, userService}
 }
 
 func (cs *companiesService) GetById(log *models.StackLog, companyId int64) (*models.Company, error) {
@@ -44,7 +45,6 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 	t := time.Now().Add(30 * (24 * time.Hour))
 
 	company.UserId = userId
-	company.ProviderTypeId = 1
 	company.ExpirationDate = fmt.Sprintf("%02d/%02d/%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
 	company.CreatedAt = functions.DateToString()
 	company.Active = true
@@ -59,10 +59,26 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 		CityId:  company.CityId,
 	}
 
-	_, registedError := cs.addressesService.RegisterByCompany(log, newCompany.CompanyId, &address)
+	companyAddr, registedError := cs.addressesService.RegisterByCompany(log, newCompany.CompanyId, &address)
 	if registedError != nil {
 		go cs.Remove(log, newCompany.CompanyId)
 		return nil, registedError
+	}
+
+	repoUser, repoUserErr := cs.usersService.GetById(log, userId)
+	if repoUserErr != nil {
+		cs.addressesService.RemoveCompanyAddress(log, companyAddr.AddressId)
+		cs.Remove(log, newCompany.CompanyId)
+		return nil, repoUserErr
+	}
+
+	repoUser.UserGroupId = 2
+
+	_, userErr := cs.usersService.Update(log, repoUser)
+	if userErr != nil {
+		cs.addressesService.RemoveCompanyAddress(log, companyAddr.AddressId)
+		cs.Remove(log, newCompany.CompanyId)
+		return nil, userErr
 	}
 
 	return newCompany.ToModel(), nil

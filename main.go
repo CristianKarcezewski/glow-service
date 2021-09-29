@@ -50,7 +50,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	userService := services.NewUserService(userRepository, hashRepository, authService)
 	locationService := services.NewLocationService(locationGateway)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
-	companiesService := services.NewCompanyService(companiesRepository)
+	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 
 	// Start presenters
