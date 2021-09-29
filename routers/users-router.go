@@ -23,5 +23,5 @@ func (ur *UsersRouter) Wire() {
 	ur.Echo.POST(userLoginPath, ur.Login)
 	ur.Echo.GET(userGetPath, ur.GetById)
 	ur.Echo.POST(userRegisterPath, ur.Register)
-	ur.Echo.PUT(refreshTokenPath, ur.Update)
+	ur.Echo.PUT(userUpdatePath, ur.Update)
 }

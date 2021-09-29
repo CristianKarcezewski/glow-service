@@ -141,6 +141,17 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
+		if user.Password == "" {
+			errorResponse := log.AddError("Password is a required field")
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if len(user.Password) < 6 {
+			errorResponse := log.AddError("Password requires a minimum 6 characteres")
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
 
 		log.SetUser(user.Email)
 
@@ -161,6 +172,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 		var user dto.UserDto
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
+		token := context.Request().Header.Get("authorization")
 		log.AddStep("UserPresenter-Register")
 
 		// Decode request body payload data
@@ -174,6 +186,14 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
+		log.AddInfo("Validating authorization")
+		tokenUser, tokenErr := up.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(up.errorMessagesData.Header.NotAuthorized)
+
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
 		// Validate payload info
 		log.AddInfo("Validating payload data")
 		validationError := functions.ValidateStruct(user)
@@ -182,6 +202,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
+		user.UserId = tokenUser.UserId
 
 		log.SetUser(user.Email)
 

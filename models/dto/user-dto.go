@@ -8,7 +8,7 @@ type (
 		UserName string `json:"userName,omitempty" validate:"required"`
 		Email    string `json:"email,omitempty" validate:"required,email"`
 		Phone    string `json:"phone,omitempty"`
-		Password string `json:"password,omitempty" validate:"required,min=6"`
+		Password string `json:"password,omitempty"`
 	}
 )
 
