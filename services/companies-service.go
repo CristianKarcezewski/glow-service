@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"glow-service/common/functions"
 	"glow-service/models"
@@ -49,39 +50,40 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 	company.CreatedAt = functions.DateToString()
 	company.Active = true
 
-	newCompany, companyErr := cs.companyRepository.Insert(log, dao.NewDAOCompany(company))
-	if companyErr != nil {
-		return nil, companyErr
-	}
-
-	address := models.Address{
-		StateUF: company.StateUF,
-		CityId:  company.CityId,
-	}
-
-	companyAddr, registedError := cs.addressesService.RegisterByCompany(log, newCompany.CompanyId, &address)
-	if registedError != nil {
-		go cs.Remove(log, newCompany.CompanyId)
-		return nil, registedError
-	}
-
 	repoUser, repoUserErr := cs.usersService.GetById(log, userId)
 	if repoUserErr != nil {
-		cs.addressesService.RemoveCompanyAddress(log, companyAddr.AddressId)
-		cs.Remove(log, newCompany.CompanyId)
 		return nil, repoUserErr
 	}
+	if repoUser.UserGroupId == 1 {
 
-	repoUser.UserGroupId = 2
+		newCompany, companyErr := cs.companyRepository.Insert(log, dao.NewDAOCompany(company))
+		if companyErr != nil {
+			return nil, companyErr
+		}
 
-	_, userErr := cs.usersService.Update(log, repoUser)
-	if userErr != nil {
-		cs.addressesService.RemoveCompanyAddress(log, companyAddr.AddressId)
-		cs.Remove(log, newCompany.CompanyId)
-		return nil, userErr
+		address := models.Address{
+			StateUF: company.StateUF,
+			CityId:  company.CityId,
+		}
+
+		companyAddr, registedError := cs.addressesService.RegisterByCompany(log, newCompany.CompanyId, &address)
+		if registedError != nil {
+			go cs.Remove(log, newCompany.CompanyId)
+			return nil, registedError
+		}
+
+		repoUser.UserGroupId = 2
+
+		_, userErr := cs.usersService.Update(log, repoUser)
+		if userErr != nil {
+			cs.addressesService.RemoveCompanyAddress(log, companyAddr.AddressId)
+			cs.Remove(log, newCompany.CompanyId)
+			return nil, userErr
+		}
+
+		return newCompany.ToModel(), nil
 	}
-
-	return newCompany.ToModel(), nil
+	return nil, errors.New("user already has a company")
 }
 
 func (cs *companiesService) Update(log *models.StackLog, company *models.Company) (*models.Company, error) {
