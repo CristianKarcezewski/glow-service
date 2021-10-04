@@ -14,13 +14,14 @@ import (
 )
 
 const (
-	pathCompanyId = "companyId"
+	pathCompanyId = "companyId"	
 )
 
 type (
 	ICompaniesPresenter interface {
 		Register() echo.HandlerFunc
-		// GetById() echo.HandlerFunc
+		GetById() echo.HandlerFunc
+		GetByUser() echo.HandlerFunc
 		// Update() echo.HandlerFunc
 		// Remove() echo.HandlerFunc
 		Router(echo *echo.Echo)
@@ -30,6 +31,7 @@ type (
 		errorMessagesData *models.ServerErrorMessages
 		authService       services.IAuthService
 		companiesService  services.ICompaniesService
+		
 	}
 )
 
@@ -117,6 +119,43 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		}
 
 		getCompany, companyErr := cp.companiesService.GetById(log, pathCompanyId)
+		if companyErr != nil {
+			errorResponse := log.AddError(companyErr.Error())
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		return context.JSON(http.StatusOK, getCompany)
+	}
+}
+
+func (cp *companiesPresenter) GetByUser() echo.HandlerFunc {
+	return func(context echo.Context) error {
+
+		log := &models.StackLog{}
+		log.Platform = context.Request().Header.Get("platform")
+		token := context.Request().Header.Get("authorization")		
+		log.AddStep("CompanyController-GetByUser")
+
+		context.Request().Body.Close()
+
+		log.AddInfo("Validating headers")
+		
+		if log.Platform == "" {
+			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		log.AddInfo("Validating authorization")
+		tokenUser, tokenErr := cp.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
+
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		getCompany, companyErr := cp.companiesService.GetByUser(log, tokenUser.UserId)
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
 
@@ -224,9 +263,10 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 
 func (cp *companiesPresenter) Router(echo *echo.Echo) {
 	router := routers.CompaniesRouter{
-		Echo:     echo,
-		Register: cp.Register(),
-		// GetById:  getById,
+		Echo:      echo,
+		Register:  cp.Register(),
+		GetById:   cp.GetById(),
+		GetByUser: cp.GetByUser(),
 		// Update:   update,
 		// Remove:   remove,
 	}

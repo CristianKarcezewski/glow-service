@@ -13,6 +13,7 @@ import (
 type (
 	ICompaniesService interface {
 		GetById(log *models.StackLog, companyId int64) (*models.Company, error)
+		GetByUser(log *models.StackLog, userId int64) (*models.Company, error)
 		Register(log *models.StackLog, userId int64, company *models.Company) (*models.Company, error)
 		Update(log *models.StackLog, company *models.Company) (*models.Company, error)
 		Remove(log *models.StackLog, companyId int64) error
@@ -21,12 +22,13 @@ type (
 		companyRepository repository.ICompanyRepository
 		addressesService  IAddressesService
 		usersService      IUsersService
+		providerTypesService IProviderTypesService
 	}
 )
 
 func NewCompanyService(
-	companyRepository repository.ICompanyRepository, addressesService IAddressesService, userService IUsersService) ICompaniesService {
-	return &companiesService{companyRepository, addressesService, userService}
+	companyRepository repository.ICompanyRepository, addressesService IAddressesService, userService IUsersService, providerTypesService IProviderTypesService) ICompaniesService {
+	return &companiesService{companyRepository, addressesService, userService, providerTypesService}
 }
 
 func (cs *companiesService) GetById(log *models.StackLog, companyId int64) (*models.Company, error) {
@@ -38,6 +40,28 @@ func (cs *companiesService) GetById(log *models.StackLog, companyId int64) (*mod
 	}
 
 	return result.ToModel(), nil
+}
+
+func (cs *companiesService) GetByUser(log *models.StackLog, userId int64) (*models.Company, error) {
+	log.AddStep("CompanyService-GetByUser")
+
+	repoUser, repoUserErr := cs.usersService.GetById(log, userId)
+	if repoUserErr != nil {
+		return nil, repoUserErr
+	}
+	if repoUser.UserGroupId > 1 {
+		result, resultErr := cs.companyRepository.FindByUser(log, repoUser.UserId)
+		if resultErr != nil {
+			return nil, nil
+		}
+
+		providerType, _ := cs.providerTypesService.GetById(log, result.ProviderTypeId)
+		cp := result.ToModel()
+		cp.ProviderType = *providerType
+		return cp, nil
+	}
+	return nil, nil
+
 }
 
 func (cs *companiesService) Register(log *models.StackLog, userId int64, company *models.Company) (*models.Company, error) {

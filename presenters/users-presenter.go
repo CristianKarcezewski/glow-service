@@ -12,10 +12,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-const (
-	pathUserId = "userId"
-)
-
 type (
 	IUsersPresenter interface {
 		Login() echo.HandlerFunc

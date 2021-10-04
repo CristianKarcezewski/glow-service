@@ -14,6 +14,7 @@ type (
 	ICompanyRepository interface {
 		Insert(log *models.StackLog, company *dao.Company) (*dao.Company, error)
 		FindById(log *models.StackLog, companyId int64) (*dao.Company, error)
+		FindByUser(log *models.StackLog, userId int64) (*dao.Company, error)
 		Update(log *models.StackLog, company *dao.Company) (*dao.Company, error)
 		Remove(log *models.StackLog, companyId int64) (error)
 	}
@@ -39,6 +40,16 @@ func (cr *companyRepository) FindById(log *models.StackLog, companyId int64) (*d
 	log.AddStep("CompanyRepository-FindById")
 	var company dao.Company
 	err := cr.database.Select(repositoryCompanyTable, &company, "id", companyId)
+	if err != nil {
+		return  nil, err
+	}
+	return &company, nil
+}
+
+func (cr *companyRepository) FindByUser(log *models.StackLog, userId int64) (*dao.Company, error){
+	log.AddStep("CompanyRepository-FindById")
+	var company dao.Company
+	err := cr.database.Select(repositoryCompanyTable, &company, "user_id", userId)
 	if err != nil {
 		return  nil, err
 	}

@@ -50,9 +50,9 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	userService := services.NewUserService(userRepository, hashRepository, authService)
 	locationService := services.NewLocationService(locationGateway)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
-	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
-
+	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService )
+	
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
 	userPresenter := presenters.NewUserPresenter(&config.ServerErrorMessages, authService, userService)
