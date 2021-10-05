@@ -8,8 +8,8 @@ type (
 		CompanyName    string `json:"companyName,omitempty" validate:"required"`
 		ProviderTypeId int64  `json:"providerTypeId,omitempty" validate:"required"`
 		Description    string `json:"description,omitempty"`
-		StateUF        string `json:"stateUf" validate:"required"`
-		CityId         int64  `json:"cityId" validate:"required"`
+		StateUF        string `json:"stateUf,omitempty"`
+		CityId         int64  `json:"cityId,omitempty"`
 	}
 )
 

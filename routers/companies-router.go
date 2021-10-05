@@ -6,6 +6,7 @@ const (
 	registerCompanyPath = "/companies"
 	getCompanyByIdPath  = "/companies"
 	getByUserPath       = "/companies/user"
+	updateCompanyPath   = "/companies"
 )
 
 type (
@@ -14,7 +15,7 @@ type (
 		Register  echo.HandlerFunc
 		GetById   echo.HandlerFunc
 		GetByUser echo.HandlerFunc
-		// Update   echo.HandlerFunc
+		Update    echo.HandlerFunc
 		// Remove   echo.HandlerFunc
 	}
 )
@@ -23,6 +24,6 @@ func (cr *CompaniesRouter) Wire() {
 	cr.Echo.POST(registerCompanyPath, cr.Register)
 	cr.Echo.GET(getCompanyByIdPath, cr.GetById)
 	cr.Echo.GET(getByUserPath, cr.GetByUser)
-	// cr.Echo.PUT(updateCompanyPath, cr.Update)
+	cr.Echo.PUT(updateCompanyPath, cr.Update)
 	// cr.Echo.DELETE(removeCompanyPath, cr.Remove)
 }

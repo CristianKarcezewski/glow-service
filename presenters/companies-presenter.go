@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	pathCompanyId = "companyId"	
+	pathCompanyId = "companyId"
 )
 
 type (
@@ -22,7 +22,7 @@ type (
 		Register() echo.HandlerFunc
 		GetById() echo.HandlerFunc
 		GetByUser() echo.HandlerFunc
-		// Update() echo.HandlerFunc
+		Update() echo.HandlerFunc
 		// Remove() echo.HandlerFunc
 		Router(echo *echo.Echo)
 	}
@@ -31,7 +31,6 @@ type (
 		errorMessagesData *models.ServerErrorMessages
 		authService       services.IAuthService
 		companiesService  services.ICompaniesService
-		
 	}
 )
 
@@ -134,13 +133,13 @@ func (cp *companiesPresenter) GetByUser() echo.HandlerFunc {
 
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		token := context.Request().Header.Get("authorization")		
+		token := context.Request().Header.Get("authorization")
 		log.AddStep("CompanyController-GetByUser")
 
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
-		
+
 		if log.Platform == "" {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
 
@@ -173,7 +172,7 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("Companeispresenter-Upadte")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&company)
@@ -267,7 +266,7 @@ func (cp *companiesPresenter) Router(echo *echo.Echo) {
 		Register:  cp.Register(),
 		GetById:   cp.GetById(),
 		GetByUser: cp.GetByUser(),
-		// Update:   update,
+		Update:    cp.Update(),
 		// Remove:   remove,
 	}
 

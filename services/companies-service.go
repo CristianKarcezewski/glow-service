@@ -19,9 +19,9 @@ type (
 		Remove(log *models.StackLog, companyId int64) error
 	}
 	companiesService struct {
-		companyRepository repository.ICompanyRepository
-		addressesService  IAddressesService
-		usersService      IUsersService
+		companyRepository    repository.ICompanyRepository
+		addressesService     IAddressesService
+		usersService         IUsersService
 		providerTypesService IProviderTypesService
 	}
 )
@@ -113,7 +113,17 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 func (cs *companiesService) Update(log *models.StackLog, company *models.Company) (*models.Company, error) {
 	log.AddStep("CompanyService-Update")
 
-	updatedCompany, updateErr := cs.companyRepository.Update(log, dao.NewDAOCompany(company))
+	result, resultErr := cs.GetById(log, company.CompanyId)
+
+	if resultErr != nil {
+		return nil, resultErr
+	}
+	result.CompanyId = company.CompanyId
+	result.CompanyName = company.CompanyName
+	result.Description = company.Description
+	result.ProviderTypeId = company.ProviderTypeId
+
+	updatedCompany, updateErr := cs.companyRepository.Update(log, dao.NewDAOCompany(result))
 	if updateErr != nil {
 		return nil, updateErr
 	}

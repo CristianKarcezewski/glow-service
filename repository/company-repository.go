@@ -47,7 +47,7 @@ func (cr *companyRepository) FindById(log *models.StackLog, companyId int64) (*d
 }
 
 func (cr *companyRepository) FindByUser(log *models.StackLog, userId int64) (*dao.Company, error){
-	log.AddStep("CompanyRepository-FindById")
+	log.AddStep("CompanyRepository-FindByUser")
 	var company dao.Company
 	err := cr.database.Select(repositoryCompanyTable, &company, "user_id", userId)
 	if err != nil {
