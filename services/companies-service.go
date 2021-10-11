@@ -127,7 +127,12 @@ func (cs *companiesService) Update(log *models.StackLog, company *models.Company
 	if updateErr != nil {
 		return nil, updateErr
 	}
-	return updatedCompany.ToModel(), nil
+		providerType, _ := cs.providerTypesService.GetById(log, updatedCompany.ProviderTypeId)
+		cp := updatedCompany.ToModel()
+		cp.ProviderType = *providerType
+		return cp, nil
+
+	//return updatedCompany.ToModel(), nil
 }
 
 func (cs *companiesService) Remove(log *models.StackLog, companyId int64) error {

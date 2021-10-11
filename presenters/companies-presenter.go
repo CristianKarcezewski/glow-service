@@ -2,6 +2,7 @@ package presenters
 
 import (
 	"encoding/json"
+	"fmt"
 	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/models/dto"
@@ -212,7 +213,7 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
-
+		fmt.Println(updatedCompany)
 		return context.JSON(http.StatusOK, updatedCompany)
 	}
 }
