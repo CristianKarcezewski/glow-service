@@ -37,5 +37,5 @@ func (ar *AddressesRouter) Wire() {
 	ar.Echo.POST(pathRegisterByCompany, ar.RegisterByCompany)
 	ar.Echo.PUT(pathUpdate, ar.Update)
 	ar.Echo.DELETE(pathRemoveByUser, ar.RemoveByUser)
-	ar.Echo.DELETE(pathRemoveByCompany, ar.RegisterByCompany)
+	ar.Echo.DELETE(pathRemoveByCompany, ar.RemoveByCompany)
 }

@@ -34,13 +34,14 @@ type (
 		errorMessagesData *models.ServerErrorMessages
 		authService       services.IAuthService
 		addressesService  services.IAddressesService
+		companiesService  services.ICompaniesService
 	}
 )
 
 func NewAddressesPresenter(
-	errorMessagesData *models.ServerErrorMessages, authService services.IAuthService, addressesService services.IAddressesService,
+	errorMessagesData *models.ServerErrorMessages, authService services.IAuthService, addressesService services.IAddressesService, companiesService services.ICompaniesService,
 ) IAddressesPresenter {
-	return &addressesPresenter{errorMessagesData, authService, addressesService}
+	return &addressesPresenter{errorMessagesData, authService, addressesService, companiesService}
 }
 
 func (ac *addressesPresenter) GetById() echo.HandlerFunc {
@@ -147,7 +148,14 @@ func (ap *addressesPresenter) GetByCompany() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		addresses, addressErr := ap.addressesService.GetByCompany(log, user.UserId)
+		getCompany, companyErr := ap.companiesService.GetByUser(log, user.UserId)
+		if companyErr != nil {
+			errorResponse := log.AddError(companyErr.Error())
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		addresses, addressErr := ap.addressesService.GetByCompany(log, getCompany.CompanyId)
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 
@@ -165,7 +173,7 @@ func (ac *addressesPresenter) RegisterByUser() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("AddressesPresenter-Register")
+		log.AddStep("AddressesPresenter-Register By User")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -212,7 +220,7 @@ func (ac *addressesPresenter) RegisterByCompany() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("AddressesPresenter-Register")
+		log.AddStep("AddressesPresenter-Register By Company")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -240,8 +248,14 @@ func (ac *addressesPresenter) RegisterByCompany() echo.HandlerFunc {
 
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
+		getCompany, companyErr := ac.companiesService.GetByUser(log, user.UserId)
+		if companyErr != nil {
+			errorResponse := log.AddError(companyErr.Error())
 
-		createdAddress, addressErr := ac.addressesService.RegisterByCompany(log, user.UserId, address.ToModel())
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		createdAddress, addressErr := ac.addressesService.RegisterByCompany(log, getCompany.CompanyId, address.ToModel())
 		if addressErr != nil {
 			errorResponse := log.AddError(addressErr.Error())
 
@@ -311,7 +325,7 @@ func (ap *addressesPresenter) RemoveUserAddress() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		AddressId, AddressIdErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
-		log.AddStep("AddressesPresenter-Remove")
+		log.AddStep("AddressesUserPresenter-Remove")
 
 		context.Request().Body.Close()
 
@@ -354,7 +368,7 @@ func (ap *addressesPresenter) RemoveCompanyAddress() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
-		log.AddStep("AddressesPresenter-Remove")
+		log.AddStep("AddressesCompanyPresenter-Remove")
 
 		context.Request().Body.Close()
 

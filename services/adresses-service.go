@@ -14,7 +14,7 @@ type (
 		GetByUser(log *models.StackLog, userId int64) (*[]models.Address, error)
 		GetByCompany(log *models.StackLog, companyId int64) (*[]models.Address, error)
 		RegisterByUser(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
-		RegisterByCompany(log *models.StackLog, userId int64, address *models.Address) (*models.Address, error)
+		RegisterByCompany(log *models.StackLog, companyId int64, address *models.Address) (*models.Address, error)
 		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
 		RemoveUserAddress(log *models.StackLog, addressId int64) error
 		RemoveCompanyAddress(log *models.StackLog, addressId int64) error
@@ -190,7 +190,6 @@ func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId in
 	if addressResultErr != nil {
 		return nil, addressResultErr
 	}
-
 	companyAddress := dao.CompanyAddress{
 		CompanyId: companyId,
 		AddressId: addressResul.AddressId,

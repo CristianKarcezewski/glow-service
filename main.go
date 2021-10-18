@@ -57,7 +57,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
 	userPresenter := presenters.NewUserPresenter(&config.ServerErrorMessages, authService, userService)
 	locationPresenter := presenters.NewLocationPresenter(&config.ServerErrorMessages, authService, locationService)
-	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService)
+	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService, companiesService)
 	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages, authService, companiesService)
 	providerTypesPresenter := presenters.NewProviderTypePresenter(&config.ServerErrorMessages, providerTypesService)
 
