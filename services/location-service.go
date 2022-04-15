@@ -132,7 +132,8 @@ func (ls *locationService) findCityByIdAsync(wg *sync.WaitGroup, log *models.Sta
 	if ctErr != nil {
 		*err = ctErr.Error()
 	} else {
-		city.CityId = ctRes.Id
+		id,_ := strconv.ParseInt(ctRes.Id,10,64)
+		city.CityId = id
 		city.Name = ctRes.Name
 	}
 	wg.Done()
