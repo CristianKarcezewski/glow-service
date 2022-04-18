@@ -8,6 +8,7 @@ type (
 	User struct {
 		tableName   struct{} `json:"-" pg:"users"`
 		UserId      int64    `json:"userId,omitempty" pg:"id,pk"`
+		Uid         string   `json:"-" pg:"uid"`
 		UserGroupId int64    `json:"userGroupId,omitempty" pg:"user_group_id"`
 		UserName    string   `json:"name,omitempty" pg:"user_name"`
 		LastLogin   string   `json:"-" pg:"last_login"`
@@ -29,6 +30,7 @@ type (
 func NewDAOUser(u *models.User) *User {
 	newUser := User{
 		UserId:      u.UserId,
+		Uid:         u.Uid,
 		UserGroupId: u.UserGroupId,
 		UserName:    u.UserName,
 		LastLogin:   u.LastLogin,

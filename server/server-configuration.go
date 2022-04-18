@@ -6,6 +6,10 @@ import (
 	"glow-service/models"
 	"io/ioutil"
 	"sync"
+
+	firebaseConfig "glow-service/server/firebase-config"
+
+	"firebase.google.com/go/auth"
 )
 
 const (
@@ -19,8 +23,9 @@ type (
 		Port                int    `json:"port" default:"8080"`
 		Environment         string `json:"environment" default:"dev"`
 		DatabaseHandler     IDatabaseHandler
-		database            databaseConfiguration
-		ServerErrorMessages models.ServerErrorMessages
+		database            *databaseConfiguration
+		ServerErrorMessages *models.ServerErrorMessages
+		FirebaseClient      *auth.Client
 		initialized         bool
 	}
 
@@ -59,6 +64,12 @@ func ConfigurationInstance() (*Configuration, error) {
 		if databaseError != nil {
 			return nil, databaseError
 		}
+
+		client, firebaseError := firebaseConfig.GetFirebase()
+		if firebaseError != nil {
+			return nil, firebaseError
+		}
+		c.FirebaseClient = client
 
 		c.DatabaseHandler = SetubDatabase(
 			&c.database.DatabaseProvider,

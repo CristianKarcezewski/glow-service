@@ -106,3 +106,6 @@ CREATE TABLE IF NOT EXISTS company_addresses(
 		FOREIGN KEY(address_id)
 			REFERENCES addresses(id)
 );
+
+ALTER TABLE public.users
+ADD COLUMN uid varchar(255);

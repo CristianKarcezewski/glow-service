@@ -47,19 +47,19 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 
 	// Start services
 	authService := services.NewAuthService()
-	userService := services.NewUserService(userRepository, hashRepository, authService)
+	userService := services.NewUserService(config.FirebaseClient, userRepository, hashRepository, authService)
 	locationService := services.NewLocationService(locationGateway)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
-	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService )
-	
+	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService)
+
 	// Start presenters
-	authPresenter := presenters.NewAuthPresenter(&config.ServerErrorMessages, authService)
-	userPresenter := presenters.NewUserPresenter(&config.ServerErrorMessages, authService, userService)
-	locationPresenter := presenters.NewLocationPresenter(&config.ServerErrorMessages, authService, locationService)
-	addressesPresenter := presenters.NewAddressesPresenter(&config.ServerErrorMessages, authService, addressesService, companiesService)
-	companiesPresenter := presenters.NewCompanyPresenter(&config.ServerErrorMessages, authService, companiesService)
-	providerTypesPresenter := presenters.NewProviderTypePresenter(&config.ServerErrorMessages, providerTypesService)
+	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)
+	userPresenter := presenters.NewUserPresenter(config.ServerErrorMessages, authService, userService)
+	locationPresenter := presenters.NewLocationPresenter(config.ServerErrorMessages, authService, locationService)
+	addressesPresenter := presenters.NewAddressesPresenter(config.ServerErrorMessages, authService, addressesService, companiesService)
+	companiesPresenter := presenters.NewCompanyPresenter(config.ServerErrorMessages, authService, companiesService)
+	providerTypesPresenter := presenters.NewProviderTypePresenter(config.ServerErrorMessages, providerTypesService)
 
 	// Start Routers
 	authPresenter.Router(echo)

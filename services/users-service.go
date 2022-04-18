@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"glow-service/common/functions"
 	"glow-service/models"
@@ -8,6 +9,7 @@ import (
 	"glow-service/models/dto"
 	"glow-service/repository"
 
+	"firebase.google.com/go/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,12 +25,18 @@ type (
 	usersService struct {
 		userRepository repository.IUserRepository
 		hashRepository repository.IHashRepository
+		FirebaseClient *auth.Client
 		authService    IAuthService
 	}
 )
 
-func NewUserService(userRepository repository.IUserRepository, hashRepository repository.IHashRepository, authService IAuthService) IUsersService {
-	return &usersService{userRepository, hashRepository, authService}
+func NewUserService(firebaseClient *auth.Client, userRepository repository.IUserRepository, hashRepository repository.IHashRepository, authService IAuthService) IUsersService {
+	return &usersService{
+		userRepository,
+		hashRepository,
+		firebaseClient,
+		authService,
+	}
 }
 
 func (us *usersService) Login(log *models.StackLog, auth *dto.AuthData) (*models.Auth, error) {
@@ -53,6 +61,13 @@ func (us *usersService) Register(log *models.StackLog, user *models.User) (*mode
 	user.LastLogin = functions.DateToString()
 	user.Active = true
 	user.UserGroupId = 1
+
+	//register user in firebase
+	uid, firErr := us.createFirebaseUser(log, user)
+	if firErr != nil {
+		return nil, firErr
+	}
+	user.Uid = *uid
 
 	log.AddInfo("Encrypting password")
 	daoUser := dao.NewDAOUser(user)
@@ -132,4 +147,21 @@ func (us *usersService) hashPassword(password *string) (*dao.Hash, error) {
 func (us *usersService) checkPasswordHash(password *string, hash *string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(*hash), []byte(*password))
 	return err == nil
+}
+
+func (us *usersService) createFirebaseUser(log *models.StackLog, user *models.User) (*string, error) {
+	log.AddInfo("Creating firebase user")
+
+	params := (&auth.UserToCreate{}).
+		Email(user.Email).
+		EmailVerified(false).
+		Password(user.Password).
+		DisplayName(user.UserName).
+		Disabled(false)
+
+	u, err := us.FirebaseClient.CreateUser(context.Background(), params)
+	if err != nil {
+		return nil, errors.New("error creating firebase user")
+	}
+	return &u.UID, nil
 }

@@ -3,6 +3,7 @@ package models
 type (
 	User struct {
 		UserId      int64  `json:"userId,omitempty"`
+		Uid         string `json:"-"`
 		UserGroupId int64  `json:"userGroupId,omitempty"`
 		UserName    string `json:"name,omitempty"`
 		LastLogin   string `json:"-"`
