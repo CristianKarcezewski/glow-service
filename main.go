@@ -46,7 +46,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	locationGateway := gateways.NewLocationsGateway()
 
 	// Start services
-	authService := services.NewAuthService()
+	authService := services.NewAuthService(config.FirebaseClient)
 	userService := services.NewUserService(config.FirebaseClient, userRepository, hashRepository, authService)
 	locationService := services.NewLocationService(locationGateway)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
