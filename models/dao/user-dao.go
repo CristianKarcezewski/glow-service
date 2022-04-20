@@ -47,6 +47,7 @@ func NewDAOUser(u *models.User) *User {
 func (u *User) ToModel() *models.User {
 	return &models.User{
 		UserId:      u.UserId,
+		Uid:         u.Uid,
 		UserGroupId: u.UserGroupId,
 		UserName:    u.UserName,
 		LastLogin:   u.LastLogin,

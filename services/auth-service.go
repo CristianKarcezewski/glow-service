@@ -32,17 +32,25 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 		return nil, errors.New("invalid token")
 	}
 
+	user := models.User{}
 	claims := token.Claims
-	if userGroupId, ok := claims["admin"]; ok {
+	if userGroupId, ok := claims["userGroupId"]; ok {
 		if userGroupId.(bool) {
-			return &models.User{
-				UserGroupId: userGroupId.(int64),
-			}, nil
+			user.UserGroupId = userGroupId.(int64)
+		} else {
+			return nil, errors.New("invalid token")
 		}
-
 	}
 
-	return nil, errors.New("invalid token")
+	if userId, ok := claims["userId"]; ok {
+		if userId.(bool) {
+			user.UserId = userId.(int64)
+		} else {
+			return nil, errors.New("invalid token")
+		}
+	}
+
+	return &user, nil
 }
 
 func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error) {
