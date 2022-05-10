@@ -7,6 +7,7 @@ const (
 	getCompanyByIdPath  = "/companies"
 	getByUserPath       = "/companies/user"
 	updateCompanyPath   = "/companies"
+	searchCompanyPath   = "/companies/search"
 )
 
 type (
@@ -17,6 +18,7 @@ type (
 		GetByUser echo.HandlerFunc
 		Update    echo.HandlerFunc
 		// Remove   echo.HandlerFunc
+		Search echo.HandlerFunc
 	}
 )
 
@@ -26,4 +28,5 @@ func (cr *CompaniesRouter) Wire() {
 	cr.Echo.GET(getByUserPath, cr.GetByUser)
 	cr.Echo.PUT(updateCompanyPath, cr.Update)
 	// cr.Echo.DELETE(removeCompanyPath, cr.Remove)
+	cr.Echo.POST(searchCompanyPath, cr.Search)
 }

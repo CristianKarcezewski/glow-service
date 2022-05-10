@@ -25,6 +25,7 @@ type (
 		GetByUser() echo.HandlerFunc
 		Update() echo.HandlerFunc
 		// Remove() echo.HandlerFunc
+		Search() echo.HandlerFunc
 		Router(echo *echo.Echo)
 	}
 
@@ -93,7 +94,7 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathCompanyId, pathCompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
-		log.AddStep("CompanyController-GetAll")
+		log.AddStep("CompanyController-GetById")
 
 		context.Request().Body.Close()
 
@@ -225,7 +226,7 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathCompanyId, pathCompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
-		log.AddStep("CitiesController-GetAll")
+		log.AddStep("companiesPresenter-Remove")
 
 		context.Request().Body.Close()
 
@@ -261,6 +262,51 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 	}
 }
 
+func (cp *companiesPresenter) Search() echo.HandlerFunc {
+	return func(context echo.Context) error {
+
+		log := &models.StackLog{}
+		log.Platform = context.Request().Header.Get("platform")
+		token := context.Request().Header.Get("authorization")
+		log.AddStep("companiesPresenter-Search")
+
+		// Decode request body payload data
+		var filter dto.CompanyFilterDto
+		bodyError := json.NewDecoder(context.Request().Body).Decode(&filter)
+		context.Request().Body.Close()
+
+		log.AddInfo("Validating headers")
+		if bodyError != nil {
+			errorResponse := log.AddError("body data not found")
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		if log.Platform == "" {
+			errorResponse := log.AddError(cp.errorMessagesData.Header.PlatformNotFound)
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		log.AddInfo("Validating authorization")
+		_, tokenErr := cp.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
+
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		result, resultErr := cp.companiesService.Search(log, filter.ToModel())
+		if resultErr != nil {
+			errorResponse := log.AddError(resultErr.Error())
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
+		}
+
+		return context.JSON(http.StatusOK, result)
+	}
+}
+
 func (cp *companiesPresenter) Router(echo *echo.Echo) {
 	router := routers.CompaniesRouter{
 		Echo:      echo,
@@ -269,6 +315,7 @@ func (cp *companiesPresenter) Router(echo *echo.Echo) {
 		GetByUser: cp.GetByUser(),
 		Update:    cp.Update(),
 		// Remove:   remove,
+		Search: cp.Search(),
 	}
 
 	router.Wire()

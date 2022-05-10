@@ -17,6 +17,7 @@ type (
 		Register(log *models.StackLog, userId int64, company *models.Company) (*models.Company, error)
 		Update(log *models.StackLog, company *models.Company) (*models.Company, error)
 		Remove(log *models.StackLog, companyId int64) error
+		Search(log *models.StackLog, search *models.CompanyFilter) (*[]models.Company, error)
 	}
 	companiesService struct {
 		companyRepository    repository.ICompanyRepository
@@ -27,8 +28,17 @@ type (
 )
 
 func NewCompanyService(
-	companyRepository repository.ICompanyRepository, addressesService IAddressesService, userService IUsersService, providerTypesService IProviderTypesService) ICompaniesService {
-	return &companiesService{companyRepository, addressesService, userService, providerTypesService}
+	companyRepository repository.ICompanyRepository,
+	addressesService IAddressesService,
+	userService IUsersService,
+	providerTypesService IProviderTypesService,
+) ICompaniesService {
+	return &companiesService{
+		companyRepository,
+		addressesService,
+		userService,
+		providerTypesService,
+	}
 }
 
 func (cs *companiesService) GetById(log *models.StackLog, companyId int64) (*models.Company, error) {
@@ -127,10 +137,10 @@ func (cs *companiesService) Update(log *models.StackLog, company *models.Company
 	if updateErr != nil {
 		return nil, updateErr
 	}
-		providerType, _ := cs.providerTypesService.GetById(log, updatedCompany.ProviderTypeId)
-		cp := updatedCompany.ToModel()
-		cp.ProviderType = *providerType
-		return cp, nil
+	providerType, _ := cs.providerTypesService.GetById(log, updatedCompany.ProviderTypeId)
+	cp := updatedCompany.ToModel()
+	cp.ProviderType = *providerType
+	return cp, nil
 
 	//return updatedCompany.ToModel(), nil
 }
@@ -139,4 +149,20 @@ func (cs *companiesService) Remove(log *models.StackLog, companyId int64) error 
 	log.AddStep("CompanyService-Remove")
 
 	return cs.companyRepository.Remove(log, companyId)
+}
+
+func (cs *companiesService) Search(log *models.StackLog, search *models.CompanyFilter) (*[]models.Company, error) {
+	log.AddStep("CompanyService-Search")
+
+	result, searchError := cs.companyRepository.Search(log, search)
+	if searchError != nil {
+		return nil, searchError
+	}
+
+	var companies []models.Company
+	for _, comp := range *result {
+		companies = append(companies, *comp.ToModel())
+	}
+
+	return &companies, nil
 }
