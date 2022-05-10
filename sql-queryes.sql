@@ -10,7 +10,7 @@ INSERT INTO users_groups(user_group_name) VALUES('provider');
 CREATE TABLE IF NOT EXISTS users(
 	id INT GENERATED ALWAYS AS IDENTITY,
 	user_group_id INT,
-	uid varchar(255),
+	uid VARCHAR(255),
 	user_name VARCHAR(100) NOT NULL,
 	last_login VARCHAR(100),
 	email VARCHAR(100) UNIQUE,
