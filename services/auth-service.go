@@ -3,12 +3,10 @@ package services
 import (
 	"context"
 	"errors"
-	"glow-service/common/functions"
 	"glow-service/models"
 	"time"
 
 	"firebase.google.com/go/auth"
-	"github.com/golang-jwt/jwt"
 )
 
 const (
@@ -65,51 +63,76 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 		return nil, errors.New("invalid token")
 	}
 
+	claims := token.Claims
+	user := models.User{
+		UserGroupId: int64(claims["userGroupId"].(float64)),
+		UserId:      int64(claims["userId"].(float64)),
+		UserName:    claims["name"].(string),
+		Email:       claims["email"].(string),
+	}
+	// if userGroupId, ok := claims["userGroupId"]; ok {
+	// 	if userGroupId.(bool) {
+	// 		user.UserGroupId = userGroupId.(int64)
+	// 	} else {
+	// 		return nil, errors.New("invalid token")
+	// 	}
+	// }
+
+	// if userId, ok := claims["userId"]; ok {
+	// 	if userId.(bool) {
+	// 		user.UserId = userId.(int64)
+	// 	} else {
+	// 		return nil, errors.New("invalid token")
+	// 	}
+	// }
+
 	return &user, nil
 }
 
 func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error) {
 	log.AddStep("AuthService-GenerateToken")
 
-	dateTime := functions.DateToString()
+	// dateTime := functions.DateToString()
 
-	// Create token
-	token := jwt.New(jwt.SigningMethodHS256)
+	// // Create token
+	// token := jwt.New(jwt.SigningMethodHS256)
 
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["userId"] = user.UserId
-	claims["userGroupId"] = user.UserGroupId
-	claims["name"] = user.UserName
-	claims["email"] = user.Email
-	claims["exp"] = dateTime
+	// // Set claims
+	// claims := token.Claims.(jwt.MapClaims)
+	// claims["userId"] = user.UserId
+	// claims["userGroupId"] = user.UserGroupId
+	// claims["name"] = user.UserName
+	// claims["email"] = user.Email
+	// claims["exp"] = dateTime
 
-	tokenStr, err := token.SignedString([]byte(tokenSecret))
-	if err != nil {
-		return nil, errors.New("error creating user token")
-	}
-
-	return &models.Auth{
-		UserId:        user.UserId,
-		UserGroupId:   user.UserGroupId,
-		Expirate:      dateTime,
-		Authorization: tokenStr,
-	}, nil
-
-	// // // Set claims
-	// claims := map[string]interface{}{
-	// 	"userGroupId": user.UserGroupId,
-	// }
-
-	// token, err := auth.firebaseClient.CustomTokenWithClaims(context.Background(), user.Uid, claims)
+	// tokenStr, err := token.SignedString([]byte(tokenSecret))
 	// if err != nil {
 	// 	return nil, errors.New("error creating user token")
 	// }
+
 	// return &models.Auth{
 	// 	UserId:        user.UserId,
 	// 	UserGroupId:   user.UserGroupId,
-	// 	Authorization: token,
+	// 	Expirate:      dateTime,
+	// 	Authorization: tokenStr,
 	// }, nil
+
+	// // Set claims
+	claims := map[string]interface{}{
+		"userGroupId": user.UserGroupId,
+		"userId":      user.UserId,
+		"name":        user.UserName,
+	}
+
+	token, err := auth.firebaseClient.CustomTokenWithClaims(context.Background(), user.Uid, claims)
+	if err != nil {
+		return nil, errors.New("error creating user token")
+	}
+	return &models.Auth{
+		UserId:        user.UserId,
+		UserGroupId:   user.UserGroupId,
+		Authorization: token,
+	}, nil
 }
 
 func (auth *authService) compareTokenDate(date time.Time) bool {
