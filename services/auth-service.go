@@ -86,6 +86,7 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 	// 	}
 	// }
 
+	log.SetUser(user.Email)
 	return &user, nil
 }
 
