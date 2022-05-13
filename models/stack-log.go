@@ -24,21 +24,30 @@ func (log *StackLog) SetUser(email string) {
 
 // Add a stackTrace step log into object.
 func (log *StackLog) AddStep(stackLog string) {
+
 	if len(log.StackTrace) == 0 {
-		if len(log.User.Email) > 0 {
-			log.StackTrace = append(log.StackTrace, fmt.Sprintf("\n{%s: %s}\n(%s) STEP: %s", log.Platform, log.User.Email, log.dateToString(), stackLog))
-		} else {
-			log.StackTrace = append(log.StackTrace, fmt.Sprintf("\n{%s: %s}\n(%s) STEP: %s", log.Platform, "Anonymous User", log.dateToString(), stackLog))
-		}
+		fmt.Printf("\n")
+	}
+
+	if len(log.User.Email) > 0 {
+		log.StackTrace = append(log.StackTrace, fmt.Sprintf("{%s: %s}(%s) STEP: %s", log.Platform, log.User.Email, log.dateToString(), stackLog))
 	} else {
-		log.StackTrace = append(log.StackTrace, fmt.Sprintf("(%s) STEP: %s", log.dateToString(), stackLog))
+		log.StackTrace = append(log.StackTrace, fmt.Sprintf("{%s: %s}(%s) STEP: %s", log.Platform, "Anonymous User", log.dateToString(), stackLog))
 	}
 	fmt.Println(log.StackTrace[(len(log.StackTrace) - 1)])
 }
 
 // Add a stackTrace info log into object.
 func (log *StackLog) AddInfo(stackLog string) {
-	log.StackTrace = append(log.StackTrace, fmt.Sprintf("(%s) INFO: %s", log.dateToString(), stackLog))
+	if len(log.StackTrace) == 0 {
+		fmt.Printf("\n")
+	}
+
+	if len(log.User.Email) > 0 {
+		log.StackTrace = append(log.StackTrace, fmt.Sprintf("{%s: %s}(%s) INFO: %s", log.Platform, log.User.Email, log.dateToString(), stackLog))
+	} else {
+		log.StackTrace = append(log.StackTrace, fmt.Sprintf("{%s: %s}(%s) INFO: %s", log.Platform, "Anonymous User", log.dateToString(), stackLog))
+	}
 	fmt.Println(log.StackTrace[(len(log.StackTrace) - 1)])
 }
 
@@ -63,6 +72,4 @@ func (log *StackLog) PrintStackOnConsole() {
 
 func (log *StackLog) dateToString() string {
 	return fmt.Sprint(time.Now().Format("02/01/2006 15:04:05.000"))
-	// t := time.Now()
-	// return fmt.Sprintf("%02d/%02d/%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
 }

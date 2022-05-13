@@ -60,20 +60,20 @@ func (cp *companiesPresenter) Register() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		log.AddInfo("Validating paylod data")
-		validationError := functions.ValidateStruct(&company)
-		if validationError != nil {
-			errorResponse := log.AddError(*validationError)
-
-			return context.JSON(http.StatusBadRequest, errorResponse)
-		}
-
 		log.AddInfo("Validating authorization")
 		user, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
 
 			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		log.AddInfo("Validating paylod data")
+		validationError := functions.ValidateStruct(&company)
+		if validationError != nil {
+			errorResponse := log.AddError(*validationError)
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		createdCompany, companyErr := cp.companiesService.Register(log, user.UserId, company.ToModel())
@@ -194,6 +194,7 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
+
 		if company.CompanyId == 0 {
 			errorResponse := log.AddError("Company id not found")
 

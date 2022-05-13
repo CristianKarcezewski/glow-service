@@ -92,6 +92,7 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 
 func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error) {
 	log.AddStep("AuthService-GenerateToken")
+	log.SetUser(user.Email)
 
 	// dateTime := functions.DateToString()
 

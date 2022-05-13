@@ -186,20 +186,20 @@ func (ac *addressesPresenter) RegisterByUser() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		log.AddInfo("Validating paylod data")
-		validationError := functions.ValidateStruct(&address)
-		if validationError != nil {
-			errorResponse := log.AddError(*validationError)
-
-			return context.JSON(http.StatusBadRequest, errorResponse)
-		}
-
 		log.AddInfo("Validating authorization")
 		user, tokenErr := ac.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
 
 			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
+		log.AddInfo("Validating paylod data")
+		validationError := functions.ValidateStruct(&address)
+		if validationError != nil {
+			errorResponse := log.AddError(*validationError)
+
+			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
 		createdAddress, addressErr := ac.addressesService.RegisterByUser(log, user.UserId, address.ToModel())
@@ -233,6 +233,14 @@ func (ac *addressesPresenter) RegisterByCompany() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
+		log.AddInfo("Validating authorization")
+		user, tokenErr := ac.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
+
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
 		log.AddInfo("Validating paylod data")
 		validationError := functions.ValidateStruct(&address)
 		if validationError != nil {
@@ -241,13 +249,6 @@ func (ac *addressesPresenter) RegisterByCompany() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		log.AddInfo("Validating authorization")
-		user, tokenErr := ac.authService.VerifyToken(log, token)
-		if tokenErr != nil {
-			errorResponse := log.AddError(ac.errorMessagesData.Header.NotAuthorized)
-
-			return context.JSON(http.StatusUnauthorized, errorResponse)
-		}
 		getCompany, companyErr := ac.companiesService.GetByUser(log, user.UserId)
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
@@ -286,6 +287,14 @@ func (ap *addressesPresenter) Update() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
+		log.AddInfo("Validating authorization")
+		_, tokenErr := ap.authService.VerifyToken(log, token)
+		if tokenErr != nil {
+			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
+
+			return context.JSON(http.StatusUnauthorized, errorResponse)
+		}
+
 		log.AddInfo("Validating paylod data")
 		validationError := functions.ValidateStruct(&address)
 		if validationError != nil {
@@ -293,18 +302,11 @@ func (ap *addressesPresenter) Update() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
+
 		if address.AddressId == 0 {
 			errorResponse := log.AddError("Address id not found")
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
-		}
-
-		log.AddInfo("Validating authorization")
-		_, tokenErr := ap.authService.VerifyToken(log, token)
-		if tokenErr != nil {
-			errorResponse := log.AddError(ap.errorMessagesData.Header.NotAuthorized)
-
-			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
 		updatedAddress, addressErr := ap.addressesService.Update(log, address.ToModel())
