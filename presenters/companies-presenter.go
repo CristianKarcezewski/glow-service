@@ -268,7 +268,7 @@ func (cp *companiesPresenter) Search() echo.HandlerFunc {
 
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		token := context.Request().Header.Get("authorization")
+		// token := context.Request().Header.Get("authorization")
 		log.AddStep("companiesPresenter-Search")
 
 		// Decode request body payload data
@@ -289,13 +289,13 @@ func (cp *companiesPresenter) Search() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		log.AddInfo("Validating authorization")
-		_, tokenErr := cp.authService.VerifyToken(log, token)
-		if tokenErr != nil {
-			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
+		// log.AddInfo("Validating authorization")
+		// _, tokenErr := cp.authService.VerifyToken(log, token)
+		// if tokenErr != nil {
+		// 	errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
 
-			return context.JSON(http.StatusUnauthorized, errorResponse)
-		}
+		// 	return context.JSON(http.StatusUnauthorized, errorResponse)
+		// }
 
 		result, resultErr := cp.companiesService.Search(log, filter.ToModel())
 		if resultErr != nil {
@@ -304,7 +304,7 @@ func (cp *companiesPresenter) Search() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		return context.JSON(http.StatusOK, result)
+		return context.JSON(http.StatusOK, *result)
 	}
 }
 

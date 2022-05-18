@@ -44,12 +44,14 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 
 	// Start gateways
 	locationGateway := gateways.NewLocationsGateway()
+	mapsGeolocationGateway := gateways.NewMapsGeolocationGateway()
 
 	// Start services
 	authService := services.NewAuthService(config.FirebaseClient)
 	userService := services.NewUserService(config.FirebaseClient, userRepository, hashRepository, authService)
 	locationService := services.NewLocationService(locationGateway)
-	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService)
+	mapsGeolocationService := services.NewMapsGeolocationService(mapsGeolocationGateway)
+	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService, mapsGeolocationService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService)
 

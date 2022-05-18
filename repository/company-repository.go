@@ -5,6 +5,7 @@ import (
 	"glow-service/models"
 	"glow-service/models/dao"
 	"glow-service/server"
+	"strings"
 )
 
 const (
@@ -90,7 +91,10 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 	query := db.Model(&companies)
 	if filter.Search != "" {
 		perc := "%"
-		query.Where("company_name LIKE ?", fmt.Sprintf("%s%s%s", perc, filter.Search, perc))
+		query.Where("LOWER(company_name) LIKE ?", fmt.Sprintf("%s%s%s", perc, strings.ToLower(filter.Search), perc))
+	}
+	if filter.ProviderType.ProviderTypeId > 0 {
+		query.Where("provider_type_id = ?", filter.ProviderType.ProviderTypeId)
 	}
 	if filter.CityId > 0 {
 		query.Relation("company_addresses._").Relation("addresses.city_id").Where("city_id = ?", filter.CityId)

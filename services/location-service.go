@@ -5,6 +5,7 @@ import (
 	"glow-service/gateways"
 	"glow-service/models"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -29,7 +30,7 @@ func NewLocationService(locationGateway gateways.ILocationsGateway) ILocationSer
 func (ls *locationService) FindByPostalCode(log *models.StackLog, postalCode string) (*models.Address, error) {
 	log.AddStep("LocationService-FindByViacep")
 
-	viacep, viacepErr := ls.locationGateway.GetViacep(log, postalCode)
+	viacep, viacepErr := ls.locationGateway.GetViacep(log, strings.ReplaceAll(postalCode, "-", ""))
 	if viacepErr != nil {
 		return nil, viacepErr
 	}
@@ -132,7 +133,7 @@ func (ls *locationService) findCityByIdAsync(wg *sync.WaitGroup, log *models.Sta
 	if ctErr != nil {
 		*err = ctErr.Error()
 	} else {
-		id,_ := strconv.ParseInt(ctRes.Id,10,64)
+		id, _ := strconv.ParseInt(ctRes.Id, 10, 64)
 		city.CityId = id
 		city.Name = ctRes.Name
 	}

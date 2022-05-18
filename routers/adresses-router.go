@@ -13,19 +13,24 @@ const (
 	pathGetByCompany      = "addresses/company"
 	pathRegisterByCompany = "addresses/company"
 	pathRemoveByCompany   = "addresses/company/:addressId"
+
+	pathFindByGeolocation = "addresses/geolocation"
+	pathFindByAddress     = "addresses/address"
 )
 
 type (
 	AddressesRouter struct {
-		Echo              *echo.Echo
-		GetById           echo.HandlerFunc
-		GetByUser         echo.HandlerFunc
-		GetByCompany      echo.HandlerFunc
-		RegisterByUser    echo.HandlerFunc
-		RegisterByCompany echo.HandlerFunc
-		Update            echo.HandlerFunc
-		RemoveByUser      echo.HandlerFunc
-		RemoveByCompany   echo.HandlerFunc
+		Echo                     *echo.Echo
+		GetById                  echo.HandlerFunc
+		GetByUser                echo.HandlerFunc
+		GetByCompany             echo.HandlerFunc
+		RegisterByUser           echo.HandlerFunc
+		RegisterByCompany        echo.HandlerFunc
+		Update                   echo.HandlerFunc
+		RemoveByUser             echo.HandlerFunc
+		RemoveByCompany          echo.HandlerFunc
+		FindAddressByGeolocation echo.HandlerFunc
+		FindGeolocationByAddress echo.HandlerFunc
 	}
 )
 
@@ -38,4 +43,6 @@ func (ar *AddressesRouter) Wire() {
 	ar.Echo.PUT(pathUpdate, ar.Update)
 	ar.Echo.DELETE(pathRemoveByUser, ar.RemoveByUser)
 	ar.Echo.DELETE(pathRemoveByCompany, ar.RemoveByCompany)
+	ar.Echo.POST(pathFindByGeolocation, ar.FindAddressByGeolocation)
+	ar.Echo.POST(pathFindByAddress, ar.FindGeolocationByAddress)
 }

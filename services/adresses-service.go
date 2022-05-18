@@ -18,12 +18,16 @@ type (
 		Update(log *models.StackLog, address *models.Address) (*models.Address, error)
 		RemoveUserAddress(log *models.StackLog, addressId int64) error
 		RemoveCompanyAddress(log *models.StackLog, addressId int64) error
+		FindAddressByGeolocation(log *models.StackLog, geolocation *models.Address) (*models.Address, error)
+		FindGeolocationByAddress(log *models.StackLog, geolocation *models.Address) (*models.Address, error)
 	}
+
 	addressesService struct {
 		addressRepository          repository.IAddressesRepository
 		userAddressesRepository    repository.IUserAddressesRepository
 		companyAddressesRepository repository.ICompanyAddressesRepository
 		locationService            ILocationService
+		mapsGeolocationService     IMapsGeolocationService
 	}
 )
 
@@ -32,12 +36,14 @@ func NewAddressService(
 	userAddressesRepository repository.IUserAddressesRepository,
 	companyAddressesRepository repository.ICompanyAddressesRepository,
 	locationService ILocationService,
+	mapsGeolocationService IMapsGeolocationService,
 ) IAddressesService {
 	return &addressesService{
 		addressRepository,
 		userAddressesRepository,
 		companyAddressesRepository,
 		locationService,
+		mapsGeolocationService,
 	}
 }
 
@@ -234,6 +240,46 @@ func (as *addressesService) RemoveCompanyAddress(log *models.StackLog, addressId
 	}
 
 	return as.addressRepository.Remove(log, addressId)
+}
+
+func (as *addressesService) FindAddressByGeolocation(log *models.StackLog, geolocation *models.Address) (*models.Address, error) {
+	log.AddStep("AddressService-FindAddressByGeolocation")
+
+	address, addressError := as.mapsGeolocationService.FindAddressByGeolocation(log, geolocation)
+	if addressError != nil {
+		return nil, addressError
+	}
+
+	if address.PostalCode != "" {
+		postalCodeAddress, postalCodeAddressError := as.locationService.FindByPostalCode(log, address.PostalCode)
+		if postalCodeAddressError == nil {
+			postalCodeAddress.Latitude = address.Latitude
+			postalCodeAddress.Longitude = address.Longitude
+			return postalCodeAddress, nil
+		}
+	}
+
+	return address, nil
+}
+
+func (as *addressesService) FindGeolocationByAddress(log *models.StackLog, geolocation *models.Address) (*models.Address, error) {
+	log.AddStep("AddressService-FindAddressByGeolocation")
+
+	address, addressError := as.mapsGeolocationService.FindGeolocationByAddress(log, geolocation)
+	if addressError != nil {
+		return nil, addressError
+	}
+
+	if address.PostalCode != "" {
+		postalCodeAddress, postalCodeAddressError := as.locationService.FindByPostalCode(log, address.PostalCode)
+		if postalCodeAddressError == nil {
+			postalCodeAddress.Latitude = address.Latitude
+			postalCodeAddress.Longitude = address.Longitude
+			return postalCodeAddress, nil
+		}
+	}
+
+	return address, nil
 }
 
 func (as *addressesService) findStateAsync(wg *sync.WaitGroup, log *models.StackLog, stateUF string, state *models.State, err *error) {

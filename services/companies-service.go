@@ -161,7 +161,11 @@ func (cs *companiesService) Search(log *models.StackLog, search *models.CompanyF
 
 	var companies []models.Company
 	for _, comp := range *result {
-		companies = append(companies, *comp.ToModel())
+		model := comp.ToModel()
+		pType, _ := cs.providerTypesService.GetById(log, comp.ProviderTypeId)
+		model.ProviderType.Name = pType.Name
+		model.ProviderType.ProviderTypeId = pType.ProviderTypeId
+		companies = append(companies, *model)
 	}
 
 	return &companies, nil

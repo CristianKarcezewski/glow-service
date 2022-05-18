@@ -1,0 +1,812 @@
+{
+  "plus_code": {
+    "compound_code": "RQ5G+8HP Caxias do Sul - Galópolis, Caxias do Sul - RS, Brasil",
+    "global_code": "582CRQ5G+8HP"
+  },
+  "results": [
+    {
+      "address_components": [
+        {
+          "long_name": "274",
+          "short_name": "274",
+          "types": ["street_number"]
+        },
+        {
+          "long_name": "Rua Antônio Susin",
+          "short_name": "R. Antônio Susin",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Charqueadas",
+          "short_name": "Charqueadas",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "95110-815",
+          "short_name": "95110-815",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "R. Antônio Susin, 274 - Charqueadas, Caxias do Sul - RS, 95110-815, Brasil",
+      "geometry": {
+        "location": {
+          "lat": -29.1916077,
+          "lng": -51.2235074
+        },
+        "location_type": "ROOFTOP",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1902587197085,
+            "lng": -51.2221584197085
+          },
+          "southwest": {
+            "lat": -29.1929566802915,
+            "lng": -51.2248563802915
+          }
+        }
+      },
+      "place_id": "ChIJZbGR26CjHpURLcadBCSUDlc",
+      "plus_code": {
+        "compound_code": "RQ5G+9H Charqueadas, Caxias do Sul - RS, Brasil",
+        "global_code": "582CRQ5G+9H"
+      },
+      "types": ["street_address"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "286",
+          "short_name": "286",
+          "types": ["street_number"]
+        },
+        {
+          "long_name": "Rua Antônio Susin",
+          "short_name": "R. Antônio Susin",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Charqueadas",
+          "short_name": "Charqueadas",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "95110-815",
+          "short_name": "95110-815",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "R. Antônio Susin, 286 - Charqueadas, Caxias do Sul - RS, 95110-815, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.1916143,
+            "lng": -51.2235521
+          },
+          "southwest": {
+            "lat": -29.1917828,
+            "lng": -51.2237211
+          }
+        },
+        "location": {
+          "lat": -29.1916982,
+          "lng": -51.22361429999999
+        },
+        "location_type": "ROOFTOP",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1903495697085,
+            "lng": -51.2222876197085
+          },
+          "southwest": {
+            "lat": -29.1930475302915,
+            "lng": -51.2249855802915
+          }
+        }
+      },
+      "place_id": "ChIJeS9O2aCjHpUR1JCBE2ec1vc",
+      "types": ["premise"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "281",
+          "short_name": "281",
+          "types": ["street_number"]
+        },
+        {
+          "long_name": "Rua Antônio Susin",
+          "short_name": "R. Antônio Susin",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Charqueadas",
+          "short_name": "Charqueadas",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "95110-815",
+          "short_name": "95110-815",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "R. Antônio Susin, 281 - Charqueadas, Caxias do Sul - RS, 95110-815, Brasil",
+      "geometry": {
+        "location": {
+          "lat": -29.191495,
+          "lng": -51.2234001
+        },
+        "location_type": "ROOFTOP",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1901460197085,
+            "lng": -51.2220511197085
+          },
+          "southwest": {
+            "lat": -29.1928439802915,
+            "lng": -51.2247490802915
+          }
+        }
+      },
+      "place_id": "ChIJqwF4JsajHpURSEI4fG8OYKA",
+      "plus_code": {
+        "compound_code": "RQ5G+CJ Charqueadas, Caxias do Sul - RS, Brasil",
+        "global_code": "582CRQ5G+CJ"
+      },
+      "types": ["establishment", "pet_store", "point_of_interest", "store"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "RQ5G+8H",
+          "short_name": "RQ5G+8H",
+          "types": ["plus_code"]
+        },
+        {
+          "long_name": "Galópolis",
+          "short_name": "Galópolis",
+          "types": ["administrative_area_level_4", "political"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "RQ5G+8H Caxias do Sul - Galópolis, Caxias do Sul - RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.191625,
+            "lng": -51.2235
+          },
+          "southwest": {
+            "lat": -29.19175,
+            "lng": -51.223625
+          }
+        },
+        "location": {
+          "lat": -29.1916647,
+          "lng": -51.2235527
+        },
+        "location_type": "GEOMETRIC_CENTER",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1903385197085,
+            "lng": -51.2222135197085
+          },
+          "southwest": {
+            "lat": -29.1930364802915,
+            "lng": -51.2249114802915
+          }
+        }
+      },
+      "place_id": "GhIJMkwS8BAxPcARXLf3X52cScA",
+      "plus_code": {
+        "compound_code": "RQ5G+8H Caxias do Sul - Galópolis, Caxias do Sul - RS, Brasil",
+        "global_code": "582CRQ5G+8H"
+      },
+      "types": ["plus_code"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "159-365",
+          "short_name": "159-365",
+          "types": ["street_number"]
+        },
+        {
+          "long_name": "Rua Antônio Susin",
+          "short_name": "R. Antônio Susin",
+          "types": ["route"]
+        },
+        {
+          "long_name": "Charqueadas",
+          "short_name": "Charqueadas",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        },
+        {
+          "long_name": "95110-815",
+          "short_name": "95110-815",
+          "types": ["postal_code"]
+        }
+      ],
+      "formatted_address": "R. Antônio Susin, 159-365 - Charqueadas, Caxias do Sul - RS, 95110-815, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.1910945,
+            "lng": -51.2223663
+          },
+          "southwest": {
+            "lat": -29.1917254,
+            "lng": -51.22437009999999
+          }
+        },
+        "location": {
+          "lat": -29.1915601,
+          "lng": -51.2234162
+        },
+        "location_type": "GEOMETRIC_CENTER",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1900609697085,
+            "lng": -51.2220192197085
+          },
+          "southwest": {
+            "lat": -29.1927589302915,
+            "lng": -51.2247171802915
+          }
+        }
+      },
+      "place_id": "ChIJAV4d26CjHpURhPYL5UjgRIE",
+      "types": ["route"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "95110-645",
+          "short_name": "95110-645",
+          "types": ["postal_code"]
+        },
+        {
+          "long_name": "Desvio Rizzo",
+          "short_name": "Desvio Rizzo",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Desvio Rizzo, Caxias do Sul - RS, 95110-645, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.190453,
+            "lng": -51.2213043
+          },
+          "southwest": {
+            "lat": -29.1933588,
+            "lng": -51.2252291
+          }
+        },
+        "location": {
+          "lat": -29.1924272,
+          "lng": -51.2223885
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.190453,
+            "lng": -51.2213043
+          },
+          "southwest": {
+            "lat": -29.1933588,
+            "lng": -51.2252291
+          }
+        }
+      },
+      "place_id": "ChIJU7mt56CjHpUR8P5FWISP6co",
+      "types": ["postal_code"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Charqueadas",
+          "short_name": "Charqueadas",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Charqueadas, Caxias do Sul - RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.1790156,
+            "lng": -51.205729
+          },
+          "southwest": {
+            "lat": -29.198607,
+            "lng": -51.23381209999999
+          }
+        },
+        "location": {
+          "lat": -29.186652,
+          "lng": -51.21868800000001
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1790156,
+            "lng": -51.205729
+          },
+          "southwest": {
+            "lat": -29.198607,
+            "lng": -51.23381209999999
+          }
+        }
+      },
+      "place_id": "ChIJKwGiVAyjHpURR-UCzj6hR9M",
+      "types": ["political", "sublocality", "sublocality_level_1"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "RA 06 - Rizzo",
+          "short_name": "RA 06 - Rizzo",
+          "types": ["administrative_area_level_5", "political"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_4", "political"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "RA 06 - Rizzo - Caxias do Sul, RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.1740769,
+            "lng": -51.20374289999999
+          },
+          "southwest": {
+            "lat": -29.2222746,
+            "lng": -51.2501889
+          }
+        },
+        "location": {
+          "lat": -29.189156,
+          "lng": -51.2337042
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1740769,
+            "lng": -51.20374289999999
+          },
+          "southwest": {
+            "lat": -29.2222746,
+            "lng": -51.2501889
+          }
+        }
+      },
+      "place_id": "ChIJfVi8DaOjHpURkR-v9nIQ_pI",
+      "types": ["administrative_area_level_5", "political"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "95110",
+          "short_name": "95110",
+          "types": ["postal_code", "postal_code_prefix"]
+        },
+        {
+          "long_name": "Desvio Rizzo",
+          "short_name": "Desvio Rizzo",
+          "types": ["political", "sublocality", "sublocality_level_1"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Desvio Rizzo, Caxias do Sul - RS, 95110, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.1745276,
+            "lng": -51.21418629999999
+          },
+          "southwest": {
+            "lat": -29.2348658,
+            "lng": -51.26285430000001
+          }
+        },
+        "location": {
+          "lat": -29.20833589999999,
+          "lng": -51.2317711
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.1745276,
+            "lng": -51.21418629999999
+          },
+          "southwest": {
+            "lat": -29.2348658,
+            "lng": -51.26285430000001
+          }
+        }
+      },
+      "place_id": "ChIJD8-6a5SjHpUR3HwzBq6XyoI",
+      "types": ["postal_code", "postal_code_prefix"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["locality", "political"]
+        },
+        {
+          "long_name": "Galópolis",
+          "short_name": "Galópolis",
+          "types": ["administrative_area_level_4", "political"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Caxias do Sul - Galópolis, Caxias do Sul - RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.0904182,
+            "lng": -51.0558777
+          },
+          "southwest": {
+            "lat": -29.2405996,
+            "lng": -51.2916278
+          }
+        },
+        "location": {
+          "lat": -29.1740137,
+          "lng": -51.1812032
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.0904182,
+            "lng": -51.0558777
+          },
+          "southwest": {
+            "lat": -29.2405996,
+            "lng": -51.2916278
+          }
+        }
+      },
+      "place_id": "ChIJc_A1ZNG8HpUR9Dt3tQf3FPU",
+      "types": ["locality", "political"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_4", "political"]
+        },
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Caxias do Sul, RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -29.0328141,
+            "lng": -50.99282359999999
+          },
+          "southwest": {
+            "lat": -29.3323223,
+            "lng": -51.3071154
+          }
+        },
+        "location": {
+          "lat": -29.1466078,
+          "lng": -51.1376317
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -29.0328141,
+            "lng": -50.99282359999999
+          },
+          "southwest": {
+            "lat": -29.3323223,
+            "lng": -51.3071154
+          }
+        }
+      },
+      "place_id": "ChIJF9w945q8HpURzyCxgeL8v8Y",
+      "types": ["administrative_area_level_4", "political"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Caxias do Sul",
+          "short_name": "Caxias do Sul",
+          "types": ["administrative_area_level_2", "political"]
+        },
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Caxias do Sul - RS, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -28.7944819,
+            "lng": -50.7822396
+          },
+          "southwest": {
+            "lat": -29.3585712,
+            "lng": -51.3100216
+          }
+        },
+        "location": {
+          "lat": -29.1668707,
+          "lng": -51.1801015
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -28.7944819,
+            "lng": -50.7822396
+          },
+          "southwest": {
+            "lat": -29.3585712,
+            "lng": -51.3100216
+          }
+        }
+      },
+      "place_id": "ChIJsaH95GCVHpURxkxEH8qbOjk",
+      "types": ["administrative_area_level_2", "political"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Rio Grande do Sul",
+          "short_name": "RS",
+          "types": ["administrative_area_level_1", "political"]
+        },
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Rio Grande do Sul, Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": -27.0823021,
+            "lng": -49.6913517
+          },
+          "southwest": {
+            "lat": -33.7549229,
+            "lng": -57.64847959999999
+          }
+        },
+        "location": {
+          "lat": -29.3646459,
+          "lng": -51.6657692
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": -27.0823021,
+            "lng": -49.6913517
+          },
+          "southwest": {
+            "lat": -33.7549229,
+            "lng": -57.64847959999999
+          }
+        }
+      },
+      "place_id": "ChIJA1i0QAxyBJUR3nOfr9uzn60",
+      "types": ["administrative_area_level_1", "political"]
+    },
+    {
+      "address_components": [
+        {
+          "long_name": "Brasil",
+          "short_name": "BR",
+          "types": ["country", "political"]
+        }
+      ],
+      "formatted_address": "Brasil",
+      "geometry": {
+        "bounds": {
+          "northeast": {
+            "lat": 5.2717863,
+            "lng": -28.650543
+          },
+          "southwest": {
+            "lat": -34.0891,
+            "lng": -73.9828169
+          }
+        },
+        "location": {
+          "lat": -14.235004,
+          "lng": -51.92528
+        },
+        "location_type": "APPROXIMATE",
+        "viewport": {
+          "northeast": {
+            "lat": 5.2717863,
+            "lng": -28.650543
+          },
+          "southwest": {
+            "lat": -34.0891,
+            "lng": -73.9828169
+          }
+        }
+      },
+      "place_id": "ChIJzyjM68dZnAARYz4p8gYVWik",
+      "types": ["country", "political"]
+    }
+  ],
+  "status": "OK"
+}
