@@ -4,11 +4,11 @@ import "glow-service/models"
 
 type (
 	CompanyFilterDto struct {
-		Search       string `json:"search"`
-		Skip         int64  `json:"skip"`
-		StateId      int64  `json:"stateId"`
-		CityId       int64  `json:"cityId"`
-		ProviderType ProviderTypeDto
+		Search       string          `json:"search"`
+		Skip         int64           `json:"skip"`
+		StateUf      string          `json:"stateUf"`
+		CityId       int64           `json:"cityId"`
+		ProviderType ProviderTypeDto `json:"providerType"`
 	}
 )
 
@@ -16,7 +16,7 @@ func (dto *CompanyFilterDto) ToModel() *models.CompanyFilter {
 	return &models.CompanyFilter{
 		Search:       dto.Search,
 		Skip:         dto.Skip,
-		StateId:      dto.StateId,
+		StateUf:      dto.StateUf,
 		CityId:       dto.CityId,
 		ProviderType: *dto.ProviderType.ToModel(),
 	}

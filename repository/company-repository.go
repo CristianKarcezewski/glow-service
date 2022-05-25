@@ -97,7 +97,10 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 		query.Where("provider_type_id = ?", filter.ProviderType.ProviderTypeId)
 	}
 	if filter.CityId > 0 {
-		query.Relation("company_addresses._").Relation("addresses.city_id").Where("city_id = ?", filter.CityId)
+		query.Join("LEFT JOIN company_addresses AS ca").
+			JoinOn("ca.company_id = company.id").
+			Join("LEFT JOIN addresses AS ad").
+			JoinOn("ad.id = ca.address_id")
 	}
 	if filter.Skip > 0 {
 		query.Offset(int(filter.Skip))

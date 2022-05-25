@@ -7,7 +7,11 @@ type (
 
 	addressComponents struct {
 		Components []components `json:"address_components,omitempty"`
-		Geometry   location     `json:"geometry,omitempty"`
+		Geometry   geonetry     `json:"geometry,omitempty"`
+	}
+
+	geonetry struct {
+		Location location `json:"location,omitempty"`
 	}
 
 	components struct {
@@ -17,7 +21,7 @@ type (
 	}
 
 	location struct {
-		Lat string `json:"lat,omitempty"`
-		Lng string `json:"lng,omitempty"`
+		Lat float64 `json:"lat,omitempty"`
+		Lng float64 `json:"lng,omitempty"`
 	}
 )

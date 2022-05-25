@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"glow-service/gateways"
 	"glow-service/models"
 	"glow-service/models/response"
@@ -58,18 +59,20 @@ func (mg *mapsGeolocationService) FindGeolocationByAddress(log *models.StackLog,
 	wg.Wait()
 
 	for _, addressComponent := range mapsResponse.Results {
-		geolocation.Latitude = addressComponent.Geometry.Lat
-		geolocation.Longitude = addressComponent.Geometry.Lng
+		geolocation.Latitude = fmt.Sprintf("%f", addressComponent.Geometry.Location.Lat)
+		geolocation.Longitude = fmt.Sprintf("%f", addressComponent.Geometry.Location.Lng)
 	}
 
 	return geolocation, nil
 }
 
 func (mg *mapsGeolocationService) fetchState(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
+	secondCondition := false
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
-			secondCondition := false
+			firstCondition = false
+			secondCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "administrative_area_level_1" {
@@ -83,6 +86,8 @@ func (mg *mapsGeolocationService) fetchState(wg *sync.WaitGroup, log *models.Sta
 			if firstCondition && secondCondition {
 				address.State.Name = responseComponent.LongName
 				address.State.Uf = responseComponent.ShortName
+				wg.Done()
+				return
 			}
 		}
 	}
@@ -91,10 +96,12 @@ func (mg *mapsGeolocationService) fetchState(wg *sync.WaitGroup, log *models.Sta
 }
 
 func (mg *mapsGeolocationService) fetchCity(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
+	secondCondition := false
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
-			secondCondition := false
+			firstCondition = false
+			secondCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "administrative_area_level_2" {
@@ -115,11 +122,15 @@ func (mg *mapsGeolocationService) fetchCity(wg *sync.WaitGroup, log *models.Stac
 }
 
 func (mg *mapsGeolocationService) fetchDistrict(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
+	secondCondition := false
+	thirdCondition := false
+
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
-			secondCondition := false
-			thirdCondition := false
+			firstCondition = false
+			secondCondition = false
+			thirdCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "political" {
@@ -135,6 +146,8 @@ func (mg *mapsGeolocationService) fetchDistrict(wg *sync.WaitGroup, log *models.
 
 			if firstCondition && secondCondition && thirdCondition {
 				address.District = responseComponent.LongName
+				wg.Done()
+				return
 			}
 		}
 	}
@@ -143,9 +156,10 @@ func (mg *mapsGeolocationService) fetchDistrict(wg *sync.WaitGroup, log *models.
 }
 
 func (mg *mapsGeolocationService) fetchStreet(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
+			firstCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "route" {
@@ -155,6 +169,8 @@ func (mg *mapsGeolocationService) fetchStreet(wg *sync.WaitGroup, log *models.St
 
 			if firstCondition {
 				address.Street = responseComponent.LongName
+				wg.Done()
+				return
 			}
 		}
 	}
@@ -163,9 +179,10 @@ func (mg *mapsGeolocationService) fetchStreet(wg *sync.WaitGroup, log *models.St
 }
 
 func (mg *mapsGeolocationService) fetchNumber(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
+			firstCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "street_number" {
@@ -177,6 +194,8 @@ func (mg *mapsGeolocationService) fetchNumber(wg *sync.WaitGroup, log *models.St
 				i, err := strconv.ParseInt(responseComponent.LongName, 10, 64)
 				if err == nil {
 					address.Number = i
+					wg.Done()
+					return
 				}
 			}
 		}
@@ -186,9 +205,10 @@ func (mg *mapsGeolocationService) fetchNumber(wg *sync.WaitGroup, log *models.St
 }
 
 func (mg *mapsGeolocationService) fetchPostalCode(wg *sync.WaitGroup, log *models.StackLog, mapsResponse *response.MapsResponse, address *models.Address) {
+	firstCondition := false
 	for _, responseComponents := range mapsResponse.Results {
 		for _, responseComponent := range responseComponents.Components {
-			firstCondition := false
+			firstCondition = false
 
 			for _, cType := range responseComponent.Types {
 				if cType == "postal_code" {
@@ -198,6 +218,8 @@ func (mg *mapsGeolocationService) fetchPostalCode(wg *sync.WaitGroup, log *model
 
 			if firstCondition {
 				address.PostalCode = responseComponent.LongName
+				wg.Done()
+				return
 			}
 		}
 	}

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"glow-service/gateways"
 	"glow-service/models"
+	"regexp"
 	"strconv"
-	"strings"
 	"sync"
 )
 
@@ -30,7 +30,12 @@ func NewLocationService(locationGateway gateways.ILocationsGateway) ILocationSer
 func (ls *locationService) FindByPostalCode(log *models.StackLog, postalCode string) (*models.Address, error) {
 	log.AddStep("LocationService-FindByViacep")
 
-	viacep, viacepErr := ls.locationGateway.GetViacep(log, strings.ReplaceAll(postalCode, "-", ""))
+	re, regexErr := regexp.Compile(`[^\w]`)
+	if regexErr != nil {
+		return nil, regexErr
+	}
+
+	viacep, viacepErr := ls.locationGateway.GetViacep(log, re.ReplaceAllString(postalCode, ""))
 	if viacepErr != nil {
 		return nil, viacepErr
 	}
