@@ -70,12 +70,12 @@ CREATE TABLE IF NOT EXISTS provider_types(
 	PRIMARY KEY(id)
 );
 
-INSERT INTO provider_types(name) VALUES('Diarista');
-INSERT INTO provider_types(name) VALUES('Pedreiro');
-INSERT INTO provider_types(name) VALUES('Funileiro');
-INSERT INTO provider_types(name) VALUES('Encanador');
-INSERT INTO provider_types(name) VALUES('Serralheiro');
-INSERT INTO provider_types(name) VALUES('Cuidador');
+INSERT IGNORE INTO provider_types(name) VALUES('Diarista');
+INSERT IGNORE INTO provider_types(name) VALUES('Pedreiro');
+INSERT IGNORE INTO provider_types(name) VALUES('Funileiro');
+INSERT IGNORE INTO provider_types(name) VALUES('Encanador');
+INSERT IGNORE INTO provider_types(name) VALUES('Serralheiro');
+INSERT IGNORE INTO provider_types(name) VALUES('Cuidador');
 
 CREATE TABLE IF NOT EXISTS companies(
 	id INT GENERATED ALWAYS AS IDENTITY,

@@ -10,6 +10,7 @@ import (
 	firebaseConfig "glow-service/server/firebase-config"
 
 	"firebase.google.com/go/auth"
+	"firebase.google.com/go/storage"
 )
 
 const (
@@ -20,13 +21,14 @@ const (
 
 type (
 	Configuration struct {
-		Port                int    `json:"port" default:"8080"`
-		Environment         string `json:"environment" default:"dev"`
-		DatabaseHandler     IDatabaseHandler
-		database            *databaseConfiguration
-		ServerErrorMessages *models.ServerErrorMessages
-		FirebaseClient      *auth.Client
-		initialized         bool
+		Port                  int    `json:"port" default:"8080"`
+		Environment           string `json:"environment" default:"dev"`
+		DatabaseHandler       IDatabaseHandler
+		database              *databaseConfiguration
+		ServerErrorMessages   *models.ServerErrorMessages
+		FirebaseAuthClient    *auth.Client
+		FirebaseStorageClient *storage.Client
+		initialized           bool
 	}
 
 	databaseConfiguration struct {
@@ -65,11 +67,26 @@ func ConfigurationInstance() (*Configuration, error) {
 			return nil, databaseError
 		}
 
-		client, firebaseError := firebaseConfig.GetFirebase()
+		//read firebase config file and start firebase application
+		firebase, firebaseError := firebaseConfig.NewFirebase()
 		if firebaseError != nil {
 			return nil, firebaseError
 		}
-		c.FirebaseClient = client
+
+		//get the firebase authentication client
+		firebaseAuth, firebaseAuthError := firebase.GetAuth()
+		if firebaseAuthError != nil {
+			return nil, firebaseAuthError
+		}
+
+		//get the firebase storage client
+		firebaseStorage, firebaseStorageError := firebase.GetStorage()
+		if firebaseStorageError != nil {
+			return nil, firebaseStorageError
+		}
+
+		c.FirebaseAuthClient = firebaseAuth
+		c.FirebaseStorageClient = firebaseStorage
 
 		c.DatabaseHandler = SetubDatabase(
 			&c.database.DatabaseProvider,

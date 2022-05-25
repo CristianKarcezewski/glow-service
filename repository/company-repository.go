@@ -100,7 +100,8 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 		query.Join("LEFT JOIN company_addresses AS ca").
 			JoinOn("ca.company_id = company.id").
 			Join("LEFT JOIN addresses AS ad").
-			JoinOn("ad.id = ca.address_id")
+			JoinOn("ad.id = ca.address_id").
+			JoinOn("ad.city_id = ?", filter.CityId)
 	}
 	if filter.Skip > 0 {
 		query.Offset(int(filter.Skip))
