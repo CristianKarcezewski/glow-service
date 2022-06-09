@@ -107,3 +107,18 @@ CREATE TABLE IF NOT EXISTS company_addresses(
 		FOREIGN KEY(address_id)
 			REFERENCES addresses(id)
 );
+
+CREATE TABLE IF NOT EXISTS packages(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(100),
+	description VARCHAR(100),
+	days INT,
+	icon VARCHAR(50),
+	value VARCHAR(50),
+	PRIMARY KEY(id)
+);
+
+INSERT IGNORE INTO packages(name, description,days,icon,value) VALUES('Pacote Bronze','30 dias',30, null,'5,00');
+INSERT IGNORE INTO packages(name, description,days,icon,value) VALUES('Pacote Prata','60 dias',60, null,'9,00');
+INSERT IGNORE INTO packages(name, description,days,icon,value) VALUES('Pacote Ouro','90 dias',90, null,'12,00');
+INSERT IGNORE INTO packages(name, description,days,icon,value) VALUES('Pacote Diamante','120 dias',30, null,'10,00');

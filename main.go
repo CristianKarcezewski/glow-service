@@ -41,6 +41,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	companyAddressesRepository := repository.NewCompanyAddressesRepository(config.DatabaseHandler)
 	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
+	packagesRepository := repository.NewPackagesRepository(config.DatabaseHandler)
 
 	// Start gateways
 	locationGateway := gateways.NewLocationsGateway()
@@ -54,6 +55,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService, mapsGeolocationService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService)
+	packagesService := services.NewPackagesService(packagesRepository)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)
@@ -62,6 +64,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	addressesPresenter := presenters.NewAddressesPresenter(config.ServerErrorMessages, authService, addressesService, companiesService)
 	companiesPresenter := presenters.NewCompanyPresenter(config.ServerErrorMessages, authService, companiesService)
 	providerTypesPresenter := presenters.NewProviderTypePresenter(config.ServerErrorMessages, providerTypesService)
+	packagesPresenter := presenters.NewPackagesPresenter(config.ServerErrorMessages, packagesService, authService)
 
 	// Start Routers
 	authPresenter.Router(echo)
@@ -70,6 +73,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	addressesPresenter.Router(echo)
 	companiesPresenter.Router(echo)
 	providerTypesPresenter.Router(echo)
+	packagesPresenter.Router(echo)
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {
