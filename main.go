@@ -56,6 +56,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService)
 	packagesService := services.NewPackagesService(packagesRepository)
+	storageService := services.NewStorageService(config.FirebaseStorageClient, userService)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)
@@ -65,6 +66,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	companiesPresenter := presenters.NewCompanyPresenter(config.ServerErrorMessages, authService, companiesService)
 	providerTypesPresenter := presenters.NewProviderTypePresenter(config.ServerErrorMessages, providerTypesService)
 	packagesPresenter := presenters.NewPackagesPresenter(config.ServerErrorMessages, packagesService, authService)
+	filesPresenter := presenters.NewFilePresenter(config.ServerErrorMessages, authService, storageService)
 
 	// Start Routers
 	authPresenter.Router(echo)
@@ -74,6 +76,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	companiesPresenter.Router(echo)
 	providerTypesPresenter.Router(echo)
 	packagesPresenter.Router(echo)
+	filesPresenter.Router(echo)
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {

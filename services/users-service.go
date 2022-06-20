@@ -128,7 +128,29 @@ func (us *usersService) VerifyUser(log *models.StackLog, email, password *string
 
 func (us *usersService) Update(log *models.StackLog, user *models.User) (*models.User, error) {
 	log.AddStep("UserService-Update")
-	daoUser, err := us.userRepository.Update(log, dao.NewDAOUser(user))
+
+	dbUser, findErr := us.GetById(log, user.UserId)
+	if findErr != nil {
+		return nil, findErr
+	}
+
+	if user.UserName != "" {
+		dbUser.UserName = user.UserName
+	}
+	if user.ImageUrl != dbUser.ImageUrl {
+		dbUser.ImageUrl = user.ImageUrl
+	}
+	if user.UserGroupId != dbUser.UserGroupId {
+		dbUser.UserGroupId = user.UserGroupId
+	}
+	if user.Email != dbUser.Email {
+		dbUser.Email = user.Email
+	}
+	if user.Phone != dbUser.Phone {
+		dbUser.Phone = user.Phone
+	}
+
+	daoUser, err := us.userRepository.Update(log, dao.NewDAOUser(dbUser))
 	if err != nil {
 		return nil, err
 	}

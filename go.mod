@@ -13,6 +13,7 @@ require (
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.7.0
 	github.com/golang-jwt/jwt v3.2.1+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/googleapis/gax-go v1.0.3 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v4 v4.13.0

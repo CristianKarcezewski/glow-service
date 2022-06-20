@@ -38,6 +38,7 @@ func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*mo
 		UserId:      int64(claims["userId"].(float64)),
 		UserName:    claims["name"].(string),
 		Email:       claims["email"].(string),
+		Uid:         token.UID,
 	}
 
 	log.SetUser(user.Email)
@@ -60,8 +61,13 @@ func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) 
 		return nil, errors.New("error creating user token")
 	}
 	return &models.Auth{
+		Authorization: token,
 		UserId:        user.UserId,
 		UserGroupId:   user.UserGroupId,
-		Authorization: token,
+		UserName:      user.UserName,
+		Email:         user.Email,
+		Phone:         user.Phone,
+		ImageUrl:      user.ImageUrl,
+		DaysLeft:      user.DaysLeft,
 	}, nil
 }
