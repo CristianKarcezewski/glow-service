@@ -140,7 +140,7 @@ func (us *usersService) Update(log *models.StackLog, user *models.User) (*models
 	if user.ImageUrl != dbUser.ImageUrl {
 		dbUser.ImageUrl = user.ImageUrl
 	}
-	if user.UserGroupId != dbUser.UserGroupId {
+	if user.UserGroupId > 0 && user.UserGroupId != dbUser.UserGroupId {
 		dbUser.UserGroupId = user.UserGroupId
 	}
 	if user.Email != dbUser.Email {
