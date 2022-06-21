@@ -124,14 +124,21 @@ func (cs *companiesService) Update(log *models.StackLog, company *models.Company
 	log.AddStep("CompanyService-Update")
 
 	result, resultErr := cs.GetById(log, company.CompanyId)
+	pacote := models.Package{}
 
 	if resultErr != nil {
 		return nil, resultErr
 	}
+
 	result.CompanyId = company.CompanyId
 	result.CompanyName = company.CompanyName
 	result.Description = company.Description
 	result.ProviderTypeId = company.ProviderTypeId
+
+	if company.PackageId != 0 {
+		t := time.Now().Add(time.Duration(pacote.Days) * (24 * time.Hour))
+		company.ExpirationDate = fmt.Sprintf("%02d/%02d/%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	}
 
 	updatedCompany, updateErr := cs.companyRepository.Update(log, dao.NewDAOCompany(result))
 	if updateErr != nil {

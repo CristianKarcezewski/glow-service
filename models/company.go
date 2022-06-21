@@ -13,5 +13,6 @@ type (
 		CreatedAt      string       `json:"createdAt,omitempty"`
 		Active         bool         `json:"-"`
 		ProviderType   ProviderType `json:"providerType,omitempty"`
+		PackageId      int64        `json:"-"`
 	}
 )
