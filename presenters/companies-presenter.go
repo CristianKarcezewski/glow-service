@@ -202,14 +202,14 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		}
 
 		log.AddInfo("Validating authorization")
-		_, tokenErr := cp.authService.VerifyToken(log, token)
+		user, tokenErr := cp.authService.VerifyToken(log, token)
 		if tokenErr != nil {
 			errorResponse := log.AddError(cp.errorMessagesData.Header.NotAuthorized)
 
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		updatedCompany, companyErr := cp.companiesService.Update(log, company.ToModel())
+		updatedCompany, companyErr := cp.companiesService.Update(log, user, company.ToModel())
 		if companyErr != nil {
 			errorResponse := log.AddError(companyErr.Error())
 

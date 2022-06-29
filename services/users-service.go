@@ -57,8 +57,7 @@ func (us *usersService) Register(log *models.StackLog, user *models.User) (*mode
 	log.AddStep("UserService-Register")
 
 	log.AddInfo("Generating default user data")
-	user.CreatedAt = functions.DateToString()
-	user.LastLogin = functions.DateToString()
+	user.CreatedAt = functions.DateToString(nil)
 	user.Active = true
 	user.UserGroupId = 1
 

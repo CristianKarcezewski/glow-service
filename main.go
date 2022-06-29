@@ -54,8 +54,8 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	mapsGeolocationService := services.NewMapsGeolocationService(mapsGeolocationGateway)
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService, mapsGeolocationService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
-	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService)
 	packagesService := services.NewPackagesService(packagesRepository)
+	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService, packagesService)	
 	storageService := services.NewStorageService(config.FirebaseStorageClient, userService)
 
 	// Start presenters
@@ -80,6 +80,6 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {
-	fmt.Printf("%s => Environment %s", functions.DateToString(), strings.ToUpper(environment))
+	fmt.Printf("%s => Environment %s", functions.DateToString(nil), strings.ToUpper(environment))
 	_ = echo.Start(fmt.Sprintf(":%d", port))
 }

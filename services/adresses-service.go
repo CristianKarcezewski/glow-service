@@ -152,7 +152,7 @@ func (as *addressesService) RegisterByUser(log *models.StackLog, userId int64, a
 	}
 
 	log.AddInfo("Saving address")
-	address.CreatedAt = functions.DateToString()
+	address.CreatedAt = functions.DateToString(nil)
 	daoAddress := dao.NewDaoAddress(address)
 	addressResul, addressResultErr := as.addressRepository.Insert(log, daoAddress)
 	if addressResultErr != nil {
@@ -190,7 +190,7 @@ func (as *addressesService) RegisterByCompany(log *models.StackLog, companyId in
 	}
 
 	log.AddInfo("Saving address")
-	address.CreatedAt = functions.DateToString()
+	address.CreatedAt = functions.DateToString(nil)
 	daoAddress := dao.NewDaoAddress(address)
 	addressResul, addressResultErr := as.addressRepository.Insert(log, daoAddress)
 	if addressResultErr != nil {
