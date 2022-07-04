@@ -18,6 +18,7 @@ type (
 
 	Auth struct {
 		UserId        int64  `json:"userId,omitempty"`
+		Uid           string `json:"uid,omitempty"`
 		UserGroupId   int64  `json:"userGroupId,omitempty"`
 		Authorization string `json:"authorization,omitempty"`
 

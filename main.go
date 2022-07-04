@@ -55,8 +55,8 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	addressesService := services.NewAddressService(addressesRepository, userAddressesRepository, companyAddressesRepository, locationService, mapsGeolocationService)
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 	packagesService := services.NewPackagesService(packagesRepository)
-	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService, packagesService)	
-	storageService := services.NewStorageService(config.FirebaseStorageClient, userService)
+	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService, packagesService)
+	storageService := services.NewStorageService(userService)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)

@@ -2,6 +2,6 @@ package dto
 
 type (
 	FileDto struct {
-		Image string `json:"image,omitempty"`
+		ImageUrl string `json:"imageUrl,omitempty"`
 	}
 )

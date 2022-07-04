@@ -123,10 +123,10 @@ func (cs *companiesService) Register(log *models.StackLog, userId int64, company
 	return nil, errors.New("user already has a company")
 }
 
-func (cs *companiesService) Update(log *models.StackLog,user *models.User, company *models.Company) (*models.Company, error) {
+func (cs *companiesService) Update(log *models.StackLog, user *models.User, company *models.Company) (*models.Company, error) {
 	log.AddStep("CompanyService-Update")
 
-	result, resultErr := cs.GetById(log, company.CompanyId)	
+	result, resultErr := cs.GetById(log, company.CompanyId)
 	if resultErr != nil {
 		return nil, resultErr
 	}
@@ -134,9 +134,9 @@ func (cs *companiesService) Update(log *models.StackLog,user *models.User, compa
 	if user.UserId != result.UserId {
 		return nil, errors.New("not authorized")
 	}
-	
+
 	if company.CompanyName != "" {
- 		result.CompanyName = company.CompanyName
+		result.CompanyName = company.CompanyName
 	}
 
 	if company.Description != "" {
@@ -146,7 +146,7 @@ func (cs *companiesService) Update(log *models.StackLog,user *models.User, compa
 	if company.ProviderTypeId != 0 {
 		result.ProviderTypeId = company.ProviderTypeId
 	}
-	
+
 	if company.PackageId != 0 {
 		packageCompany, packageError := cs.packagesService.GetById(log, result.PackageId)
 		if packageError != nil {
@@ -156,15 +156,15 @@ func (cs *companiesService) Update(log *models.StackLog,user *models.User, compa
 		if expError != nil {
 			return nil, expError
 		}
-		if expiration.After(time.Now()){
-		//	provider já tem pacote adquirido			
+		if expiration.After(time.Now()) {
+			//company has a valid package
 			newDate := expiration.Add(time.Duration(packageCompany.Days) * (24 * time.Hour))
 			result.ExpirationDate = functions.DateToString(&newDate)
-		}else{
-		// Adquirindo pacote a partir de hoje
-		t := time.Now().Add(time.Duration(packageCompany.Days) * (24 * time.Hour))
-		result.ExpirationDate = fmt.Sprintf("%02d/%02d/%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
-		}	
+		} else {
+			//getting a new package
+			newDate := time.Now().Add(time.Duration(packageCompany.Days) * (24 * time.Hour))
+			result.ExpirationDate = functions.DateToString(&newDate)
+		}
 	}
 
 	updatedCompany, updateErr := cs.companyRepository.Update(log, dao.NewDAOCompany(result))
@@ -174,7 +174,7 @@ func (cs *companiesService) Update(log *models.StackLog,user *models.User, compa
 	providerType, _ := cs.providerTypesService.GetById(log, updatedCompany.ProviderTypeId)
 	cp := updatedCompany.ToModel()
 	cp.ProviderType = *providerType
-	return cp, nil	
+	return cp, nil
 }
 
 func (cs *companiesService) Remove(log *models.StackLog, companyId int64) error {
@@ -195,8 +195,10 @@ func (cs *companiesService) Search(log *models.StackLog, search *models.CompanyF
 	for _, comp := range *result {
 		model := comp.ToModel()
 		pType, _ := cs.providerTypesService.GetById(log, comp.ProviderTypeId)
+		user, _ := cs.usersService.GetById(log, comp.UserId)
 		model.ProviderType.Name = pType.Name
 		model.ProviderType.ProviderTypeId = pType.ProviderTypeId
+		model.ImageUrl = user.ImageUrl
 		companies = append(companies, *model)
 	}
 

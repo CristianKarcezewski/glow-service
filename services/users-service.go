@@ -20,6 +20,7 @@ type (
 		GetById(log *models.StackLog, userId int64) (*models.User, error)
 		VerifyUser(log *models.StackLog, email, password *string) (*models.User, error)
 		Update(log *models.StackLog, user *models.User) (*models.User, error)
+		SetProfileImage(log *models.StackLog, user *models.User, imageUrl string) error
 	}
 
 	usersService struct {
@@ -154,6 +155,21 @@ func (us *usersService) Update(log *models.StackLog, user *models.User) (*models
 		return nil, err
 	}
 	return daoUser.ToModel(), nil
+}
+
+func (us *usersService) SetProfileImage(log *models.StackLog, user *models.User, imageUrl string) error {
+	log.AddStep("UserService-SetProfileImage")
+
+	params := (&auth.UserToUpdate{}).
+		PhotoURL(imageUrl).
+		Disabled(false)
+
+	_, err := us.FirebaseClient.UpdateUser(context.Background(), user.Uid, params)
+	if err != nil {
+		return errors.New("error updating user profile image")
+	}
+
+	return nil
 }
 
 func (us *usersService) hashPassword(password *string) (*dao.Hash, error) {

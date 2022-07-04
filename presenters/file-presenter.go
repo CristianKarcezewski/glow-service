@@ -60,13 +60,13 @@ func (fp *filePresenter) UploadProfileImage() echo.HandlerFunc {
 			return context.JSON(http.StatusUnauthorized, errorResponse)
 		}
 
-		uri, uriError := fp.storageService.SaveProfileImage(user, file.Image)
+		_, uriError := fp.storageService.SaveProfileImage(log, user, file.ImageUrl)
 		if uriError != nil {
 			errorResponse := log.AddError("error saving file")
 			return context.JSON(http.StatusInternalServerError, errorResponse)
 		}
 
-		return context.JSON(http.StatusOK, uri)
+		return context.JSON(http.StatusOK, file)
 	}
 }
 

@@ -63,6 +63,7 @@ func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) 
 	return &models.Auth{
 		Authorization: token,
 		UserId:        user.UserId,
+		Uid:           user.Uid,
 		UserGroupId:   user.UserGroupId,
 		UserName:      user.UserName,
 		Email:         user.Email,

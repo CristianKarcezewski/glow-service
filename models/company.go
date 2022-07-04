@@ -4,6 +4,7 @@ type (
 	Company struct {
 		CompanyId      int64        `json:"companyId,omitempty"`
 		CompanyName    string       `json:"companyName,omitempty"`
+		ImageUrl       string       `json:"imageUrl,omitempty"`
 		UserId         int64        `json:"userId,omitempty"`
 		ProviderTypeId int64        `json:"providerTypeId,omitempty"`
 		Description    string       `json:"description,omitempty"`
