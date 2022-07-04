@@ -79,7 +79,7 @@ func (pp *packagesPresenter) GetAll() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("ServicePackTypePresenter-GetAll")
+		log.AddStep("PackagesPresenter-GetAll")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")

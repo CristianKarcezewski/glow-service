@@ -122,3 +122,13 @@ INSERT INTO packages(name, description,days,icon,value) VALUES('Pacote Bronze','
 INSERT INTO packages(name, description,days,icon,value) VALUES('Pacote Prata','60 dias',60, null,'9,00');
 INSERT INTO packages(name, description,days,icon,value) VALUES('Pacote Ouro','90 dias',90, null,'12,00');
 INSERT INTO packages(name, description,days,icon,value) VALUES('Pacote Diamante','120 dias',30, null,'10,00');
+
+CREATE TABLE IF NOT EXISTS files(
+	id INT GENERATED ALWAYS AS IDENTITY,
+	file_url VARCHAR(500),
+	company_id INT,
+	PRIMARY KEY(id),
+	CONSTRAINT fk_companies
+		FOREIGN KEY(company_id)
+			REFERENCES companies(id)
+);

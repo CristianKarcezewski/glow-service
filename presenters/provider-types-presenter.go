@@ -36,7 +36,7 @@ func (pp *providerTypesPresenter) GetById() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		pathProviderTypeId, pathProviderTypeErr := strconv.ParseInt(context.Param(pathProviderTypeId), 10, 64)
-		log.AddStep("ProviderTypesPresenter-GetAll")
+		log.AddStep("ProviderTypesPresenter-GetById")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")
@@ -68,7 +68,7 @@ func (pp *providerTypesPresenter) GetAll() echo.HandlerFunc {
 
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		log.AddStep("ProvidersTypePresenter-GetAll")
+		log.AddStep("ProvidersTypesPresenter-GetAll")
 		context.Request().Body.Close()
 
 		log.AddInfo("Validating headers")

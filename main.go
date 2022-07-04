@@ -42,6 +42,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	companiesRepository := repository.NewCompanyRepository(config.DatabaseHandler)
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 	packagesRepository := repository.NewPackagesRepository(config.DatabaseHandler)
+	filesRepository := repository.NewFilesRepository(config.DatabaseHandler)
 
 	// Start gateways
 	locationGateway := gateways.NewLocationsGateway()
@@ -56,7 +57,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesService := services.NewProviderTypeService(providerTypesRepository)
 	packagesService := services.NewPackagesService(packagesRepository)
 	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService, packagesService)
-	storageService := services.NewStorageService(userService)
+	filesService := services.NewFilesService(userService, companiesService, filesRepository)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)
@@ -66,7 +67,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	companiesPresenter := presenters.NewCompanyPresenter(config.ServerErrorMessages, authService, companiesService)
 	providerTypesPresenter := presenters.NewProviderTypePresenter(config.ServerErrorMessages, providerTypesService)
 	packagesPresenter := presenters.NewPackagesPresenter(config.ServerErrorMessages, packagesService, authService)
-	filesPresenter := presenters.NewFilePresenter(config.ServerErrorMessages, authService, storageService)
+	filesPresenter := presenters.NewFilePresenter(config.ServerErrorMessages, authService, filesService)
 
 	// Start Routers
 	authPresenter.Router(echo)

@@ -47,7 +47,7 @@ func (cp *companiesPresenter) Register() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("CompanyController-Register")
+		log.AddStep("CompaniesPresenter-Register")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&company)
@@ -94,7 +94,7 @@ func (cp *companiesPresenter) GetById() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathCompanyId, pathCompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
-		log.AddStep("CompanyController-GetById")
+		log.AddStep("CompaniesPresenter-GetById")
 
 		context.Request().Body.Close()
 
@@ -136,7 +136,7 @@ func (cp *companiesPresenter) GetByUser() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("CompanyController-GetByUser")
+		log.AddStep("CompaniesPresenter-GetByUser")
 
 		context.Request().Body.Close()
 
@@ -174,7 +174,7 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("Companeispresenter-Upadte")
+		log.AddStep("CompaniesPresenter-Upadte")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&company)
@@ -227,7 +227,7 @@ func (cp *companiesPresenter) Remove() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathCompanyId, pathCompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
-		log.AddStep("companiesPresenter-Remove")
+		log.AddStep("CompaniesPresenter-Remove")
 
 		context.Request().Body.Close()
 
@@ -269,7 +269,7 @@ func (cp *companiesPresenter) Search() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("companiesPresenter-Search")
+		log.AddStep("CompaniesPresenter-Search")
 
 		// Decode request body payload data
 		var filter dto.CompanyFilterDto

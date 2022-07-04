@@ -175,7 +175,7 @@ func (ac *addressesPresenter) RegisterByUser() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("AddressesPresenter-Register By User")
+		log.AddStep("AddressesPresenter-RegisterByUser")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -222,7 +222,7 @@ func (ac *addressesPresenter) RegisterByCompany() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("AddressesPresenter-Register By Company")
+		log.AddStep("AddressesPresenter-RegisterByCompany")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&address)
@@ -329,7 +329,7 @@ func (ap *addressesPresenter) RemoveUserAddress() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		AddressId, AddressIdErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
-		log.AddStep("AddressesUserPresenter-Remove")
+		log.AddStep("AddressesPresenter-RemoveUserAddress")
 
 		context.Request().Body.Close()
 
@@ -372,7 +372,7 @@ func (ap *addressesPresenter) RemoveCompanyAddress() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		pathAddressId, pathAddressErr := strconv.ParseInt(context.Param(pathAddressId), 10, 64)
-		log.AddStep("AddressesCompanyPresenter-Remove")
+		log.AddStep("AddressesPresenter-RemoveCompanyAddress")
 
 		context.Request().Body.Close()
 

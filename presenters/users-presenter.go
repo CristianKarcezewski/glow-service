@@ -38,7 +38,7 @@ func (up *usersPresenter) Login() echo.HandlerFunc {
 		var authData dto.AuthData
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		log.AddStep("UserPresenter-Login")
+		log.AddStep("UsersPresenter-Login")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&authData)
@@ -80,11 +80,9 @@ func (up *usersPresenter) GetById() echo.HandlerFunc {
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
 		context.Request().Body.Close()
-
-		log.AddStep("UserPresenter-GetById")
+		log.AddStep("UsersPresenter-GetById")
 
 		log.AddInfo("Validating headers")
-
 		if log.Platform == "" {
 			errorResponse := log.AddError(up.errorMessagesData.Header.PlatformNotFound)
 
@@ -116,7 +114,7 @@ func (up *usersPresenter) Register() echo.HandlerFunc {
 		var user dto.UserDto
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		log.AddStep("UserPresenter-Register")
+		log.AddStep("UsersPresenter-Register")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&user)
@@ -169,7 +167,7 @@ func (up *usersPresenter) Update() echo.HandlerFunc {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
 		token := context.Request().Header.Get("authorization")
-		log.AddStep("UserPresenter-Register")
+		log.AddStep("UserPresenter-Update")
 
 		// Decode request body payload data
 		_ = json.NewDecoder(context.Request().Body).Decode(&user)
