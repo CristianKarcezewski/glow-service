@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	User struct {
+	UserDao struct {
 		tableName   struct{} `json:"-" pg:"users"`
 		UserId      int64    `json:"userId,omitempty" pg:"id,pk"`
 		Uid         string   `json:"-" pg:"uid"`
@@ -27,8 +27,8 @@ type (
 	}
 )
 
-func NewDAOUser(u *models.User) *User {
-	newUser := User{
+func NewDAOUser(u *models.User) *UserDao {
+	newUser := UserDao{
 		UserId:      u.UserId,
 		Uid:         u.Uid,
 		UserGroupId: u.UserGroupId,
@@ -44,7 +44,7 @@ func NewDAOUser(u *models.User) *User {
 	return &newUser
 }
 
-func (u *User) ToModel() *models.User {
+func (u *UserDao) ToModel() *models.User {
 	return &models.User{
 		UserId:      u.UserId,
 		Uid:         u.Uid,

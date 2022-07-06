@@ -13,9 +13,9 @@ const (
 
 type (
 	IUserRepository interface {
-		Insert(log *models.StackLog, user *dao.User) (*dao.User, error)
-		Select(log *models.StackLog, key string, value interface{}) (*dao.User, error)
-		Update(log *models.StackLog, user *dao.User) (*dao.User, error)
+		Insert(log *models.StackLog, user *dao.UserDao) (*dao.UserDao, error)
+		Select(log *models.StackLog, key string, value interface{}) (*dao.UserDao, error)
+		Update(log *models.StackLog, user *dao.UserDao) (*dao.UserDao, error)
 	}
 	userRepository struct {
 		database server.IDatabaseHandler
@@ -26,7 +26,7 @@ func NewUserRepository(database server.IDatabaseHandler) IUserRepository {
 	return &userRepository{database}
 }
 
-func (ur *userRepository) Insert(log *models.StackLog, user *dao.User) (*dao.User, error) {
+func (ur *userRepository) Insert(log *models.StackLog, user *dao.UserDao) (*dao.UserDao, error) {
 	log.AddStep("UserRepository-Insert")
 
 	log.AddInfo("Saving user")
@@ -37,10 +37,10 @@ func (ur *userRepository) Insert(log *models.StackLog, user *dao.User) (*dao.Use
 	return user, nil
 }
 
-func (ur *userRepository) Select(log *models.StackLog, key string, value interface{}) (*dao.User, error) {
+func (ur *userRepository) Select(log *models.StackLog, key string, value interface{}) (*dao.UserDao, error) {
 	log.AddStep("UserRepository-Select")
 
-	var user dao.User
+	var user dao.UserDao
 
 	log.AddInfo(fmt.Sprintf("Finding user by %s", key))
 	selectErr := ur.database.Select(repositoryUserTable, &user, key, value)
@@ -50,7 +50,7 @@ func (ur *userRepository) Select(log *models.StackLog, key string, value interfa
 	return &user, nil
 }
 
-func (ur *userRepository) Update(log *models.StackLog, user *dao.User) (*dao.User, error) {
+func (ur *userRepository) Update(log *models.StackLog, user *dao.UserDao) (*dao.UserDao, error) {
 	log.AddStep("UserRepository-Update")
 
 	err := ur.database.Update(repositoryUserTable, user)

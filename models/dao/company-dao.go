@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	Company struct {
+	CompanyDao struct {
 		tableName      struct{} `json:"-" pg:"companies"`
 		CompanyId      int64    `json:"companyId,omitempty" pg:"id,pk"`
 		CompanyName    string   `json:"companyName,omitempty" pg:"company_name"`
@@ -18,8 +18,8 @@ type (
 	}
 )
 
-func NewDAOCompany(u *models.Company) *Company {
-	return &Company{
+func NewDAOCompany(u *models.Company) *CompanyDao {
+	return &CompanyDao{
 		CompanyId:      u.CompanyId,
 		CompanyName:    u.CompanyName,
 		UserId:         u.UserId,
@@ -31,7 +31,7 @@ func NewDAOCompany(u *models.Company) *Company {
 	}
 }
 
-func (u *Company) ToModel() *models.Company {
+func (u *CompanyDao) ToModel() *models.Company {
 	return &models.Company{
 		CompanyId:      u.CompanyId,
 		CompanyName:    u.CompanyName,

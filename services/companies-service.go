@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/models/dao"
@@ -80,10 +79,9 @@ func (cs *companiesService) GetByUser(log *models.StackLog, userId int64) (*mode
 func (cs *companiesService) Register(log *models.StackLog, userId int64, company *models.Company) (*models.Company, error) {
 
 	log.AddStep("CompanyService-Register")
-	t := time.Now().Add(30 * (24 * time.Hour))
 
 	company.UserId = userId
-	company.ExpirationDate = fmt.Sprintf("%02d/%02d/%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second())
+	company.ExpirationDate = functions.DateToString(nil)
 	company.CreatedAt = functions.DateToString(nil)
 	company.Active = true
 

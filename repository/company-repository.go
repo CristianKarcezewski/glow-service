@@ -14,12 +14,12 @@ const (
 
 type (
 	ICompanyRepository interface {
-		Insert(log *models.StackLog, company *dao.Company) (*dao.Company, error)
-		FindById(log *models.StackLog, companyId int64) (*dao.Company, error)
-		FindByUser(log *models.StackLog, userId int64) (*dao.Company, error)
-		Update(log *models.StackLog, company *dao.Company) (*dao.Company, error)
+		Insert(log *models.StackLog, company *dao.CompanyDao) (*dao.CompanyDao, error)
+		FindById(log *models.StackLog, companyId int64) (*dao.CompanyDao, error)
+		FindByUser(log *models.StackLog, userId int64) (*dao.CompanyDao, error)
+		Update(log *models.StackLog, company *dao.CompanyDao) (*dao.CompanyDao, error)
 		Remove(log *models.StackLog, companyId int64) error
-		Search(log *models.StackLog, filter *models.CompanyFilter) (*[]dao.Company, error)
+		Search(log *models.StackLog, filter *models.CompanyFilter) (*[]dao.CompanyDao, error)
 	}
 	companyRepository struct {
 		database server.IDatabaseHandler
@@ -30,7 +30,7 @@ func NewCompanyRepository(database server.IDatabaseHandler) ICompanyRepository {
 	return &companyRepository{database}
 }
 
-func (cr *companyRepository) Insert(log *models.StackLog, company *dao.Company) (*dao.Company, error) {
+func (cr *companyRepository) Insert(log *models.StackLog, company *dao.CompanyDao) (*dao.CompanyDao, error) {
 	log.AddStep("CompanyRepository-Insert")
 	err := cr.database.Insert(repositoryCompanyTable, company)
 	if err != nil {
@@ -39,9 +39,9 @@ func (cr *companyRepository) Insert(log *models.StackLog, company *dao.Company) 
 	return company, nil
 }
 
-func (cr *companyRepository) FindById(log *models.StackLog, companyId int64) (*dao.Company, error) {
+func (cr *companyRepository) FindById(log *models.StackLog, companyId int64) (*dao.CompanyDao, error) {
 	log.AddStep("CompanyRepository-FindById")
-	var company dao.Company
+	var company dao.CompanyDao
 	err := cr.database.Select(repositoryCompanyTable, &company, "id", companyId)
 	if err != nil {
 		return nil, err
@@ -49,9 +49,9 @@ func (cr *companyRepository) FindById(log *models.StackLog, companyId int64) (*d
 	return &company, nil
 }
 
-func (cr *companyRepository) FindByUser(log *models.StackLog, userId int64) (*dao.Company, error) {
+func (cr *companyRepository) FindByUser(log *models.StackLog, userId int64) (*dao.CompanyDao, error) {
 	log.AddStep("CompanyRepository-FindByUser")
-	var company dao.Company
+	var company dao.CompanyDao
 	err := cr.database.Select(repositoryCompanyTable, &company, "user_id", userId)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (cr *companyRepository) FindByUser(log *models.StackLog, userId int64) (*da
 	return &company, nil
 }
 
-func (cr *companyRepository) Update(log *models.StackLog, company *dao.Company) (*dao.Company, error) {
+func (cr *companyRepository) Update(log *models.StackLog, company *dao.CompanyDao) (*dao.CompanyDao, error) {
 	log.AddStep("CompanyRepository-Update")
 	err := cr.database.Update(repositoryCompanyTable, company)
 	if err != nil {
@@ -70,7 +70,7 @@ func (cr *companyRepository) Update(log *models.StackLog, company *dao.Company) 
 
 func (cr *companyRepository) Remove(log *models.StackLog, companyId int64) error {
 	log.AddStep("CompanyRepository-Remove")
-	var company dao.Company
+	var company dao.CompanyDao
 	err := cr.database.Remove(repositoryCompanyTable, &company, "id", companyId)
 	if err != nil {
 		return err
@@ -78,10 +78,10 @@ func (cr *companyRepository) Remove(log *models.StackLog, companyId int64) error
 	return nil
 }
 
-func (cr *companyRepository) Search(log *models.StackLog, filter *models.CompanyFilter) (*[]dao.Company, error) {
+func (cr *companyRepository) Search(log *models.StackLog, filter *models.CompanyFilter) (*[]dao.CompanyDao, error) {
 	log.AddStep("CompanyRepository-Search")
 
-	var companies []dao.Company
+	var companies []dao.CompanyDao
 
 	db, dbErr := cr.database.CustomQuery()
 	if dbErr != nil {
@@ -94,7 +94,7 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 		queryString := fmt.Sprintf("%s%s%s", perc, strings.ToLower(filter.Search), perc)
 		// query.Where("LOWER(company_name) LIKE ?", fmt.Sprintf("%s%s%s", perc, strings.ToLower(filter.Search), perc))
 		query.Join("LEFT JOIN provider_types as pt").
-			JoinOn("pt.id = company.provider_type_id").
+			JoinOn("pt.id = companies.provider_type_id").
 			Where("LOWER(company_name) LIKE ?", queryString).
 			WhereOr("LOWER(pt.name) LIKE ?", queryString)
 	}
@@ -103,7 +103,7 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 	}
 	if filter.CityId > 0 {
 		query.Join("LEFT JOIN company_addresses AS ca").
-			JoinOn("ca.company_id = company.id").
+			JoinOn("ca.company_id = companies.id").
 			Join("LEFT JOIN addresses AS ad").
 			JoinOn("ad.id = ca.address_id").
 			Where("ad.city_id = ?", filter.CityId)
