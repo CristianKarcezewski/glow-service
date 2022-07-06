@@ -101,13 +101,13 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 	if filter.ProviderType.ProviderTypeId > 0 {
 		query.Where("provider_type_id = ?", filter.ProviderType.ProviderTypeId)
 	}
-	if filter.CityId > 0 {
-		query.Join("LEFT JOIN company_addresses AS ca").
-			JoinOn("ca.company_id = companies.id").
-			Join("LEFT JOIN addresses AS ad").
-			JoinOn("ad.id = ca.address_id").
-			Where("ad.city_id = ?", filter.CityId)
-	}
+	// if filter.CityId > 0 {
+	// 	query.Join("LEFT JOIN company_addresses AS ca").
+	// 		JoinOn("ca.company_id = companies.id").
+	// 		Join("LEFT JOIN addresses AS ad").
+	// 		JoinOn("ad.id = ca.address_id").
+	// 		Where("ad.city_id = ?", filter.CityId)
+	// }
 	if filter.Skip > 0 {
 		query.Offset(int(filter.Skip))
 	}

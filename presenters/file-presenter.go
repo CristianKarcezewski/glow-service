@@ -174,7 +174,7 @@ func (fp *filePresenter) FetchCompanyFiles() echo.HandlerFunc {
 	return func(context echo.Context) error {
 		log := &models.StackLog{}
 		log.Platform = context.Request().Header.Get("platform")
-		token := context.Request().Header.Get("authorization")
+		// token := context.Request().Header.Get("authorization")
 		companyId, pathCompanyErr := strconv.ParseInt(context.Param(pathCompanyId), 10, 64)
 		log.AddStep("FilesPresenter-FetchCompanyFiles")
 
@@ -192,12 +192,12 @@ func (fp *filePresenter) FetchCompanyFiles() echo.HandlerFunc {
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
 
-		log.AddInfo("Validating authorization")
-		_, tokenErr := fp.authService.VerifyToken(log, token)
-		if tokenErr != nil {
-			errorResponse := log.AddError(fp.errorMessagesData.Header.NotAuthorized)
-			return context.JSON(http.StatusUnauthorized, errorResponse)
-		}
+		// log.AddInfo("Validating authorization")
+		// _, tokenErr := fp.authService.VerifyToken(log, token)
+		// if tokenErr != nil {
+		// 	errorResponse := log.AddError(fp.errorMessagesData.Header.NotAuthorized)
+		// 	return context.JSON(http.StatusUnauthorized, errorResponse)
+		// }
 
 		files, fileError := fp.filesService.FetchCompanyFiles(log, companyId)
 		if fileError != nil {
