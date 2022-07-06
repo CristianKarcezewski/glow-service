@@ -2,7 +2,6 @@ package presenters
 
 import (
 	"encoding/json"
-	"fmt"
 	"glow-service/common/functions"
 	"glow-service/models"
 	"glow-service/models/dto"
@@ -188,12 +187,12 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 		}
 
 		log.AddInfo("Validating paylod data")
-		validationError := functions.ValidateStruct(&company)
-		if validationError != nil {
-			errorResponse := log.AddError(*validationError)
+		// validationError := functions.ValidateStruct(&company)
+		// if validationError != nil {
+		// 	errorResponse := log.AddError(*validationError)
 
-			return context.JSON(http.StatusBadRequest, errorResponse)
-		}
+		// 	return context.JSON(http.StatusBadRequest, errorResponse)
+		// }
 
 		if company.CompanyId == 0 {
 			errorResponse := log.AddError("Company id not found")
@@ -215,7 +214,6 @@ func (cp *companiesPresenter) Update() echo.HandlerFunc {
 
 			return context.JSON(http.StatusBadRequest, errorResponse)
 		}
-		fmt.Println(updatedCompany)
 		return context.JSON(http.StatusOK, updatedCompany)
 	}
 }

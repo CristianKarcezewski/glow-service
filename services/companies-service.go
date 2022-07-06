@@ -148,7 +148,7 @@ func (cs *companiesService) Update(log *models.StackLog, user *models.User, comp
 	}
 
 	if company.PackageId != 0 {
-		packageCompany, packageError := cs.packagesService.GetById(log, result.PackageId)
+		packageCompany, packageError := cs.packagesService.GetById(log, company.PackageId)
 		if packageError != nil {
 			return nil, packageError
 		}
