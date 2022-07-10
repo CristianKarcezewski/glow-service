@@ -43,6 +43,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesRepository := repository.NewProviderTypeRepository(config.DatabaseHandler)
 	packagesRepository := repository.NewPackagesRepository(config.DatabaseHandler)
 	filesRepository := repository.NewFilesRepository(config.DatabaseHandler)
+	messagesRepository := repository.NewMessagesRepository(config.DatabaseHandler)
 
 	// Start gateways
 	locationGateway := gateways.NewLocationsGateway()
@@ -58,6 +59,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	packagesService := services.NewPackagesService(packagesRepository)
 	companiesService := services.NewCompanyService(companiesRepository, addressesService, userService, providerTypesService, packagesService)
 	filesService := services.NewFilesService(userService, companiesService, filesRepository)
+	messagesService := services.NewMessageService(messagesRepository)
 
 	// Start presenters
 	authPresenter := presenters.NewAuthPresenter(config.ServerErrorMessages, authService)
@@ -68,6 +70,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesPresenter := presenters.NewProviderTypePresenter(config.ServerErrorMessages, providerTypesService)
 	packagesPresenter := presenters.NewPackagesPresenter(config.ServerErrorMessages, packagesService, authService)
 	filesPresenter := presenters.NewFilePresenter(config.ServerErrorMessages, authService, filesService)
+	messagesPresenter := presenters.NewMessagePresenter(config.ServerErrorMessages, authService, messagesService)
 
 	// Start Routers
 	authPresenter.Router(echo)
@@ -78,6 +81,7 @@ func initApplication(config *server.Configuration, echo *echo.Echo) {
 	providerTypesPresenter.Router(echo)
 	packagesPresenter.Router(echo)
 	filesPresenter.Router(echo)
+	messagesPresenter.Router(echo)
 }
 
 func initEcho(echo *echo.Echo, environment string, port int64) {

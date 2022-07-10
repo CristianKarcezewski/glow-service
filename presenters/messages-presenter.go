@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"glow-service/models"
 	"glow-service/models/dto"
+	"glow-service/routers"
 	"glow-service/services"
 	"net/http"
 
@@ -14,6 +15,7 @@ type (
 	IMessagesPresenter interface {
 		SaveMessage() echo.HandlerFunc
 		FetchMessages() echo.HandlerFunc
+		Router(echo *echo.Echo)
 	}
 	messagesPresenter struct {
 		errorMessagesData *models.ServerErrorMessages
@@ -103,4 +105,14 @@ func (mp *messagesPresenter) FetchMessages() echo.HandlerFunc {
 
 		return context.JSON(http.StatusOK, msgs)
 	}
+}
+
+func (mp *messagesPresenter) Router(echo *echo.Echo) {
+	router := routers.MessagesRouter{
+		Echo:         echo,
+		SaveMessage:  mp.SaveMessage(),
+		FetchMessage: mp.FetchMessages(),
+	}
+
+	router.Wire()
 }
