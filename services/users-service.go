@@ -20,7 +20,7 @@ type (
 		GetById(log *models.StackLog, userId int64) (*models.User, error)
 		VerifyUser(log *models.StackLog, email, password *string) (*models.User, error)
 		Update(log *models.StackLog, user *models.User) (*models.User, error)
-		SetProfileImage(log *models.StackLog, user *models.User, imageUrl string) error
+		SetProfileImage(log *models.StackLog, user *models.User, fileUrl string) error
 	}
 
 	usersService struct {
@@ -137,8 +137,8 @@ func (us *usersService) Update(log *models.StackLog, user *models.User) (*models
 	if user.UserName != "" {
 		dbUser.UserName = user.UserName
 	}
-	if user.ImageUrl != dbUser.ImageUrl {
-		dbUser.ImageUrl = user.ImageUrl
+	if user.FileUrl != dbUser.FileUrl {
+		dbUser.FileUrl = user.FileUrl
 	}
 	if user.UserGroupId > 0 && user.UserGroupId != dbUser.UserGroupId {
 		dbUser.UserGroupId = user.UserGroupId
@@ -157,11 +157,11 @@ func (us *usersService) Update(log *models.StackLog, user *models.User) (*models
 	return daoUser.ToModel(), nil
 }
 
-func (us *usersService) SetProfileImage(log *models.StackLog, user *models.User, imageUrl string) error {
+func (us *usersService) SetProfileImage(log *models.StackLog, user *models.User, fileUrl string) error {
 	log.AddStep("UserService-SetProfileImage")
 
 	params := (&auth.UserToUpdate{}).
-		PhotoURL(imageUrl).
+		PhotoURL(fileUrl).
 		Disabled(false)
 
 	_, err := us.FirebaseClient.UpdateUser(context.Background(), user.Uid, params)

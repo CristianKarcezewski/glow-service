@@ -9,7 +9,7 @@ type (
 		LastLogin   string `json:"-"`
 		Email       string `json:"email,omitempty"`
 		Phone       string `json:"phone,omitempty"`
-		ImageUrl    string `json:"imageUrl,omitempty"`
+		FileUrl     string `json:"FileUrl,omitempty"`
 		CreatedAt   string `json:"-"`
 		Password    string `json:"-"`
 		Active      bool   `json:"-"`
@@ -25,7 +25,7 @@ type (
 		UserName string `json:"name,omitempty"`
 		Email    string `json:"email,omitempty"`
 		Phone    string `json:"phone,omitempty"`
-		ImageUrl string `json:"imageUrl,omitempty"`
+		FileUrl  string `json:"FileUrl,omitempty"`
 		DaysLeft int64  `json:"daysLeft,omitempty"`
 	}
 )

@@ -31,7 +31,7 @@ func (ss *filesService) SaveProfileImage(log *models.StackLog, user *models.User
 		return "", errors.New("user not found")
 	}
 
-	user.ImageUrl = image
+	user.FileUrl = image
 	firebaseError := ss.usersService.SetProfileImage(log, user, image)
 	if firebaseError != nil {
 		return "", firebaseError

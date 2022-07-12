@@ -93,8 +93,8 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 		perc := "%"
 		queryString := fmt.Sprintf("%s%s%s", perc, strings.ToLower(filter.Search), perc)
 		// query.Where("LOWER(company_name) LIKE ?", fmt.Sprintf("%s%s%s", perc, strings.ToLower(filter.Search), perc))
-		query.Join("JOIN provider_types as pt").
-			JoinOn("pt.id = company.provider_type_id").
+		query.Join("LEFT JOIN provider_types as pt").
+			JoinOn("pt.id = provider_type_id").
 			Where("LOWER(company_name) LIKE ?", queryString).
 			WhereOr("LOWER(pt.name) LIKE ?", queryString)
 	}
@@ -102,17 +102,15 @@ func (cr *companyRepository) Search(log *models.StackLog, filter *models.Company
 		query.Where("provider_type_id = ?", filter.ProviderType.ProviderTypeId)
 	}
 	// if filter.CityId > 0 {
-	// 	query.Join("JOIN company_addresses AS ca").
-	// 		JoinOn("ca.company_id = companies.id").
-	// 		Join("JOIN addresses AS ad").
+	// 	query.Join("LEFT JOIN company_addresses AS ca").
+	// 		// JoinOn("ca.company_id = id").
+	// 		Join("LEFT JOIN addresses AS ad").
 	// 		JoinOn("ad.id = ca.address_id").
 	// 		Where("ad.city_id = ?", filter.CityId)
 	// }
 	if filter.Skip > 0 {
 		query.Offset(int(filter.Skip))
 	}
-
-	query.Where("active = ?", true)
 
 	queryError := query.Limit(10).Select()
 	if queryError != nil {

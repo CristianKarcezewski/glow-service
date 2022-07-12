@@ -196,7 +196,7 @@ func (cs *companiesService) Search(log *models.StackLog, search *models.CompanyF
 		user, _ := cs.usersService.GetById(log, comp.UserId)
 		model.ProviderType.Name = pType.Name
 		model.ProviderType.ProviderTypeId = pType.ProviderTypeId
-		model.ImageUrl = user.ImageUrl
+		model.FileUrl = user.FileUrl
 		companies = append(companies, *model)
 	}
 

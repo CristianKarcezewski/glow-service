@@ -68,7 +68,7 @@ func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) 
 		UserName:      user.UserName,
 		Email:         user.Email,
 		Phone:         user.Phone,
-		ImageUrl:      user.ImageUrl,
+		FileUrl:       user.FileUrl,
 		DaysLeft:      user.DaysLeft,
 	}, nil
 }

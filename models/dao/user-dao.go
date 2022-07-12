@@ -36,7 +36,7 @@ func NewDAOUser(u *models.User) *UserDao {
 		LastLogin:   u.LastLogin,
 		Email:       u.Email,
 		Phone:       u.Phone,
-		ImageUrl:    u.ImageUrl,
+		ImageUrl:    u.FileUrl,
 		CreatedAt:   u.CreatedAt,
 		Active:      u.Active,
 	}
@@ -53,7 +53,7 @@ func (u *UserDao) ToModel() *models.User {
 		LastLogin:   u.LastLogin,
 		Email:       u.Email,
 		Phone:       u.Phone,
-		ImageUrl:    u.ImageUrl,
+		FileUrl:     u.ImageUrl,
 		CreatedAt:   u.CreatedAt,
 		Active:      u.Active,
 	}
