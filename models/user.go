@@ -25,7 +25,7 @@ type (
 		UserName string `json:"name,omitempty"`
 		Email    string `json:"email,omitempty"`
 		Phone    string `json:"phone,omitempty"`
-		FileUrl  string `json:"FileUrl,omitempty"`
+		FileUrl  string `json:"fileUrl,omitempty"`
 		DaysLeft int64  `json:"daysLeft,omitempty"`
 	}
 )
