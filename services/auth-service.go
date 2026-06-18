@@ -1,46 +1,74 @@
 package services
 
 import (
-	"net/http"
-	"time"
+	"context"
+	"errors"
+	"glow-service/models"
 
-	"github.com/golang-jwt/jwt"
-	"github.com/labstack/echo/v4"
+	"firebase.google.com/go/auth"
 )
 
 type (
 	IAuthService interface {
-		Login(email, password string) (string, error)
+		GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error)
+		VerifyToken(log *models.StackLog, token string) (*models.User, error)
 	}
-	authService struct{}
+
+	authService struct {
+		firebaseClient *auth.Client
+	}
 )
 
-func NewAuthService() IAuthService {
-	return &authService{}
+func NewAuthService(firebaseClient *auth.Client) IAuthService {
+	return &authService{firebaseClient}
 }
 
-func (auth *authService) Login(email, password string) (string, error) {
+func (auth *authService) VerifyToken(log *models.StackLog, tokenStr string) (*models.User, error) {
 
-	// Create token
-	token := jwt.New(jwt.SigningMethodHS256)
+	log.AddStep("AuthService-ValidateToken")
 
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = "Jon Snow"
-	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
+	token, err := auth.firebaseClient.VerifyIDToken(context.Background(), tokenStr)
+	if err != nil {
+		return nil, errors.New("invalid token")
+	}
 
-	// Generate encoded token and send it as response.
-	return token.SignedString([]byte("secret"))
+	claims := token.Claims
+	user := models.User{
+		UserGroupId: int64(claims["userGroupId"].(float64)),
+		UserId:      int64(claims["userId"].(float64)),
+		UserName:    claims["name"].(string),
+		Email:       claims["email"].(string),
+		Uid:         token.UID,
+	}
+
+	log.SetUser(user.Email)
+	return &user, nil
 }
 
-func accessible(c echo.Context) error {
-	return c.String(http.StatusOK, "Accessible")
-}
+func (auth *authService) GenerateToken(log *models.StackLog, user *models.User) (*models.Auth, error) {
+	log.AddStep("AuthService-GenerateToken")
+	log.SetUser(user.Email)
 
-func restricted(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	name := claims["name"].(string)
-	return c.String(http.StatusOK, "Welcome "+name+"!")
+	// // Set claims
+	claims := map[string]interface{}{
+		"userGroupId": user.UserGroupId,
+		"userId":      user.UserId,
+		"name":        user.UserName,
+	}
+
+	token, err := auth.firebaseClient.CustomTokenWithClaims(context.Background(), user.Uid, claims)
+	if err != nil {
+		return nil, errors.New("error creating user token")
+	}
+	return &models.Auth{
+		Authorization: token,
+		UserId:        user.UserId,
+		Uid:           user.Uid,
+		UserGroupId:   user.UserGroupId,
+		UserName:      user.UserName,
+		Email:         user.Email,
+		Phone:         user.Phone,
+		FileUrl:       user.FileUrl,
+		DaysLeft:      user.DaysLeft,
+	}, nil
 }

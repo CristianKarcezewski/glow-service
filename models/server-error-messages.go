@@ -6,7 +6,7 @@ type (
 	}
 
 	headerErrorMessages struct {
-		PlatformNotFound      string `json:"platformNotFound,omitempty"`
-		AuthorizationNotFound string `json:"authorizationNotFound,omitempty"`
+		PlatformNotFound string `json:"platformNotFound,omitempty"`
+		NotAuthorized    string `json:"notAuthorized,omitempty"`
 	}
 )
